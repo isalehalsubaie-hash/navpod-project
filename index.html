@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NavPod — BWB Kinetic Strike | Iraqi Plains</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Courier New',monospace}
+#c{position:fixed;inset:0;display:block;width:100%;height:100%;z-index:1}
+:root{
+  --hud-bg:rgba(0,12,6,0.90);--hud-border:rgba(0,200,80,0.20);
+  --hud-bl:rgba(0,200,80,0.48);--txt:#00e87a;--txt2:rgba(0,200,100,0.58);
+  --warn:#ff4422;--accent:#ffbb00;--dim:rgba(0,180,80,0.38);
+  --pip-b:rgba(0,220,100,0.45);--pip-bg:rgba(0,8,4,0.80);
+  --btn-bg:rgba(0,200,80,0.10);--btn-b:rgba(0,200,80,0.48);--btn-t:#00ff88;
+  --lb:rgba(200,40,0,0.18);--lbb:#ff4400;--lbt:#ff6622;
+  --con-bg:rgba(0,10,5,0.96);--con-b:rgba(0,200,100,0.25)
+}
+body.day{
+  --hud-bg:rgba(228,238,255,0.92);--hud-border:rgba(28,78,178,0.20);
+  --hud-bl:rgba(28,78,178,0.52);--txt:#0a1e5e;--txt2:rgba(18,48,158,0.58);
+  --warn:#cc2200;--accent:#c85e00;--dim:rgba(18,58,148,0.38);
+  --pip-b:rgba(28,78,178,0.50);--pip-bg:rgba(218,228,248,0.60);
+  --btn-bg:rgba(28,78,178,0.08);--btn-b:rgba(28,78,178,0.42);--btn-t:#183888;
+  --lb:rgba(178,38,0,0.12);--lbb:#b82e00;--lbt:#c84200;
+  --con-bg:rgba(215,225,245,0.96);--con-b:rgba(28,78,178,0.22)
+}
+/* top bar */
+#topbar{position:fixed;top:0;left:0;right:0;height:50px;
+  background:var(--hud-bg);border-bottom:1px solid var(--hud-border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  z-index:12;pointer-events:none;box-shadow:0 2px 20px rgba(0,0,0,.5)}
+#t-title{font-size:11px;font-weight:700;letter-spacing:4px;color:var(--txt);text-transform:uppercase}
+#t-phase{font-size:8px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;
+  padding:3px 10px;border:1px solid var(--accent);border-radius:2px}
+#t-gps{font-size:8px;letter-spacing:1.5px;color:var(--txt);padding:3px 8px;
+  border:1px solid var(--hud-bl);border-radius:2px}
+#ingressBar{position:fixed;top:50px;left:0;right:0;height:3px;z-index:12;background:rgba(0,0,0,.3)}
+#ingressFill{height:100%;width:0%;background:linear-gradient(90deg,#00aa44,#ffbb00,#ff4422);transition:width .3s}
+/* panels */
+#tel{position:fixed;top:58px;left:14px;background:var(--hud-bg);
+  border:1px solid var(--hud-border);border-left:3px solid var(--txt);
+  padding:12px 15px;min-width:200px;border-radius:2px;z-index:11;pointer-events:none}
+#ai{position:fixed;top:58px;right:14px;background:var(--hud-bg);
+  border:1px solid var(--hud-border);border-right:3px solid var(--accent);
+  padding:12px 15px;min-width:215px;border-radius:2px;z-index:11;pointer-events:none}
+.ph{font-size:5.5px;letter-spacing:3px;color:var(--dim);border-bottom:1px solid var(--hud-border);
+  padding-bottom:5px;margin-bottom:6px;text-transform:uppercase}
+.row{display:flex;justify-content:space-between;align-items:center;margin:3px 0;gap:8px}
+.lk{font-size:6.5px;letter-spacing:.8px;color:var(--txt2);text-transform:uppercase;white-space:nowrap}
+.lv{font-size:7.5px;letter-spacing:1px;font-weight:700;color:var(--txt);text-align:right}
+.lv.w{color:var(--warn)}.lv.a{color:var(--accent)}.lv.ok{color:#00ffaa}
+.dv{height:1px;background:var(--hud-border);margin:5px 0}
+/* AI console — sits above the left PiP */
+#aiConsole{position:fixed;bottom:200px;left:14px;background:var(--con-bg);
+  border:1px solid var(--con-b);border-left:3px solid #00ffaa;
+  padding:9px 13px;width:370px;border-radius:2px;z-index:11;pointer-events:none;display:none}
+#consoleHeader{font-size:5.5px;letter-spacing:3px;color:rgba(0,200,100,.45);text-transform:uppercase;
+  border-bottom:1px solid var(--con-b);padding-bottom:5px;margin-bottom:6px}
+#consoleLog{height:130px;overflow-y:auto;overflow-x:hidden;font-size:7.5px;
+  line-height:1.85;scrollbar-width:none}
+#consoleLog::-webkit-scrollbar{display:none}
+.con-line{display:block;margin:1px 0;color:#00cc77}
+.con-warn{color:#ffbb00}.con-crit{color:#ff4422;font-weight:700;letter-spacing:1px}
+.con-ok{color:#00ffcc;font-weight:700;text-shadow:0 0 8px rgba(0,255,200,.4)}
+.con-anchor{color:#ff9900;font-weight:700;text-shadow:0 0 8px rgba(255,150,0,.4)}
+#matchBar{width:200px;height:4px;background:rgba(0,100,40,.28);
+  border:1px solid var(--hud-border);border-radius:2px;overflow:hidden;display:none;margin-top:4px}
+#matchFill{height:100%;width:0%;background:linear-gradient(90deg,#00aa44,#00ff88);transition:width .2s}
+#matchPct{font-size:6.5px;color:var(--accent);letter-spacing:1px;display:none;margin-top:2px}
+/* anchor badges */
+#anchorA,#anchorB{position:fixed;z-index:22;display:none;font-size:8px;letter-spacing:1.5px;
+  font-weight:700;text-transform:uppercase;background:rgba(0,10,5,.92);
+  border:1px solid #ff9900;color:#ff9900;padding:5px 11px;border-radius:2px}
+#anchorA{bottom:418px;left:14px}
+#anchorB{bottom:386px;left:14px}
+/* center msg */
+#msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none;z-index:15}
+#msgTxt{font-size:14px;letter-spacing:3px;font-weight:700;color:var(--warn);
+  text-transform:uppercase;text-shadow:0 0 20px currentColor;display:none}
+.flash{animation:fl .45s step-end infinite}
+@keyframes fl{0%,100%{opacity:1}50%{opacity:0}}
+.pulse{animation:pl 1.2s ease-in-out infinite}
+@keyframes pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.05)}}
+/* EW glitch */
+#ewGlitch{position:fixed;inset:0;z-index:40;pointer-events:none;display:none}
+#ewGlitch.active{display:block;animation:gp 0.18s steps(1) infinite}
+@keyframes gp{
+  0%{background:rgba(255,0,0,.08);clip-path:inset(0 0 91% 0)}
+  11%{background:rgba(0,0,0,.92);clip-path:inset(18% 0 68% 0)}
+  22%{background:rgba(255,0,0,.04);clip-path:inset(0 0 0 0)}
+  33%{background:rgba(0,0,0,.88);clip-path:inset(58% 0 30% 0)}
+  44%{background:rgba(255,0,0,.06);clip-path:inset(0 0 0 0)}
+  55%{background:rgba(0,0,0,.90);clip-path:inset(28% 0 54% 0)}
+  66%{background:rgba(255,0,0,.05);clip-path:inset(0 0 0 0)}
+  77%{background:rgba(0,0,0,.93);clip-path:inset(72% 0 8% 0)}
+  88%{background:rgba(255,0,0,.04);clip-path:inset(0 0 0 0)}
+  100%{background:rgba(0,0,0,.86);clip-path:inset(44% 0 42% 0)}
+}
+#ewBanner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:41;display:none;text-align:center;pointer-events:none;
+  background:rgba(0,0,0,.7);padding:18px 30px;border:2px solid #ff2200;border-radius:3px}
+#ewBanner.show{display:block}
+#ewBannerTitle{font-size:20px;font-weight:900;letter-spacing:5px;color:#ff2200;
+  text-shadow:0 0 30px #ff2200;text-transform:uppercase;animation:ewP .35s step-end infinite}
+#ewBannerSub{font-size:8.5px;letter-spacing:3px;color:#ff8800;margin-top:8px;font-weight:700;text-transform:uppercase}
+@keyframes ewP{0%,100%{opacity:1}50%{opacity:.15}}
+/* ★ PiP frames — transparent background so WebGL shows through */
+.pip-wrap{position:fixed;z-index:20;pointer-events:none}
+.pip-label{font-size:6px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:3px}
+.pip-frame{border:1px solid var(--pip-b);border-radius:2px;overflow:hidden;
+  box-shadow:0 2px 18px rgba(0,0,0,.7);position:relative;
+  background:transparent}   /* ★ transparent — WebGL draws inside */
+.pip-corner{position:absolute;font-size:5.5px;color:rgba(0,220,100,.70);
+  background:rgba(0,8,4,.80);padding:1px 4px;z-index:4;letter-spacing:.5px;pointer-events:none}
+.tl{top:3px;left:3px}.tr{top:3px;right:3px}.bl{bottom:3px;left:3px}.br2{bottom:3px;right:3px}
+.scan-overlay{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3}
+.scan-line{position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,80,.85),transparent);
+  animation:sa 1.2s linear infinite;display:none}
+.scan-line.r{background:linear-gradient(90deg,transparent,rgba(255,100,0,.85),transparent)}
+@keyframes sa{0%{top:0}100%{top:100%}}
+/* ★ Both PiPs at EXACT bottom corners — GL coords computed to match */
+#pipDownWrap{bottom:14px;left:14px}
+#pipNoseWrap{bottom:14px;right:14px}
+/* ★ Nose bbox canvas overlay — EXACTLY over right PiP */
+#noseBboxCanvas{position:fixed;right:14px;bottom:14px;
+  width:220px;height:165px;pointer-events:none;z-index:21;display:none}
+/* ★ Down bbox canvas overlay — EXACTLY over left PiP (SLAM nadir cam) */
+#downBboxCanvas{position:fixed;left:14px;bottom:14px;
+  width:220px;height:165px;pointer-events:none;z-index:21;display:none}
+/* Controls — above the right PiP */
+#ctrlWrap{position:fixed;bottom:200px;right:14px;display:flex;flex-direction:column;
+  align-items:flex-end;gap:6px;z-index:20}
+.btn{background:var(--btn-bg);border:1px solid var(--btn-b);color:var(--btn-t);
+  font-family:'Courier New',monospace;font-size:7px;letter-spacing:1.5px;
+  padding:7px 12px;cursor:pointer;text-transform:uppercase;border-radius:2px;
+  pointer-events:all;display:block;box-shadow:0 1px 6px rgba(0,0,0,.3)}
+.btn:hover{filter:brightness(1.3)}
+#btnLaunch{background:var(--lb);border-color:var(--lbb);color:var(--lbt);
+  font-size:11px;letter-spacing:2.5px;padding:10px 20px}
+.btn-row{display:flex;gap:6px}
+/* ★ PAUSE button — cyan/blue tactical theme, distinct from green controls */
+#btnPause{
+  background:rgba(0,160,220,0.14);border-color:rgba(0,200,255,0.55);color:#00d4ff;
+  font-size:8px;letter-spacing:2px;padding:8px 14px}
+#btnPause.paused{
+  background:rgba(0,220,160,0.18);border-color:rgba(0,255,180,0.65);color:#00ffcc;
+  animation:pausePulse 1.6s ease-in-out infinite}
+@keyframes pausePulse{0%,100%{box-shadow:0 0 0 rgba(0,255,200,0)}50%{box-shadow:0 0 12px rgba(0,255,200,0.35)}}
+/* lock reticle */
+#lockReticle{position:fixed;display:none;pointer-events:none;z-index:15}
+#lockReticle svg{animation:lp .7s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.18)}}
+#speedLines{position:fixed;inset:0;pointer-events:none;z-index:8;display:none}
+#missionComplete{position:fixed;inset:0;display:none;align-items:center;
+  justify-content:center;flex-direction:column;z-index:50;background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
+#missionComplete.show{display:flex}
+#mcTitle{font-size:28px;letter-spacing:4px;color:#ff4422;font-weight:700;
+  text-shadow:0 0 40px #ff4422;text-align:center}
+#mcSub{font-size:10px;letter-spacing:3px;color:rgba(255,100,50,.7);margin-top:10px;text-align:center}
+/* ══════════════════════════════════════════════════════════
+   ★ STORED SATELLITE BASELINE INTEL PANEL
+   Positioned below the #ai panel (right:14px).
+   The 2D top-down map drawn on #intelCanvas is the "photo"
+   loaded into NavPod before launch — the drone matches this
+   to live camera feeds to locate itself without GPS.
+══════════════════════════════════════════════════════════ */
+#intelPanel{
+  position:fixed;top:296px;right:14px;width:220px;
+  background:var(--hud-bg);border:1px solid var(--hud-border);
+  border-right:3px solid rgba(0,255,140,0.55);
+  padding:9px 12px 10px;border-radius:2px;z-index:11;pointer-events:none;display:none}
+#intelCanvas{display:block;width:196px;height:168px;
+  border:1px solid rgba(0,200,80,0.18);background:#000d06;
+  border-radius:1px;margin-top:6px;image-rendering:crisp-edges}
+/* match-confidence progress bar inside intel panel */
+#intelMatchRow{margin-top:6px}
+#intelMatchBar{width:100%;height:3px;background:rgba(0,100,40,.25);
+  border:1px solid var(--hud-border);border-radius:2px;overflow:hidden;margin-top:3px}
+#intelMatchFill{height:100%;width:0%;background:linear-gradient(90deg,#00aa44,#00ffaa);
+  transition:width .15s}
+/* ★ MATCH LINES — full-screen canvas that draws glowing lines
+   from the stored intel panel's feature points to the live
+   bounding boxes on whichever PiP camera can see them.
+   z-index:30 sits above PiP frames (z:20) + bbox canvases (z:21)
+   but below the EW glitch (z:40) and mission-complete (z:50). */
+#matchLinesCanvas{
+  position:fixed;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:30;display:none}
+
+/* ══════════════════════════════════════════════════════════════
+   ★ ARCHITECTURE PANEL — slides up from bottom
+   Live block diagram driven by mission STATE each frame.
+══════════════════════════════════════════════════════════════ */
+#archPanel{
+  position:fixed;bottom:0;left:0;right:0;
+  height:68vh;max-height:700px;
+  background:rgba(2,6,18,0.97);
+  border-top:2px solid rgba(0,212,255,0.35);
+  z-index:60;
+  transform:translateY(100%);
+  transition:transform 0.38s cubic-bezier(0.22,0.61,0.36,1);
+  display:flex;flex-direction:column;overflow:hidden}
+#archPanel.open{transform:translateY(0)}
+
+#arch-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 18px;border-bottom:1px solid rgba(0,212,255,0.18);
+  background:rgba(0,10,30,0.95);flex-shrink:0}
+#arch-title-txt{
+  font-family:'Orbitron',monospace;font-size:0.70rem;font-weight:700;
+  letter-spacing:.18em;color:#00d4ff;
+  text-shadow:0 0 14px rgba(0,212,255,0.55)}
+#arch-state-badge{
+  font-family:'Share Tech Mono',monospace;font-size:0.60rem;letter-spacing:.10em;
+  padding:4px 12px;border-radius:3px;border:1px solid;
+  transition:color .2s,border-color .2s,background .2s}
+#arch-close{
+  cursor:pointer;font-size:1.1rem;color:rgba(0,212,255,0.55);
+  background:none;border:none;padding:0 4px;line-height:1;
+  pointer-events:all;transition:color .15s}
+#arch-close:hover{color:#00ffff}
+#arch-scroll{
+  flex:1;overflow:auto;padding:10px 14px 18px;
+  scrollbar-width:thin;scrollbar-color:rgba(0,212,255,0.22) transparent}
+#arch-scroll::-webkit-scrollbar{width:5px;height:5px}
+#arch-scroll::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.2);border-radius:3px}
+#arch-svg{display:block;width:100%;max-width:1060px;margin:0 auto;height:auto}
+
+/* node opacity classes toggled by JS */
+.an-dim   {opacity:0.22}
+.an-idle  {opacity:0.52}
+.an-active{opacity:1.00}
+
+/* arch toggle button */
+#btnArch{
+  background:rgba(0,150,255,0.14);border-color:rgba(0,212,255,0.55);
+  color:#00d4ff;font-size:7px;letter-spacing:1.8px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ingressBar"><div id="ingressFill"></div></div>
+<div id="ewGlitch"></div>
+<div id="ewBanner">
+  <div id="ewBannerTitle">&#9888; CRITICAL: EW INTERFERENCE &#9888;</div>
+  <div id="ewBannerSub">DATALINK SEVERED &nbsp;&#9632;&nbsp; NAVPOD AUTONOMY ENGAGED</div>
+</div>
+<div id="topbar">
+  <div id="t-title">&#9651; NavPod Strike &middot; Iraqi Plains &middot; 33.28&deg;N 44.36&deg;E</div>
+  <div id="t-phase">PRE-LAUNCH</div>
+  <div id="t-gps">&#11044; GPS LOCKED</div>
+</div>
+<div id="tel">
+  <div class="ph">&#9632; Flight Telemetry</div>
+  <div class="row"><span class="lk">Altitude MSL</span><span class="lv" id="eALT">0 m</span></div>
+  <div class="row"><span class="lk">Airspeed</span><span class="lv" id="eSPD">0 kts</span></div>
+  <div class="row"><span class="lk">Heading</span><span class="lv" id="eHDG">---&deg;</span></div>
+  <div class="row"><span class="lk">Bank Angle</span><span class="lv" id="eBANK">0.0&deg;</span></div>
+  <div class="row"><span class="lk">Pitch</span><span class="lv" id="ePITCH">0.0&deg;</span></div>
+  <div class="row"><span class="lk">G-Load</span><span class="lv" id="eGF">1.0 G</span></div>
+  <div class="dv"></div>
+  <div class="ph">&#9632; Navigation</div>
+  <div class="row"><span class="lk">Nav Mode</span><span class="lv" id="eNAV">GPS</span></div>
+  <div class="row"><span class="lk">Ingress T+</span><span class="lv a" id="eING">00:00</span></div>
+  <div class="row"><span class="lk">Hunt T+</span><span class="lv a" id="eHNT">--:--</span></div>
+  <div class="row"><span class="lk">AGL</span><span class="lv" id="eAGL">--- m</span></div>
+  <div class="row"><span class="lk">Tgt Dist</span><span class="lv" id="eWPD">-- m</span></div>
+</div>
+<div id="ai">
+  <div class="ph">&#9632; NavPod AI Status</div>
+  <div class="row"><span class="lk">CPU Util</span><span class="lv a" id="eCPU">12%</span></div>
+  <div class="row"><span class="lk">SLAM Conf</span><span class="lv" id="eSLAM">STANDBY</span></div>
+  <div class="row"><span class="lk">Visual Match</span><span class="lv" id="eVM">IDLE</span></div>
+  <div class="row"><span class="lk">Anchor (Rock)</span><span class="lv" id="eAA">SEARCHING</span></div>
+  <div class="row"><span class="lk">Anchor (Bldg)</span><span class="lv" id="eAB">SEARCHING</span></div>
+  <div class="row"><span class="lk">Threat Score</span><span class="lv" id="eTHR">---</span></div>
+  <div class="dv"></div>
+  <div class="ph">&#9632; Match Confidence</div>
+  <div id="matchBar"><div id="matchFill"></div></div>
+  <div id="matchPct">Match: 0%</div>
+  <div class="dv"></div>
+  <div class="ph">&#9632; Data Link</div>
+  <div class="row"><span class="lk">Status</span><span class="lv" id="eLINK">SECURE</span></div>
+  <div class="row"><span class="lk">Latency</span><span class="lv" id="eLAT">8 ms</span></div>
+  <div class="row"><span class="lk">Uplink</span><span class="lv a" id="eUPL">140 Mbps</span></div>
+</div>
+<div id="aiConsole">
+  <div id="consoleHeader">&#9632; NavPod AI Kill-Chain Console &mdash; Live</div>
+  <div id="consoleLog"></div>
+</div>
+<div id="anchorA">&#9650; ANCHOR &alpha; (ARC HALL) LOCKED</div>
+<div id="anchorB">&#9650; ANCHOR &beta; (WAREHOUSES) LOCKED</div>
+<div id="msg"><div id="msgTxt"></div></div>
+<div id="lockReticle">
+  <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+    <circle cx="40" cy="40" r="28" stroke="#ff2200" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <circle cx="40" cy="40" r="6" fill="#ff2200" opacity="0.9"/>
+    <line x1="40" y1="8" x2="40" y2="28" stroke="#ff2200" stroke-width="1.5"/>
+    <line x1="40" y1="52" x2="40" y2="72" stroke="#ff2200" stroke-width="1.5"/>
+    <line x1="8" y1="40" x2="28" y2="40" stroke="#ff2200" stroke-width="1.5"/>
+    <line x1="52" y1="40" x2="72" y2="40" stroke="#ff2200" stroke-width="1.5"/>
+    <rect x="10" y="10" width="10" height="1.5" fill="#ff2200"/>
+    <rect x="10" y="10" width="1.5" height="10" fill="#ff2200"/>
+    <rect x="60" y="10" width="10" height="1.5" fill="#ff2200"/>
+    <rect x="68.5" y="10" width="1.5" height="#ff2200"/><rect x="68.5" y="10" width="1.5" height="10" fill="#ff2200"/>
+    <rect x="10" y="68.5" width="10" height="1.5" fill="#ff2200"/>
+    <rect x="10" y="60" width="1.5" height="10" fill="#ff2200"/>
+    <rect x="60" y="68.5" width="10" height="1.5" fill="#ff2200"/>
+    <rect x="68.5" y="60" width="1.5" height="10" fill="#ff2200"/>
+  </svg>
+</div>
+
+<!-- ★ LEFT PiP — SLAM NADIR (downCam) — CSS bottom:14px left:14px, 220x165 -->
+<div class="pip-wrap" id="pipDownWrap">
+  <div class="pip-label">&#8595; slam nadir cam</div>
+  <div class="pip-frame" style="width:220px;height:165px">
+    <div class="pip-corner tl">SLAM-CAM</div>
+    <div class="pip-corner tr" id="downCamStatus">ACTIVE</div>
+    <div class="pip-corner bl" id="downCamAlt">ALT: --</div>
+    <div class="pip-corner br2">NADIR</div>
+    <div class="scan-overlay"><div class="scan-line" id="downScanLine"></div></div>
+  </div>
+</div>
+
+<!-- ★ Down bbox canvas — EXACTLY over left PiP; frustum-culled detections drawn here -->
+<canvas id="downBboxCanvas"></canvas>
+
+<!-- ★ RIGHT PiP — FORWARD NOSE CAM — CSS bottom:14px right:14px, 220x165 -->
+<div class="pip-wrap" id="pipNoseWrap">
+  <div class="pip-label" style="text-align:right">navpod forward sensor &#9664;</div>
+  <div class="pip-frame" style="width:220px;height:165px">
+    <div class="pip-corner tl">NAVPOD-IR</div>
+    <div class="pip-corner tr" id="pipRStatus">ACTIVE</div>
+    <div class="pip-corner bl" id="pipRAGL">AGL: --</div>
+    <div class="pip-corner br2">D435i</div>
+    <div class="scan-overlay"><div class="scan-line r" id="liveScanLine"></div></div>
+  </div>
+</div>
+
+<!-- ★ Bbox overlay canvas — EXACTLY matches right PiP position -->
+<canvas id="noseBboxCanvas"></canvas>
+
+<!-- ══════════════════════════════════════════════════════════
+     ★ STORED SATELLITE BASELINE — top-down reference image
+     This is the "photo" pre-loaded into the NavPod at launch.
+     The drone has no GPS; it visually matches live camera
+     feeds to THIS image to determine where it is and where
+     the target is. Visible only during JAMMED phase.
+════════════════════════════════════════════════════════════ -->
+<div id="intelPanel">
+  <div class="ph">&#9632; Stored Satellite Baseline</div>
+  <canvas id="intelCanvas" width="196" height="168"></canvas>
+  <div id="intelMatchRow">
+    <div class="row" style="margin-top:4px">
+      <span class="lk">Live Match</span>
+      <span class="lv" id="eIntelMatch">SEARCHING</span>
+    </div>
+    <div id="intelMatchBar"><div id="intelMatchFill"></div></div>
+  </div>
+</div>
+
+<!-- ★ Full-screen match-lines canvas — glowing connectors from intel panel
+     features to live PiP bounding boxes, proving the AI is comparing
+     the stored photo to the real-time 3D sensor feeds. -->
+<canvas id="matchLinesCanvas"></canvas>
+
+<div id="ctrlWrap">
+  <div class="btn-row">
+    <button class="btn" id="btnCam" onclick="toggleCam()">&#9655; Chase Cam</button>
+    <button class="btn" id="btnTheme" onclick="toggleTheme()">&#9788; Day Mode</button>
+  </div>
+  <!-- ★ Architecture panel toggle -->
+  <button class="btn" id="btnArch" onclick="toggleArch()">&#9670; ARCH DIAGRAM</button>
+  <!-- ★ PAUSE — freezes physics/AI timers, keeps camera live for free-look analysis -->
+  <button class="btn" id="btnPause" onclick="togglePause()">&#9646;&#9646; PAUSE SIM</button>
+  <button class="btn" id="btnLaunch" onclick="launch()" style="display:none">
+    &#9658;&#9658; EXECUTE LAUNCH
+  </button>
+</div>
+
+<svg id="speedLines" width="100%" height="100%"></svg>
+<div id="missionComplete">
+  <div id="mcTitle">&#9660; TARGET NEUTRALIZED &#9660;</div>
+  <div id="mcSub">MISSION ACCOMPLISHED &nbsp;&middot;&nbsp; NavPod Strike Complete</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ★ LIVE ARCHITECTURE PANEL
+     The SVG block diagram is embedded here. JS drives node opacity/
+     glow classes from the mission STATE each animation frame.
+     Node IDs map: an-jetson, an-d435i, an-slamcam, an-orbslam,
+     an-yolo, an-traj, an-mavlink, an-pixhawk, an-imu, an-ekf,
+     an-pid, an-mixer, an-esc, an-servol, an-servor, an-feedback
+════════════════════════════════════════════════════════════════ -->
+<div id="archPanel">
+  <div id="arch-topbar">
+    <div id="arch-title-txt">◈ &nbsp;NavPod BWB — Bifurcated Control Architecture &nbsp;·&nbsp; Live Mission Sync</div>
+    <div id="arch-state-badge" style="color:#00ff88;border-color:#00ff88;background:rgba(0,255,136,0.08)">PRE-LAUNCH</div>
+    <button id="arch-close" onclick="toggleArch()">&#10005;</button>
+  </div>
+  <div id="arch-scroll">
+<svg id="arch-svg" viewBox="0 0 1100 1010" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <filter id="afc" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="3.5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="afo" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="3.5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="afg" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="3" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="afs" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="7" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="afp" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="4" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <marker id="aac" markerWidth="8" markerHeight="6" refX="7.5" refY="3" orient="auto">
+    <polygon points="0 0,8 3,0 6" fill="#00d4ff" opacity="0.9"/>
+  </marker>
+  <marker id="aao" markerWidth="8" markerHeight="6" refX="7.5" refY="3" orient="auto">
+    <polygon points="0 0,8 3,0 6" fill="#ff8c00" opacity="0.9"/>
+  </marker>
+  <marker id="aag" markerWidth="8" markerHeight="6" refX="7.5" refY="3" orient="auto">
+    <polygon points="0 0,8 3,0 6" fill="#00ff88" opacity="0.9"/>
+  </marker>
+  <marker id="aap" markerWidth="10" markerHeight="7" refX="9.5" refY="3.5" orient="auto">
+    <polygon points="0 0,10 3.5,0 7" fill="#cc44ff" opacity="0.95"/>
+  </marker>
+  <marker id="aafb" markerWidth="8" markerHeight="6" refX="7.5" refY="3" orient="auto">
+    <polygon points="0 0,8 3,0 6" fill="#607080" opacity="0.75"/>
+  </marker>
+  <linearGradient id="agz-outer" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#001a35" stop-opacity="0.88"/>
+    <stop offset="100%" stop-color="#000c1c" stop-opacity="0.80"/>
+  </linearGradient>
+  <linearGradient id="agz-inner" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1e0d00" stop-opacity="0.88"/>
+    <stop offset="100%" stop-color="#0c0600" stop-opacity="0.80"/>
+  </linearGradient>
+  <linearGradient id="agz-plant" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#001c10" stop-opacity="0.88"/>
+    <stop offset="100%" stop-color="#000c08" stop-opacity="0.80"/>
+  </linearGradient>
+  <linearGradient id="anc" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#00385a"/><stop offset="100%" stop-color="#001c2e"/>
+  </linearGradient>
+  <linearGradient id="ancm" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#004d72"/><stop offset="100%" stop-color="#00263a"/>
+  </linearGradient>
+  <linearGradient id="ano" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3c2000"/><stop offset="100%" stop-color="#1e1000"/>
+  </linearGradient>
+  <linearGradient id="anom" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#502b00"/><stop offset="100%" stop-color="#281600"/>
+  </linearGradient>
+  <linearGradient id="ang" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#003520"/><stop offset="100%" stop-color="#001a10"/>
+  </linearGradient>
+  <linearGradient id="ans" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#091a2a"/><stop offset="100%" stop-color="#040c14"/>
+  </linearGradient>
+</defs>
+
+<!-- ── Zone backgrounds ── -->
+<rect x="10" y="52" width="1080" height="410" rx="8" fill="url(#agz-outer)" stroke="#00d4ff" stroke-width="1.1" stroke-opacity="0.30"/>
+<text x="26" y="44" font-family="Orbitron,monospace" font-size="8.5" fill="#00d4ff" fill-opacity="0.50" letter-spacing="3">OUTER LOOP — NavPod Edge Compute  ·  Jetson Orin Nano</text>
+<g stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.38">
+  <path d="M10,62 L10,52 L20,52"/><path d="M1080,62 L1090,62 L1090,52 L1080,52"/>
+  <path d="M10,452 L10,462 L20,462"/><path d="M1080,462 L1090,462 L1090,452"/>
+</g>
+<rect x="10" y="545" width="1080" height="352" rx="8" fill="url(#agz-inner)" stroke="#ff8c00" stroke-width="1.1" stroke-opacity="0.30"/>
+<text x="26" y="538" font-family="Orbitron,monospace" font-size="8.5" fill="#ff8c00" fill-opacity="0.50" letter-spacing="3">INNER LOOP — Flight Controller  ·  Pixhawk Cube Orange+ / ArduPilot</text>
+<g stroke="#ff8c00" stroke-width="1" fill="none" opacity="0.38">
+  <path d="M10,555 L10,545 L20,545"/><path d="M1080,555 L1090,555 L1090,545 L1080,545"/>
+  <path d="M10,887 L10,897 L20,897"/><path d="M1080,887 L1090,887 L1090,897"/>
+</g>
+<rect x="10" y="918" width="1080" height="85" rx="8" fill="url(#agz-plant)" stroke="#00ff88" stroke-width="1.1" stroke-opacity="0.30"/>
+<text x="26" y="912" font-family="Orbitron,monospace" font-size="8.5" fill="#00ff88" fill-opacity="0.50" letter-spacing="3">PLANT &amp; ACTUATORS — Physical Hardware</text>
+<g stroke="#00ff88" stroke-width="1" fill="none" opacity="0.38">
+  <path d="M10,928 L10,918 L20,918"/><path d="M1080,928 L1090,928 L1090,918 L1080,918"/>
+</g>
+
+<!-- ── D435i ── -->
+<g id="an-d435i" filter="url(#afc)" class="an-idle">
+  <rect x="80" y="90" width="188" height="68" rx="5" fill="url(#ans)" stroke="#00d4ff" stroke-width="1.2"/>
+  <rect x="80" y="90" width="188" height="9" rx="4" fill="#00d4ff" fill-opacity="0.28"/>
+  <circle cx="98" cy="124" r="6" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.6"/>
+  <circle cx="98" cy="124" r="2.5" fill="#00d4ff" opacity="0.45"/>
+  <circle cx="110" cy="124" r="6" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.6"/>
+  <circle cx="110" cy="124" r="2.5" fill="#00d4ff" opacity="0.45"/>
+  <text x="174" y="112" font-family="Orbitron,monospace" font-size="6.5" fill="#00d4ff" fill-opacity="0.65" text-anchor="middle" letter-spacing="1.2">SENSOR  ·  STEREO RGB-D</text>
+  <text x="174" y="130" font-family="Orbitron,monospace" font-size="9.5" fill="#00eeff" font-weight="700" text-anchor="middle" letter-spacing="0.5">Intel D435i</text>
+  <text x="174" y="146" font-family="Share Tech Mono,monospace" font-size="8" fill="#88ccff" fill-opacity="0.80" text-anchor="middle">Forward Stereo Camera</text>
+</g>
+
+<!-- ── SLAM Cam ── -->
+<g id="an-slamcam" filter="url(#afc)" class="an-idle">
+  <rect x="640" y="90" width="188" height="68" rx="5" fill="url(#ans)" stroke="#00d4ff" stroke-width="1.2"/>
+  <rect x="640" y="90" width="188" height="9" rx="4" fill="#00d4ff" fill-opacity="0.28"/>
+  <text x="658" y="130" font-family="Share Tech Mono,monospace" font-size="14" fill="#00d4ff" fill-opacity="0.4">↓</text>
+  <text x="734" y="112" font-family="Orbitron,monospace" font-size="6.5" fill="#00d4ff" fill-opacity="0.65" text-anchor="middle" letter-spacing="1.2">SENSOR  ·  NADIR VISUAL</text>
+  <text x="734" y="130" font-family="Orbitron,monospace" font-size="9.5" fill="#00eeff" font-weight="700" text-anchor="middle" letter-spacing="0.5">SLAM Camera</text>
+  <text x="734" y="146" font-family="Share Tech Mono,monospace" font-size="8" fill="#88ccff" fill-opacity="0.80" text-anchor="middle">Downward Terrain Survey</text>
+</g>
+
+<!-- ── ORB-SLAM3 ── -->
+<g id="an-orbslam" filter="url(#afc)" class="an-idle">
+  <rect x="58" y="195" width="195" height="68" rx="5" fill="url(#anc)" stroke="#00d4ff" stroke-width="1.4"/>
+  <rect x="58" y="195" width="195" height="9" rx="4" fill="#00d4ff" fill-opacity="0.35"/>
+  <text x="156" y="216" font-family="Orbitron,monospace" font-size="6.5" fill="#00d4ff" fill-opacity="0.70" text-anchor="middle" letter-spacing="1.2">PROCESSING  ·  VISUAL SLAM</text>
+  <text x="156" y="234" font-family="Orbitron,monospace" font-size="11" fill="#00ffff" font-weight="700" text-anchor="middle" letter-spacing="0.3">ORB-SLAM3</text>
+  <text x="156" y="251" font-family="Share Tech Mono,monospace" font-size="8" fill="#88ccff" fill-opacity="0.80" text-anchor="middle">Terrain Mapping · 3D Pose</text>
+</g>
+
+<!-- ── YOLOv8 ── -->
+<g id="an-yolo" filter="url(#afc)" class="an-idle">
+  <rect x="642" y="195" width="195" height="68" rx="5" fill="url(#anc)" stroke="#00d4ff" stroke-width="1.4"/>
+  <rect x="642" y="195" width="195" height="9" rx="4" fill="#00d4ff" fill-opacity="0.35"/>
+  <text x="740" y="216" font-family="Orbitron,monospace" font-size="6.5" fill="#00d4ff" fill-opacity="0.70" text-anchor="middle" letter-spacing="1.2">PROCESSING  ·  VISION AI</text>
+  <text x="740" y="234" font-family="Orbitron,monospace" font-size="11" fill="#00ffff" font-weight="700" text-anchor="middle" letter-spacing="0.3">YOLOv8-n</text>
+  <text x="740" y="251" font-family="Share Tech Mono,monospace" font-size="8" fill="#88ccff" fill-opacity="0.80" text-anchor="middle">Target Detection · Classification</text>
+</g>
+
+<!-- ── Jetson Orin Nano ── -->
+<g id="an-jetson" filter="url(#afs)" class="an-idle">
+  <rect x="308" y="284" width="282" height="88" rx="7" fill="url(#ancm)" stroke="#00d4ff" stroke-width="2.2"/>
+  <rect x="308" y="284" width="282" height="12" rx="6" fill="#00d4ff" fill-opacity="0.48"/>
+  <g fill="#00d4ff" fill-opacity="0.14">
+    <rect x="318" y="336" width="18" height="28" rx="2"/><rect x="340" y="330" width="18" height="34" rx="2"/>
+    <rect x="362" y="323" width="18" height="41" rx="2"/><rect x="562" y="336" width="18" height="28" rx="2"/>
+    <rect x="540" y="330" width="18" height="34" rx="2"/><rect x="518" y="323" width="18" height="41" rx="2"/>
+  </g>
+  <text x="449" y="308" font-family="Orbitron,monospace" font-size="7" fill="#00d4ff" fill-opacity="0.80" text-anchor="middle" letter-spacing="2">EDGE COMPUTE  ·  GPU SOM  ·  NavPod</text>
+  <text x="449" y="332" font-family="Orbitron,monospace" font-size="16" fill="#00ffff" font-weight="900" text-anchor="middle" letter-spacing="1">JETSON ORIN NANO</text>
+  <text x="449" y="350" font-family="Orbitron,monospace" font-size="9" fill="#00d4ff" fill-opacity="0.9" text-anchor="middle">8 GB LPDDR5  ·  1024-core Ampere GPU</text>
+  <text x="449" y="364" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#88ccff" fill-opacity="0.65" text-anchor="middle">40 TOPS  ·  ROS2 Humble  ·  Ubuntu 22.04 LTS</text>
+</g>
+
+<!-- ── Trajectory Vector ── -->
+<g id="an-traj" filter="url(#afc)" class="an-idle">
+  <rect x="330" y="400" width="238" height="56" rx="5" fill="url(#anc)" stroke="#00eeff" stroke-width="1.5" stroke-dasharray="7,4"/>
+  <text x="449" y="422" font-family="Orbitron,monospace" font-size="6.5" fill="#00d4ff" fill-opacity="0.70" text-anchor="middle" letter-spacing="1.2">OUTPUT  ·  GUIDANCE COMMAND</text>
+  <text x="449" y="439" font-family="Orbitron,monospace" font-size="11" fill="#00ffff" font-weight="700" text-anchor="middle">Trajectory Vector</text>
+  <text x="449" y="452" font-family="Share Tech Mono,monospace" font-size="8.5" fill="#88ccff" fill-opacity="0.80" text-anchor="middle">Δψ &nbsp;·&nbsp; Δθ &nbsp;·&nbsp; Δφ &nbsp;·&nbsp; V_ref</text>
+</g>
+
+<!-- ── MAVLink Bridge ── -->
+<g id="an-mavlink" filter="url(#afp)" class="an-idle">
+  <rect x="265" y="470" width="368" height="50" rx="7" fill="rgba(60,0,90,0.55)" stroke="#cc44ff" stroke-width="1.6"/>
+  <text x="449" y="491" font-family="Orbitron,monospace" font-size="9.5" fill="#dd66ff" font-weight="700" text-anchor="middle" letter-spacing="1.5">MAVLink  via  UART</text>
+  <text x="449" y="507" font-family="Share Tech Mono,monospace" font-size="8" fill="#cc99ff" fill-opacity="0.85" text-anchor="middle">Serial Bridge  ·  921 600 baud  ·  8N1  ·  TELEM1</text>
+</g>
+
+<!-- ── Pixhawk ── -->
+<g id="an-pixhawk" filter="url(#afs)" class="an-idle">
+  <rect x="308" y="557" width="282" height="80" rx="7" fill="url(#anom)" stroke="#ff8c00" stroke-width="2.2"/>
+  <rect x="308" y="557" width="282" height="12" rx="6" fill="#ff8c00" fill-opacity="0.50"/>
+  <g fill="#ff8c00" fill-opacity="0.13">
+    <rect x="318" y="607" width="38" height="22" rx="2"/><rect x="546" y="607" width="38" height="22" rx="2"/>
+  </g>
+  <text x="449" y="580" font-family="Orbitron,monospace" font-size="7" fill="#ff8c00" fill-opacity="0.85" text-anchor="middle" letter-spacing="2">FLIGHT CONTROLLER  ·  FCU  ·  ArduPlane</text>
+  <text x="449" y="603" font-family="Orbitron,monospace" font-size="15.5" fill="#ffaa00" font-weight="900" text-anchor="middle" letter-spacing="0.5">PIXHAWK CUBE</text>
+  <text x="449" y="620" font-family="Orbitron,monospace" font-size="9" fill="#ff8c00" fill-opacity="0.90" text-anchor="middle">Orange+  ·  STM32H753  ·  480 MHz</text>
+  <text x="449" y="634" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#ffcc88" fill-opacity="0.65" text-anchor="middle">Triple IMU Redundancy  ·  TELEM1/2  ·  14 PWM Out</text>
+</g>
+
+<!-- ── IMU ── -->
+<g id="an-imu" filter="url(#afo)" class="an-idle">
+  <rect x="45" y="645" width="193" height="65" rx="5" fill="url(#ans)" stroke="#ff8c00" stroke-width="1.3"/>
+  <rect x="45" y="645" width="193" height="9" rx="4" fill="#ff8c00" fill-opacity="0.28"/>
+  <g stroke="#ff8c00" stroke-width="0.8" fill="none" opacity="0.45">
+    <rect x="58" y="667" width="14" height="14" rx="1"/>
+    <line x1="65" y1="667" x2="65" y2="681"/><line x1="58" y1="674" x2="72" y2="674"/>
+  </g>
+  <text x="142" y="667" font-family="Orbitron,monospace" font-size="6.5" fill="#ff8c00" fill-opacity="0.65" text-anchor="middle" letter-spacing="1.2">INERTIAL SENSING</text>
+  <text x="142" y="684" font-family="Orbitron,monospace" font-size="9.5" fill="#ffaa44" font-weight="600" text-anchor="middle">IMU &amp; Barometer</text>
+  <text x="142" y="700" font-family="Share Tech Mono,monospace" font-size="8" fill="#ffcc88" fill-opacity="0.75" text-anchor="middle">ICM-42688 · ICM-20649 · MS5611</text>
+</g>
+
+<!-- ── EKF ── -->
+<g id="an-ekf" filter="url(#afo)" class="an-idle">
+  <rect x="662" y="645" width="205" height="65" rx="5" fill="url(#ano)" stroke="#ff8c00" stroke-width="1.4"/>
+  <rect x="662" y="645" width="205" height="9" rx="4" fill="#ff8c00" fill-opacity="0.35"/>
+  <text x="765" y="667" font-family="Orbitron,monospace" font-size="6.5" fill="#ff8c00" fill-opacity="0.70" text-anchor="middle" letter-spacing="1.2">STATE ESTIMATOR</text>
+  <text x="765" y="684" font-family="Orbitron,monospace" font-size="11" fill="#ffcc44" font-weight="700" text-anchor="middle">EKF3</text>
+  <text x="765" y="700" font-family="Share Tech Mono,monospace" font-size="8" fill="#ffcc88" fill-opacity="0.80" text-anchor="middle">Extended Kalman Filter · 18-state</text>
+</g>
+
+<!-- ── PID Controllers ── -->
+<g id="an-pid" filter="url(#afo)" class="an-idle">
+  <rect x="308" y="740" width="282" height="68" rx="5" fill="url(#ano)" stroke="#ff8c00" stroke-width="1.7"/>
+  <rect x="308" y="740" width="282" height="10" rx="5" fill="#ff8c00" fill-opacity="0.42"/>
+  <g fill="#ff8c00" fill-opacity="0.18">
+    <rect x="320" y="778" width="7" height="22" rx="1"/><rect x="331" y="771" width="7" height="29" rx="1"/>
+    <rect x="342" y="764" width="7" height="36" rx="1"/><rect x="565" y="778" width="7" height="22" rx="1"/>
+    <rect x="554" y="771" width="7" height="29" rx="1"/><rect x="543" y="764" width="7" height="36" rx="1"/>
+  </g>
+  <text x="449" y="764" font-family="Orbitron,monospace" font-size="7" fill="#ff8c00" fill-opacity="0.80" text-anchor="middle" letter-spacing="1.5">PID CONTROL LOOPS  ·  400 Hz</text>
+  <text x="449" y="784" font-family="Orbitron,monospace" font-size="13" fill="#ffaa44" font-weight="700" text-anchor="middle">PID Controllers</text>
+  <text x="449" y="800" font-family="Share Tech Mono,monospace" font-size="8" fill="#ffcc88" fill-opacity="0.80" text-anchor="middle">Roll · Pitch · Yaw · Throttle</text>
+</g>
+
+<!-- ── BWB Mixer ── -->
+<g id="an-mixer" filter="url(#afo)" class="an-idle">
+  <rect x="308" y="835" width="282" height="58" rx="5" fill="url(#ano)" stroke="#ffaa44" stroke-width="1.7"/>
+  <rect x="308" y="835" width="282" height="10" rx="5" fill="#ffaa44" fill-opacity="0.42"/>
+  <g stroke="#ffaa44" stroke-width="1" fill="none" opacity="0.35">
+    <path d="M322 875 L348 855 L348 875 Z"/><path d="M576 875 L550 855 L550 875 Z"/>
+    <line x1="322" y1="865" x2="576" y2="865"/>
+  </g>
+  <text x="449" y="858" font-family="Orbitron,monospace" font-size="7" fill="#ffaa44" fill-opacity="0.80" text-anchor="middle" letter-spacing="1.5">BWB AERODYNAMIC MIXING</text>
+  <text x="449" y="876" font-family="Orbitron,monospace" font-size="12" fill="#ffcc44" font-weight="700" text-anchor="middle">BWB Elevon Mixer</text>
+  <text x="449" y="887" font-family="Share Tech Mono,monospace" font-size="8" fill="#ffcc88" fill-opacity="0.80" text-anchor="middle">δL = (Pitch+Roll)/2 &nbsp;·&nbsp; δR = (Pitch−Roll)/2</text>
+</g>
+
+<!-- PWM label -->
+<rect x="350" y="900" width="198" height="16" rx="3" fill="rgba(0,40,20,0.8)" stroke="#00ff88" stroke-width="0.9"/>
+<text x="449" y="912" font-family="Orbitron,monospace" font-size="8" fill="#00ff88" text-anchor="middle" font-weight="600" letter-spacing="1.5">PWM  OUTPUT</text>
+
+<!-- ── ESC / Motor ── -->
+<g id="an-esc" filter="url(#afg)" class="an-idle">
+  <rect x="48" y="928" width="192" height="58" rx="5" fill="url(#ang)" stroke="#00ff88" stroke-width="1.4"/>
+  <rect x="48" y="928" width="192" height="9" rx="4" fill="#00ff88" fill-opacity="0.35"/>
+  <circle cx="66" cy="957" r="8" fill="none" stroke="#00ff88" stroke-width="1" opacity="0.4"/>
+  <circle cx="66" cy="957" r="4" fill="none" stroke="#00ff88" stroke-width="1" opacity="0.35"/>
+  <circle cx="66" cy="957" r="1.5" fill="#00ff88" opacity="0.45"/>
+  <text x="144" y="951" font-family="Orbitron,monospace" font-size="6.5" fill="#00ff88" fill-opacity="0.65" text-anchor="middle" letter-spacing="1">ESC  →  PROPULSION</text>
+  <text x="144" y="967" font-family="Orbitron,monospace" font-size="10" fill="#44ff99" font-weight="600" text-anchor="middle">Motor / EDF</text>
+  <text x="144" y="980" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#88ffcc" fill-opacity="0.75" text-anchor="middle">Brushless · 30A BL-Heli32</text>
+</g>
+
+<!-- ── Left Elevon ── -->
+<g id="an-servol" filter="url(#afg)" class="an-idle">
+  <rect x="348" y="928" width="202" height="58" rx="5" fill="url(#ang)" stroke="#00ff88" stroke-width="1.4"/>
+  <rect x="348" y="928" width="202" height="9" rx="4" fill="#00ff88" fill-opacity="0.35"/>
+  <g stroke="#00ff88" stroke-width="1" fill="none" opacity="0.4"><path d="M362 963 L380 948 L380 963 Z"/></g>
+  <text x="449" y="951" font-family="Orbitron,monospace" font-size="6.5" fill="#00ff88" fill-opacity="0.65" text-anchor="middle" letter-spacing="1">SERVO  →  LEFT CONTROL SURFACE</text>
+  <text x="449" y="967" font-family="Orbitron,monospace" font-size="10" fill="#44ff99" font-weight="600" text-anchor="middle">Left Elevon</text>
+  <text x="449" y="980" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#88ffcc" fill-opacity="0.75" text-anchor="middle">Metal-Gear Servo · ±30°</text>
+</g>
+
+<!-- ── Right Elevon ── -->
+<g id="an-servor" filter="url(#afg)" class="an-idle">
+  <rect x="652" y="928" width="202" height="58" rx="5" fill="url(#ang)" stroke="#00ff88" stroke-width="1.4"/>
+  <rect x="652" y="928" width="202" height="9" rx="4" fill="#00ff88" fill-opacity="0.35"/>
+  <g stroke="#00ff88" stroke-width="1" fill="none" opacity="0.4"><path d="M840 963 L822 948 L822 963 Z"/></g>
+  <text x="753" y="951" font-family="Orbitron,monospace" font-size="6.5" fill="#00ff88" fill-opacity="0.65" text-anchor="middle" letter-spacing="1">SERVO  →  RIGHT CONTROL SURFACE</text>
+  <text x="753" y="967" font-family="Orbitron,monospace" font-size="10" fill="#44ff99" font-weight="600" text-anchor="middle">Right Elevon</text>
+  <text x="753" y="980" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#88ffcc" fill-opacity="0.75" text-anchor="middle">Metal-Gear Servo · ±30°</text>
+</g>
+
+<!-- ── All Data-Flow Paths (static, always visible) ── -->
+<!-- Outer loop cyan paths -->
+<path d="M174 158 L156 195" stroke="#00d4ff" stroke-width="1.6" fill="none" opacity="0.55" marker-end="url(#aac)" stroke-dasharray="5,4"/>
+<path d="M268 125 C440 125 550 165 740 195" stroke="#00d4ff" stroke-width="1.3" fill="none" opacity="0.38" marker-end="url(#aac)" stroke-dasharray="5,4"/>
+<path d="M640 125 C440 125 320 165 253 195" stroke="#00d4ff" stroke-width="1.3" fill="none" opacity="0.38" marker-end="url(#aac)" stroke-dasharray="5,4"/>
+<path d="M734 158 L740 195" stroke="#00d4ff" stroke-width="1.6" fill="none" opacity="0.55" marker-end="url(#aac)" stroke-dasharray="5,4"/>
+<path d="M253 228 C290 228 308 300 308 322" stroke="#00d4ff" stroke-width="1.8" fill="none" opacity="0.65" marker-end="url(#aac)" stroke-dasharray="6,4"/>
+<path d="M642 228 C608 228 590 300 590 322" stroke="#00d4ff" stroke-width="1.8" fill="none" opacity="0.65" marker-end="url(#aac)" stroke-dasharray="6,4"/>
+<path d="M449 372 L449 400" stroke="#00ffff" stroke-width="2.2" fill="none" opacity="0.80" marker-end="url(#aac)" stroke-dasharray="7,4"/>
+<!-- MAVLink purple paths -->
+<path d="M449 456 L449 470" stroke="#cc44ff" stroke-width="2.6" fill="none" opacity="0.80" marker-end="url(#aap)" stroke-dasharray="7,4"/>
+<path d="M449 520 L449 557" stroke="#cc44ff" stroke-width="2.6" fill="none" opacity="0.80" marker-end="url(#aap)" stroke-dasharray="7,4"/>
+<!-- Inner loop orange paths -->
+<path d="M142 645 L142 617 L308 617 L308 597" stroke="#ff8c00" stroke-width="1.7" fill="none" opacity="0.62" marker-end="url(#aao)" stroke-dasharray="5,4"/>
+<path d="M590 595 C640 595 662 645 662 677" stroke="#ff8c00" stroke-width="1.6" fill="none" opacity="0.60" marker-end="url(#aao)" stroke-dasharray="5,4"/>
+<path d="M662 678 C620 678 590 740 590 774" stroke="#ff8c00" stroke-width="1.6" fill="none" opacity="0.60" marker-end="url(#aao)" stroke-dasharray="5,4"/>
+<path d="M308 597 L216 597 L216 774 L308 774" stroke="#cc44ff" stroke-width="1.7" fill="none" opacity="0.62" marker-end="url(#aap)" stroke-dasharray="6,4"/>
+<rect x="174" y="672" width="32" height="42" rx="2" fill="rgba(60,0,90,0.6)"/>
+<text x="190" y="686" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#cc99ff" fill-opacity="0.80" text-anchor="middle">Set</text>
+<text x="190" y="697" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#cc99ff" fill-opacity="0.80" text-anchor="middle">point</text>
+<text x="190" y="708" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#cc99ff" fill-opacity="0.80" text-anchor="middle">Δψ/θ/φ</text>
+<path d="M449 808 L449 835" stroke="#ffaa44" stroke-width="2.2" fill="none" opacity="0.82" marker-end="url(#aao)" stroke-dasharray="6,4"/>
+<!-- PWM green paths -->
+<path d="M340 893 C260 893 200 910 144 928" stroke="#00ff88" stroke-width="1.8" fill="none" opacity="0.68" marker-end="url(#aag)" stroke-dasharray="5,4"/>
+<text x="218" y="905" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#00ff88" fill-opacity="0.55" text-anchor="middle">PWM CH1</text>
+<path d="M430 893 L415 928" stroke="#00ff88" stroke-width="1.8" fill="none" opacity="0.68" marker-end="url(#aag)" stroke-dasharray="5,4"/>
+<text x="388" y="906" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#00ff88" fill-opacity="0.55" text-anchor="middle">PWM CH3</text>
+<path d="M558 893 C640 893 700 910 753 928" stroke="#00ff88" stroke-width="1.8" fill="none" opacity="0.68" marker-end="url(#aag)" stroke-dasharray="5,4"/>
+<text x="672" y="905" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#00ff88" fill-opacity="0.55" text-anchor="middle">PWM CH4</text>
+<!-- Feedback grey -->
+<path id="an-feedback" d="M854 968 L940 968 L940 678 L867 678" stroke="#607080" stroke-width="1.6" fill="none" opacity="0.45" stroke-dasharray="5,5" marker-end="url(#aafb)"/>
+<path d="M240 968 L142 968 L142 710" stroke="#607080" stroke-width="1.4" fill="none" opacity="0.38" stroke-dasharray="5,5" marker-end="url(#aafb)"/>
+<text font-family="Share Tech Mono,monospace" font-size="7.5" fill="#607080" fill-opacity="0.65" text-anchor="middle" transform="rotate(90,940,800)">Aerodynamic Response — Closed Loop</text>
+
+<!-- ── ANIMATED FLOW DOTS (CSS-driven via animateMotion) ── -->
+<g id="an-dots-outer">
+  <circle r="3.5" fill="#00ffff" opacity="0.88">
+    <animateMotion dur="0.70s" repeatCount="indefinite" path="M449 372 L449 400"/>
+  </circle>
+  <circle r="2.5" fill="#00d4ff" opacity="0.65">
+    <animateMotion dur="1.0s" repeatCount="indefinite" path="M174 158 L156 195"/>
+  </circle>
+  <circle r="2.5" fill="#00d4ff" opacity="0.65">
+    <animateMotion dur="1.0s" repeatCount="indefinite" path="M734 158 L740 195"/>
+  </circle>
+  <circle r="2.5" fill="#00d4ff" opacity="0.78">
+    <animateMotion dur="0.85s" repeatCount="indefinite" path="M253 228 C290 228 308 300 308 322"/>
+  </circle>
+  <circle r="2.5" fill="#00d4ff" opacity="0.78">
+    <animateMotion dur="0.85s" begin="0.3s" repeatCount="indefinite" path="M642 228 C608 228 590 300 590 322"/>
+  </circle>
+</g>
+
+<g id="an-dots-mavlink">
+  <circle r="4" fill="#dd66ff" opacity="0.92">
+    <animateMotion dur="0.50s" repeatCount="indefinite" path="M449 456 L449 557"/>
+  </circle>
+  <circle r="2.8" fill="#dd66ff" opacity="0.65">
+    <animateMotion dur="0.50s" begin="0.17s" repeatCount="indefinite" path="M449 456 L449 557"/>
+  </circle>
+  <circle r="2" fill="#dd66ff" opacity="0.45">
+    <animateMotion dur="0.50s" begin="0.33s" repeatCount="indefinite" path="M449 456 L449 557"/>
+  </circle>
+</g>
+
+<g id="an-dots-inner">
+  <circle r="2.5" fill="#ff8c00" opacity="0.80">
+    <animateMotion dur="0.70s" repeatCount="indefinite" path="M142 645 L142 617 L308 617 L308 597"/>
+  </circle>
+  <circle r="2.5" fill="#ff8c00" opacity="0.75">
+    <animateMotion dur="0.90s" repeatCount="indefinite" path="M590 595 C640 595 662 645 662 677"/>
+  </circle>
+  <circle r="2.5" fill="#ffcc44" opacity="0.80">
+    <animateMotion dur="0.90s" repeatCount="indefinite" path="M662 678 C620 678 590 740 590 774"/>
+  </circle>
+  <circle r="3.5" fill="#ffaa44" opacity="0.90">
+    <animateMotion dur="0.60s" repeatCount="indefinite" path="M449 808 L449 835"/>
+  </circle>
+</g>
+
+<g id="an-dots-plant">
+  <circle r="3" fill="#00ff88" opacity="0.88">
+    <animateMotion dur="0.75s" repeatCount="indefinite" path="M340 893 C260 893 200 910 144 928"/>
+  </circle>
+  <circle r="3" fill="#00ff88" opacity="0.85">
+    <animateMotion dur="0.60s" repeatCount="indefinite" path="M430 893 L415 928"/>
+  </circle>
+  <circle r="3" fill="#00ff88" opacity="0.85">
+    <animateMotion dur="0.75s" repeatCount="indefinite" path="M558 893 C640 893 700 910 753 928"/>
+  </circle>
+</g>
+
+</svg>
+  </div><!-- end arch-scroll -->
+</div><!-- end archPanel -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+// ══════════════════════════════════════════════════════════════
+// MISSION PARAMETERS
+// ══════════════════════════════════════════════════════════════
+var LAUNCH_ACCELERATION = 0.30;     // ★ violent catapult kick
+var LAUNCH_MAX_SPEED    = 8.0;      // ★ screams off the rail
+var DRONE_SPEED_PER_SEC = 1/15;     // ★ screams through valleys — spline T=1.0 in 15 real-sec
+var CRUISE_SPEED        = 220;      // ★ methodical hunt — slow enough to watch AI work
+var DIVE_SPEED          = 800;      // ★ fast attack dive — visible but aggressive
+var DOME_RADIUS         = 2000;
+var BANK_MULT           = 28;
+var EXPLOSION_N         = 600;
+var SPLINE_TUBE_R       = 4;
+var FOLLOW_DIST         = 520;
+var CRUISE_AGL          = 300;
+var MIN_AGL             = 80;       // ★ strictly enforced in JAMMED, bypassed in DIVE
+var INGRESS_DURATION_S  = 15.0;     // ★ 15-sec sprint to the dome — skip the boring transit
+// World coords
+var DOME_CX=0, DOME_CZ=600;
+var TGT_X=0,   TGT_Z=380;
+var ANC_A={x:-60,z:220};  // ★ Arc Assembly Hall (α anchor)
+var ANC_B={x:220,z:410};  // ★ Warehouse Row (β anchor)
+// ★ PiP pixel dimensions — MUST match HTML/CSS widths
+var PW=220, PH=165;
+
+// ══════════════════════════════════════════════════════════════
+// RENDERER + SCENE
+// ══════════════════════════════════════════════════════════════
+var W=window.innerWidth, H=window.innerHeight;
+var canvas=document.getElementById('c');
+var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(W,H);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
+renderer.shadowMap.enabled=false;
+renderer.autoClear=false;
+renderer.toneMapping=THREE.ReinhardToneMapping;
+renderer.toneMappingExposure=1.1;
+
+var scene=new THREE.Scene();
+scene.background=new THREE.Color(0x9EC4DC); // ★ Iraqi plains noon sky
+scene.fog=new THREE.FogExp2(0xD4B87A,0.00005); // ★ desert heat haze
+
+// Main cam
+var mainCam=new THREE.PerspectiveCamera(68,W/H,1,20000);
+mainCam.position.set(0,1800,-3500);mainCam.lookAt(0,400,0);
+
+// ★ Nose cam — forward + slightly down
+var noseCam=new THREE.PerspectiveCamera(72,PW/PH,1,18000);
+
+// ★ Down cam — SLAM nadir camera, straight down at terrain
+var downCam=new THREE.PerspectiveCamera(80,PW/PH,10,8000);
+
+window.addEventListener('resize',function(){
+  W=window.innerWidth;H=window.innerHeight;
+  renderer.setSize(W,H);mainCam.aspect=W/H;mainCam.updateProjectionMatrix();
+  matchLinesCvs.width=W;matchLinesCvs.height=H;
+});
+
+// Orbit control
+var orb={theta:0.30,phi:0.50,r:3200};
+var orbTgt=new THREE.Vector3(0,400,0);
+var isDrag=false,prevM={x:0,y:0},chaseModeActive=false;
+function updateOrbitCam(){
+  mainCam.position.set(
+    orbTgt.x+orb.r*Math.sin(orb.phi)*Math.sin(orb.theta),
+    orbTgt.y+orb.r*Math.cos(orb.phi),
+    orbTgt.z+orb.r*Math.sin(orb.phi)*Math.cos(orb.theta));
+  mainCam.lookAt(orbTgt);
+}
+updateOrbitCam();
+canvas.addEventListener('mousedown',function(e){
+  if(e.target!==canvas)return;
+  isDrag=true;prevM={x:e.clientX,y:e.clientY};
+  if(chaseModeActive){chaseModeActive=false;document.getElementById('btnCam').textContent='\u25b7 Chase Cam';}
+});
+window.addEventListener('mouseup',function(){isDrag=false;});
+window.addEventListener('mousemove',function(e){
+  if(!isDrag)return;
+  orb.theta-=(e.clientX-prevM.x)*0.005;
+  orb.phi=Math.max(0.06,Math.min(1.50,orb.phi-(e.clientY-prevM.y)*0.005));
+  prevM={x:e.clientX,y:e.clientY};updateOrbitCam();
+});
+canvas.addEventListener('wheel',function(e){
+  orb.r=Math.max(50,Math.min(14000,orb.r+e.deltaY*0.8));
+  if(!chaseModeActive)updateOrbitCam();
+},{passive:true});
+function toggleCam(){chaseModeActive=!chaseModeActive;document.getElementById('btnCam').textContent=chaseModeActive?'\u25a0 Free Cam':'\u25b7 Chase Cam';}
+window.toggleCam=toggleCam;
+
+// Lighting
+scene.add(new THREE.AmbientLight(0xD4B87A,1.4));        // ★ desert warm ambient
+var sunLight=new THREE.DirectionalLight(0xFFF8E8,4.8);  // ★ harsh noon sun
+sunLight.position.set(-1500,4000,-800);scene.add(sunLight);
+var fillLight=new THREE.DirectionalLight(0xD4C090,1.2); // ★ sand-bounce fill
+fillLight.position.set(1500,800,2500);scene.add(fillLight);
+scene.add(new THREE.HemisphereLight(0x9EC4DC,0xC4A058,0.9)); // ★ sky/sand hemi
+var isDayMode=true; // ★ Iraqi plains — default to daylight
+function toggleTheme(){
+  isDayMode=!isDayMode;
+  document.body.classList.toggle('day',isDayMode);
+  document.getElementById('btnTheme').textContent=isDayMode?'\u263e Night Mode':'\u2600 Day Mode';
+  scene.background.set(isDayMode?0x9EC4DC:0x0C1422);
+  scene.fog.color.set(isDayMode?0xD4B87A:0x0C1422);
+  scene.fog.density=isDayMode?0.00005:0.00012;
+  sunLight.color.set(isDayMode?0xFFF8E8:0x3344aa);sunLight.intensity=isDayMode?4.8:2.2;
+  fillLight.intensity=isDayMode?1.2:0.9;
+  terrain.material.color.set(isDayMode?0xC4A058:0x7A6838); // ★ desert sand / night
+  starField.visible=!isDayMode;
+}
+window.toggleTheme=toggleTheme;
+
+// ══════════════════════════════════════════════════════════════
+// ★ TERRAIN — smooth rolling hills with FORCED FLAT PLATEAU
+//   Plateau: within FLAT_INNER (400u) of target = perfectly flat
+//   Blend zone: 400→800u = smoothstep transition
+//   Beyond 800u: natural terrain
+// ══════════════════════════════════════════════════════════════
+var FLAT_H    = 300;   // ★ forced flat height under and around the camp
+var FLAT_INNER= 400;   // fully flat within this radius of target
+var FLAT_OUTER= 800;   // fully natural terrain beyond this radius
+
+function rawH(x,z){
+  // ★ Iraqi alluvial plains — nearly flat, very gentle undulation
+  var s1=28*Math.sin(x*0.00028+0.6)*Math.cos(z*0.00024+0.4);
+  var s2=14*Math.cos(x*0.00045+1.2)*Math.sin(z*0.00038+0.8);
+  var s3= 8*Math.sin((x+z)*0.00018+0.3);
+  return Math.max(50,90+s1+s2+s3); // base ≈90u, gentle ±50u undulation
+}
+
+function getH(x,z){
+  var dx=x-TGT_X, dz=z-TGT_Z;
+  var dist=Math.sqrt(dx*dx+dz*dz);
+  if(dist<=FLAT_INNER) return FLAT_H;               // ★ perfectly flat
+  if(dist>=FLAT_OUTER) return rawH(x,z);            // ★ natural terrain
+  var t=(dist-FLAT_INNER)/(FLAT_OUTER-FLAT_INNER);  // 0→1
+  t=t*t*(3-2*t);                                    // smoothstep
+  return FLAT_H*(1-t)+rawH(x,z)*t;                  // blend
+}
+
+// ★ tgy: target sits exactly at FLAT_H — no guessing
+var tgy=FLAT_H;
+
+var TERR_SIZE=8000,TERR_SEGS=72;
+var terrGeo=new THREE.PlaneGeometry(TERR_SIZE,TERR_SIZE,TERR_SEGS,TERR_SEGS);
+var tPA=terrGeo.attributes.position;
+for(var ti=0;ti<tPA.count;ti++) tPA.setZ(ti,getH(tPA.getX(ti),-tPA.getY(ti)));
+terrGeo.computeVertexNormals();
+var terrain=new THREE.Mesh(terrGeo,
+  new THREE.MeshStandardMaterial({color:0xC4A058,roughness:0.93,metalness:0.0})); // ★ desert sand
+terrain.rotation.x=-Math.PI/2;scene.add(terrain);
+
+var rockMat=new THREE.MeshStandardMaterial({color:0xA89060,roughness:0.94,metalness:0.03}); // ★ sandy desert rocks
+[[-1500,-800],[800,-1400],[-600,900],[1200,-400],[900,1300],[-2000,400],[-900,-1600],[1600,900]].forEach(function(rp){
+  var gy=getH(rp[0],rp[1]);
+  var rg=new THREE.Mesh(new THREE.SphereGeometry(80+Math.random()*55,9,7),rockMat);
+  rg.scale.set(1+Math.random()*0.5,0.7+Math.random()*0.5,1+Math.random()*0.5);
+  rg.position.set(rp[0],gy+15,rp[1]);scene.add(rg);
+});
+
+var starGeo=new THREE.BufferGeometry();
+var sBuf=new Float32Array(3200*3);
+for(var si=0;si<3200;si++){sBuf[si*3]=(Math.random()-0.5)*18000;sBuf[si*3+1]=900+Math.random()*5000;sBuf[si*3+2]=(Math.random()-0.5)*18000;}
+starGeo.setAttribute('position',new THREE.BufferAttribute(sBuf,3));
+var starField=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:3.5,transparent:true,opacity:0.75}));
+scene.add(starField);
+
+// EW dome
+var domeMat=new THREE.MeshStandardMaterial({color:0xff2200,roughness:0.9,transparent:true,opacity:0.038,side:THREE.DoubleSide,depthWrite:false});
+var domeMesh=new THREE.Mesh(new THREE.SphereGeometry(DOME_RADIUS,48,24,0,Math.PI*2,0,Math.PI*0.5),domeMat);
+domeMesh.position.set(DOME_CX,0,DOME_CZ);scene.add(domeMesh);
+scene.add(new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints(Array.from({length:100},function(_,i){var a=i/99*Math.PI*2;return new THREE.Vector3(DOME_CX+Math.cos(a)*DOME_RADIUS,0.5,DOME_CZ+Math.sin(a)*DOME_RADIUS);})),
+  new THREE.LineBasicMaterial({color:0xff2200,transparent:true,opacity:0.60})));
+for(var dm=0;dm<8;dm++){
+  var dma=dm/8*Math.PI*2,dmPts=[];
+  for(var di=0;di<=26;di++){var dph=di/26*Math.PI*0.5;dmPts.push(new THREE.Vector3(DOME_CX+Math.cos(dma)*Math.sin(dph)*DOME_RADIUS,Math.cos(dph)*DOME_RADIUS,DOME_CZ+Math.sin(dma)*Math.sin(dph)*DOME_RADIUS));}
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(dmPts),new THREE.LineBasicMaterial({color:0xff2200,transparent:true,opacity:0.08})));
+}
+var jMat=new THREE.MeshStandardMaterial({color:0x2a0808,roughness:0.5,metalness:0.7,emissive:0xff1100,emissiveIntensity:0.6});
+var jgy=getH(DOME_CX,DOME_CZ);
+// Jammer tower and arms below:
+var jarm1=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.8,28,8),jMat);jarm1.position.set(DOME_CX+12,jgy+50,DOME_CZ+12);scene.add(jarm1);
+var jarm2=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.8,28,8),jMat);jarm2.position.set(DOME_CX-12,jgy+46,DOME_CZ+12);scene.add(jarm2);
+var jarm3=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.8,28,8),jMat);jarm3.position.set(DOME_CX,jgy+46,DOME_CZ-14);scene.add(jarm3);
+var jTower=new THREE.Mesh(new THREE.CylinderGeometry(5,8,80,10),jMat);jTower.position.set(DOME_CX,jgy+40,DOME_CZ);scene.add(jTower);
+// ★ jamLight — pulsing red point light at the EW jammer tower (referenced in render loop)
+var jamLight=new THREE.PointLight(0xff2200,5.5,1200);
+jamLight.position.set(DOME_CX,jgy+90,DOME_CZ);scene.add(jamLight);
+
+// ══════════════════════════════════════════════════════════════
+// ★ TARGET — MILITARY ENCAMPMENT on RAISED FLAT PLATFORM
+//   tgy = FLAT_H = 300 (guaranteed flat terrain under it)
+//   targetGrp sits 10 units above tgy so nothing can clip
+// ══════════════════════════════════════════════════════════════
+var targetGrp=new THREE.Group();
+targetGrp.position.set(TGT_X, tgy+10, TGT_Z);
+scene.add(targetGrp);
+
+// ★★★ DESERT MILITARY COMPOUND — rebuilt from satellite imagery
+//   Based on Iraqi plains compound featuring:
+//   α anchor: large curved arc assembly hall (blue corrugated roof)
+//   β anchor: row of 4 brown warehouses on east side
+//   Biome:    flat arid plain, sandy terrain, ~33°N 44°E
+// ══════════════════════════════════════════════════════════════
+
+// ── Materials ────────────────────────────────────────────────
+var padMat     = new THREE.MeshStandardMaterial({color:0xAA9060,roughness:0.94,metalness:0.0});  // sandy concrete base
+var wallMat    = new THREE.MeshStandardMaterial({color:0xB8A070,roughness:0.92,metalness:0.02}); // sand-colour walls
+var blueRoofMat= new THREE.MeshStandardMaterial({color:0x2A5C9A,roughness:0.62,metalness:0.35,emissive:0x0A1830,emissiveIntensity:0.08});
+var brownRoofMat=new THREE.MeshStandardMaterial({color:0x6B3A18,roughness:0.70,metalness:0.22});
+var orangeRoofMat=new THREE.MeshStandardMaterial({color:0xBB4A18,roughness:0.65,metalness:0.20});
+var tarmacMat  = new THREE.MeshStandardMaterial({color:0x9A8858,roughness:0.92,metalness:0.0});
+var metalMat   = new THREE.MeshStandardMaterial({color:0x707878,roughness:0.55,metalness:0.65});
+var vegMat     = new THREE.MeshStandardMaterial({color:0x2A3A18,roughness:0.96,metalness:0.0});
+var perimMat   = new THREE.MeshStandardMaterial({color:0x987848,roughness:0.92,metalness:0.0});
+var truckMat   = new THREE.MeshStandardMaterial({color:0x706050,roughness:0.72,metalness:0.22});
+
+// ── COMPOUND BASE PAD ──────────────────────────────────────────
+var pad=new THREE.Mesh(new THREE.BoxGeometry(800,14,680),padMat);
+pad.position.set(0,-7,0);targetGrp.add(pad);
+
+// ── PERIMETER BERM/WALL ─────────────────────────────────────
+[[0,4,-342,808,8,8],[0,4,342,808,8,8],[398,4,0,8,8,680],[-398,4,0,8,8,680]].forEach(function(w){
+  var wm=new THREE.Mesh(new THREE.BoxGeometry(w[3],w[4],w[5]),perimMat);
+  wm.position.set(w[0],w[1],w[2]);targetGrp.add(wm);
+});
+
+// ── ARC ASSEMBLY HALL (α ANCHOR) — upper-center-left ─────────
+// The most distinctive compound feature: curved arc hall, blue corrugated roof.
+// Composed of a central section + two angled wings forming a ~270u wide arc.
+// Group-local center: (-60, 0, -160) → world: (-60, -, 220)
+(function buildArcHall(){
+  // Central hall block
+  var ctr=new THREE.Mesh(new THREE.BoxGeometry(128,54,80),wallMat);
+  ctr.position.set(-60,27,-162);targetGrp.add(ctr);
+  var ctrR=new THREE.Mesh(new THREE.BoxGeometry(132,7,84),blueRoofMat);
+  ctrR.position.set(-60,55,-162);targetGrp.add(ctrR);
+
+  // Left wing angled ~25° outward
+  var wL=new THREE.Mesh(new THREE.BoxGeometry(115,50,72),wallMat);
+  wL.rotation.y=0.44;wL.position.set(-178,25,-196);targetGrp.add(wL);
+  var wLR=new THREE.Mesh(new THREE.BoxGeometry(119,6,76),blueRoofMat);
+  wLR.rotation.y=0.44;wLR.position.set(-178,51,-196);targetGrp.add(wLR);
+
+  // Right wing angled ~-25° outward
+  var wR=new THREE.Mesh(new THREE.BoxGeometry(115,50,72),wallMat);
+  wR.rotation.y=-0.44;wR.position.set(52,25,-194);targetGrp.add(wR);
+  var wRR=new THREE.Mesh(new THREE.BoxGeometry(119,6,76),blueRoofMat);
+  wRR.rotation.y=-0.44;wRR.position.set(52,51,-194);targetGrp.add(wRR);
+
+  // Front annex / colonnade in front of arc
+  var ann=new THREE.Mesh(new THREE.BoxGeometry(200,28,48),wallMat);
+  ann.position.set(-54,14,-108);targetGrp.add(ann);
+  var annR=new THREE.Mesh(new THREE.BoxGeometry(204,5,52),blueRoofMat);
+  annR.position.set(-54,28,-108);targetGrp.add(annR);
+
+  // Concrete apron in front of hall
+  var apron=new THREE.Mesh(new THREE.BoxGeometry(280,2,100),tarmacMat);
+  apron.position.set(-54,1,-62);targetGrp.add(apron);
+})();
+
+// ── BROWN WAREHOUSE ROW (β ANCHOR) — east side ───────────────
+// Four parallel warehouses, brown/rust corrugated roofing.
+// Group-local row center: (+220, 0, +30) → world: (220, -, 410)
+(function buildWarehouses(){
+  var ridgeMat=new THREE.MeshStandardMaterial({color:0x4A2810,roughness:0.70,metalness:0.25});
+  [-95,-25,45,115].forEach(function(z){
+    var wh=new THREE.Mesh(new THREE.BoxGeometry(170,42,64),wallMat);
+    wh.position.set(220,21,z+20);targetGrp.add(wh);
+    var whR=new THREE.Mesh(new THREE.BoxGeometry(174,7,68),brownRoofMat);
+    whR.position.set(220,44,z+20);targetGrp.add(whR);
+    var ridge=new THREE.Mesh(new THREE.BoxGeometry(174,4,10),ridgeMat);
+    ridge.position.set(220,48,z+20);targetGrp.add(ridge);
+  });
+  // West access road to warehouses
+  var wr=new THREE.Mesh(new THREE.BoxGeometry(14,2,450),tarmacMat);
+  wr.position.set(135,1,20);targetGrp.add(wr);
+})();
+
+// ── ORANGE COMMAND BUILDING — center compound ─────────────────
+(function buildCmdBldg(){
+  var b=new THREE.Mesh(new THREE.BoxGeometry(72,40,60),wallMat);
+  b.position.set(28,20,58);targetGrp.add(b);
+  var r=new THREE.Mesh(new THREE.BoxGeometry(76,7,64),orangeRoofMat);
+  r.position.set(28,41,58);targetGrp.add(r);
+  // Small annex
+  var a=new THREE.Mesh(new THREE.BoxGeometry(40,32,40),wallMat);
+  a.position.set(28,16,105);targetGrp.add(a);
+  var ar=new THREE.Mesh(new THREE.BoxGeometry(44,6,44),blueRoofMat);
+  ar.position.set(28,33,105);targetGrp.add(ar);
+})();
+
+// ── SMALL BLUE SHELTERS — scattered west/south ────────────────
+[{x:-290,z:-55},{x:-240,z:-55},{x:-290,z:0},{x:-240,z:0},
+ {x:-290,z:55},{x:-240,z:55},{x:-180,z:105},{x:-130,z:90},
+ {x:-80,z:155},{x:-140,z:170},{x:75,z:-60},{x:125,z:-60},
+ {x:-200,z:200},{x:-250,z:230}].forEach(function(sp){
+  var sh=new THREE.Mesh(new THREE.BoxGeometry(34,16,24),wallMat);
+  sh.position.set(sp.x,8,sp.z);targetGrp.add(sh);
+  var sr=new THREE.Mesh(new THREE.BoxGeometry(38,4,28),blueRoofMat);
+  sr.position.set(sp.x,17,sp.z);targetGrp.add(sr);
+});
+
+// ── VEGETATION — north section (darker patches visible in sat image) ──
+(function buildVeg(){
+  var positions=[
+    {x:-148,z:-248,r:18},{x:-118,z:-258,r:13},{x:-94,z:-238,r:16},
+    {x:-64,z:-252,r:14},{x:-34,z:-245,r:17},{x:-166,z:-225,r:11},
+    {x:8,z:-255,r:13},{x:38,z:-240,r:12},{x:62,z:-228,r:15},
+    {x:-200,z:-260,r:10},{x:-24,z:-270,r:9},{x:85,z:-250,r:11}
+  ];
+  positions.forEach(function(vp){
+    var vc=new THREE.Mesh(new THREE.CylinderGeometry(vp.r,vp.r*1.2,vp.r*0.6,8),vegMat);
+    vc.position.set(vp.x,vp.r*0.3,vp.z);targetGrp.add(vc);
+    var vt=new THREE.Mesh(new THREE.SphereGeometry(vp.r*1.1,8,6),vegMat);
+    vt.position.set(vp.x,vp.r*1.15,vp.z);targetGrp.add(vt);
+  });
+})();
+
+// ── TARMAC AREAS — central hardstand + roads ─────────────────
+// Central open hardstand in front of arc building
+var ts1=new THREE.Mesh(new THREE.BoxGeometry(320,2,200),tarmacMat);
+ts1.position.set(-40,1,-30);targetGrp.add(ts1);
+// East-west main road
+var rd1=new THREE.Mesh(new THREE.BoxGeometry(750,2,16),tarmacMat);
+rd1.position.set(0,1,168);targetGrp.add(rd1);
+// Smaller service road
+var rd2=new THREE.Mesh(new THREE.BoxGeometry(14,2,280),tarmacMat);
+rd2.position.set(-340,1,80);targetGrp.add(rd2);
+
+// ── CIRCULAR FEATURE — helipad/decorative (visible in satellite) ──
+var helipMat=new THREE.MeshStandardMaterial({color:0xA89060,roughness:0.90,metalness:0.0});
+var helip=new THREE.Mesh(new THREE.CylinderGeometry(38,38,1,20),helipMat);
+helip.position.set(-32,0.5,-285);targetGrp.add(helip);
+// H marking
+var hm=new THREE.Mesh(new THREE.BoxGeometry(28,0.5,4),tarmacMat);
+hm.position.set(-32,1.2,-285);targetGrp.add(hm);
+var hm2=new THREE.Mesh(new THREE.BoxGeometry(4,0.5,28),tarmacMat);
+hm2.position.set(-32,1.2,-285);targetGrp.add(hm2);
+
+// ── COMMUNICATIONS ANTENNA MAST ───────────────────────────────
+var mastMat=new THREE.MeshStandardMaterial({color:0x707070,roughness:0.50,metalness:0.72});
+var mast=new THREE.Mesh(new THREE.CylinderGeometry(2.5,3.5,145,6),mastMat);
+mast.position.set(-62,72,-235);targetGrp.add(mast);
+[-22,0,22].forEach(function(h){
+  var arm=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,52,4),mastMat);
+  arm.rotation.z=Math.PI/2;arm.position.set(-62,112+h,-235);targetGrp.add(arm);
+});
+
+// ── PARKED VEHICLES ───────────────────────────────────────────
+[{x:88,z:168},{x:148,z:168},{x:88,z:205},{x:62,z:188}].forEach(function(tv){
+  var tb=new THREE.Mesh(new THREE.BoxGeometry(78,22,38),truckMat);
+  tb.position.set(tv.x,11,tv.z);targetGrp.add(tb);
+  var tc=new THREE.Mesh(new THREE.BoxGeometry(30,18,36),truckMat);
+  tc.position.set(tv.x-28,30,tv.z);targetGrp.add(tc);
+  [[-32,-20],[-32,20],[28,-20],[28,20]].forEach(function(wp){
+    var wh=new THREE.Mesh(new THREE.CylinderGeometry(10,10,7,10),metalMat);
+    wh.rotation.z=Math.PI/2;wh.position.set(tv.x+wp[0],7,tv.z+wp[1]);targetGrp.add(wh);
+  });
+});
+
+// ── LIGHTS ────────────────────────────────────────────────────
+var tgtLight=new THREE.PointLight(0xFFCC88,0,600);tgtLight.position.set(0,120,0);targetGrp.add(tgtLight);
+var campFireLight=new THREE.PointLight(0xFFE8AA,1.8,400);campFireLight.position.set(28,30,55);targetGrp.add(campFireLight);
+
+// soldiers array kept for compatibility (empty — no patrol soldiers in this compound)
+var soldiers=[];
+
+
+// ★ ANCHOR POINTS — both anchors now point at compound structures
+// α: Arc Assembly Hall (world -60, -, 220)  β: Warehouse Row (world 220, -, 410)
+// No separate geometry needed — the buildings themselves are the anchors.
+// Tiny low-visibility sand-colored survey marker just to mark the spot.
+var ancA_gy=getH(ANC_A.x,ANC_A.z);
+var ancAGrp=new THREE.Group();ancAGrp.position.set(ANC_A.x,ancA_gy,ANC_A.z);scene.add(ancAGrp);
+// Minimal desert terrain marker (barely visible ground-level stub)
+var ancMarkerMat=new THREE.MeshStandardMaterial({color:0x9A8050,roughness:0.95,metalness:0.0});
+var ancMrkA=new THREE.Mesh(new THREE.CylinderGeometry(4,5,8,6),ancMarkerMat);
+ancMrkA.position.set(0,4,0);ancAGrp.add(ancMrkA);
+var ancALight=new THREE.PointLight(0xFFAA44,1.8,400);ancALight.position.set(ANC_A.x,ancA_gy+90,ANC_A.z);scene.add(ancALight);
+var ancB_gy=getH(ANC_B.x,ANC_B.z);
+var ancBLight=new THREE.PointLight(0xFF8822,1.4,350);ancBLight.position.set(ANC_B.x,ancB_gy+60,ANC_B.z);scene.add(ancBLight);
+
+// ══════════════════════════════════════════════════════════════
+// CATAPULT LAUNCHER
+// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+// ★ PROCEDURAL LAUNCH SITE — random position outside the dome
+//   Every page-load places the catapult at a fresh random bearing
+//   and distance from the jamming dome centre.
+// ══════════════════════════════════════════════════════════════
+
+// Random bearing (0–2π) and distance (3500–4500 u) from dome centre
+var launchAngle = Math.random() * Math.PI * 2;
+var launchDist  = 3500 + Math.random() * 1000;
+
+// World-space launch coordinates
+var LAUNCH_X = DOME_CX + Math.cos(launchAngle) * launchDist;
+var LAUNCH_Z = DOME_CZ + Math.sin(launchAngle) * launchDist;
+
+// Terrain-conforming base height at the chosen site
+var launchGy = getH(LAUNCH_X, LAUNCH_Z);
+
+// ── RAIL orientation — aim TOWARD the dome centre ─────────────
+// Flat horizontal unit vector from launch site → dome centre
+var launchToDome = new THREE.Vector3(
+  DOME_CX - LAUNCH_X, 0, DOME_CZ - LAUNCH_Z).normalize();
+
+// Rail perpendicular (right-hand axis) for slight lateral offset
+var launchRight = new THREE.Vector3(
+  -launchToDome.z, 0, launchToDome.x);
+
+// RAIL_START: ground level + modest height offset
+var RAIL_START = new THREE.Vector3(
+  LAUNCH_X, launchGy + 60, LAUNCH_Z);
+
+// RAIL_END: ~520 u forward toward dome + steep upward climb
+// Small lateral nudge (-0.12 × right) gives a slight cant to the rail
+var RAIL_END = new THREE.Vector3(
+  LAUNCH_X + launchToDome.x * 45 + launchRight.x * (-0.12 * 45),
+  launchGy + 580,
+  LAUNCH_Z + launchToDome.z * 45 + launchRight.z * (-0.12 * 45));
+
+var railDir = new THREE.Vector3().subVectors(RAIL_END, RAIL_START).normalize();
+var railLen  = RAIL_START.distanceTo(RAIL_END);
+
+// ── Catapult structure ─────────────────────────────────────────
+var catGrp = new THREE.Group();
+catGrp.position.set(LAUNCH_X, launchGy, LAUNCH_Z);
+// Rotate the entire catapult group to face the dome
+catGrp.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1), launchToDome);
+scene.add(catGrp);
+
+var railMat     = new THREE.MeshStandardMaterial({color:0x444444,roughness:0.5,metalness:0.8});
+var railBaseMat = new THREE.MeshStandardMaterial({color:0x2a2a2a,roughness:0.6,metalness:0.6});
+var basePad = new THREE.Mesh(new THREE.BoxGeometry(200,16,130),railBaseMat);
+basePad.position.set(0,8,0); catGrp.add(basePad);
+[[-60,-30],[-60,30],[60,-30],[60,30]].forEach(function(p){
+  var leg = new THREE.Mesh(new THREE.CylinderGeometry(4,5,260,8),railMat);
+  leg.position.set(p[0],130,p[1]*0.8); catGrp.add(leg);
+});
+// Rail tube in group-local space (group is already rotated)
+var railLocalStart = new THREE.Vector3(0, 60, 0);
+var railLocalEnd   = new THREE.Vector3(-0.12*45, 580, 45);
+var railLocalMid   = new THREE.Vector3().addVectors(railLocalStart, railLocalEnd).multiplyScalar(0.5);
+var railLocalDir   = new THREE.Vector3().subVectors(railLocalEnd, railLocalStart).normalize();
+var railTube = new THREE.Mesh(new THREE.CylinderGeometry(6,6,railLen+30,8),railMat);
+railTube.position.copy(railLocalMid);
+railTube.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), railLocalDir);
+catGrp.add(railTube);
+
+var launchSiteLight = new THREE.PointLight(0xffaa44,3,800);
+launchSiteLight.position.copy(RAIL_START.clone().add(new THREE.Vector3(0,100,0)));
+scene.add(launchSiteLight);
+
+// ══════════════════════════════════════════════════════════════
+// ★ PROCEDURAL SPLINE — 5–7 waypoints from RAIL_END to dome edge
+//   Each refresh produces a unique curved ingress path.
+//   Altitude: always safely above terrain + 300–500 u clearance.
+//   Lateral noise: ±600 u on middle waypoints for organic curves.
+// ══════════════════════════════════════════════════════════════
+
+(function buildSpline(){
+  // Number of intermediate waypoints (3–5) + launch point + dome entry = 5–7 total
+  var nMid = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5 mid-pts
+
+  var pts = [];
+
+  // WP 0 — rail exit (exact RAIL_END)
+  pts.push(RAIL_END.clone());
+
+  // Dome entry point (a point on the dome perimeter facing the launch site)
+  // Angle from dome centre back toward launch site
+  var domeEntryAngle = Math.atan2(LAUNCH_Z - DOME_CZ, LAUNCH_X - DOME_CX);
+  // Push entry slightly inside so the spline end is just at the perimeter
+  var domeEntryX = DOME_CX + Math.cos(domeEntryAngle) * (DOME_RADIUS * 0.88);
+  var domeEntryZ = DOME_CZ + Math.sin(domeEntryAngle) * (DOME_RADIUS * 0.88);
+
+  // Generate intermediate waypoints interpolating from RAIL_END → dome entry
+  for(var mi = 1; mi <= nMid; mi++){
+    var t = mi / (nMid + 1); // 0 < t < 1
+
+    // Linear interpolation along the ingress corridor
+    var bx = RAIL_END.x  + (domeEntryX - RAIL_END.x)  * t;
+    var bz = RAIL_END.z  + (domeEntryZ - RAIL_END.z)  * t;
+
+    // Lateral noise (perpendicular to the corridor) — strongest in the middle
+    var lateralNoise = Math.sin(t * Math.PI); // peaks at t=0.5
+    var noiseAmp = 500 + Math.random() * 600; // 500–1100 u max swing
+    var noiseSign = (Math.random() < 0.5) ? 1 : -1; // consistent side per run? no — each mid varies
+    var nx = bx + launchRight.x * lateralNoise * noiseAmp * noiseSign;
+    var nz = bz + launchRight.z * lateralNoise * noiseAmp * noiseSign;
+
+    // Altitude: at least terrain + 300 u, targeting a descending arc from
+    // the high launch apex (1480 u) down to ~600 u at dome entry
+    var terrainHere = getH(nx, nz);
+    var arcAlt = RAIL_END.y * (1 - t) + 620 * t; // linear descent from launch apex
+    var ny = Math.max(terrainHere + 300, arcAlt);
+
+    pts.push(new THREE.Vector3(nx, ny, nz));
+  }
+
+  // WP final — dome perimeter entry
+  var domeEntryTerrain = getH(domeEntryX, domeEntryZ);
+  pts.push(new THREE.Vector3(
+    domeEntryX,
+    Math.max(domeEntryTerrain + 300, 580),
+    domeEntryZ));
+
+  window._SPLINE_PTS = pts; // expose for debug if needed
+  return pts;
+})();
+
+// Build the CatmullRom curve from the procedural points
+var SPLINE_PTS = window._SPLINE_PTS;
+var spline = new THREE.CatmullRomCurve3(SPLINE_PTS);
+
+var splineTube = new THREE.Mesh(
+  new THREE.TubeGeometry(spline,160,SPLINE_TUBE_R,7,false),
+  new THREE.MeshBasicMaterial({color:0x00aaff,transparent:true,opacity:0.48}));
+scene.add(splineTube);
+scene.add(new THREE.Mesh(new THREE.TubeGeometry(spline,100,SPLINE_TUBE_R*3,9,false),
+  new THREE.MeshBasicMaterial({color:0x003366,transparent:true,opacity:0.14,side:THREE.BackSide})));
+
+// Waypoint markers — first is launch (orange), rest are nav blue
+SPLINE_PTS.forEach(function(pt,wi){
+  var wm = new THREE.Mesh(
+    new THREE.OctahedronGeometry(18,0),
+    new THREE.MeshBasicMaterial({color:wi===0?0xff4400:0x44ccff,transparent:true,opacity:0.70}));
+  wm.position.copy(pt); scene.add(wm);
+});
+// GPS beams
+var gpsGrp=new THREE.Group();scene.add(gpsGrp);var gpsBeams=[];
+[{x:-14,z:-7,y:90},{x:12,z:18,y:75},{x:0,z:-18,y:115},{x:-11,z:15,y:68}].forEach(function(bo){
+  var bGrp=new THREE.Group();bGrp.position.set(bo.x,520+bo.y,bo.z);
+  var bm=new THREE.Mesh(new THREE.CylinderGeometry(1.5,55,480,12,1,true),new THREE.MeshBasicMaterial({color:0x3b82f6,transparent:true,opacity:0.06,side:THREE.DoubleSide,depthWrite:false}));
+  bm.position.y=-240;bGrp.add(bm);gpsGrp.add(bGrp);gpsBeams.push(bGrp);
+});
+
+// ══════════════════════════════════════════════════════════════
+// BWB AIRFRAME
+// ══════════════════════════════════════════════════════════════
+var drone=new THREE.Group();scene.add(drone);
+var bwbMat=new THREE.MeshStandardMaterial({color:0x1a1e2c,roughness:0.42,metalness:0.62,emissive:0x060810,emissiveIntensity:0.18});
+var huMat=new THREE.MeshStandardMaterial({color:0x12161e,roughness:0.38,metalness:0.70,emissive:0x040508,emissiveIntensity:0.22});
+var npMat=new THREE.MeshStandardMaterial({color:0xff5500,roughness:0.40,metalness:0.38,emissive:0xff3300,emissiveIntensity:0.45});
+var glassMat=new THREE.MeshStandardMaterial({color:0x040812,roughness:0.08,metalness:0.94,emissive:0x000820,emissiveIntensity:0.65});
+var exhMat=new THREE.MeshStandardMaterial({color:0x333333,roughness:0.30,metalness:0.90});
+var glowMat=new THREE.MeshBasicMaterial({color:0xff5500,transparent:true,opacity:0.88});
+var planform=new THREE.Shape();
+planform.moveTo(0,36);planform.quadraticCurveTo(3.6,30.4,12.8,22.4);planform.quadraticCurveTo(28.8,12.0,48.0,-0.8);
+planform.quadraticCurveTo(46.4,-6.4,40.0,-12.8);planform.quadraticCurveTo(27.2,-16.8,6.4,-19.2);
+planform.lineTo(0,-19.2);planform.lineTo(-6.4,-19.2);
+planform.quadraticCurveTo(-27.2,-16.8,-40.0,-12.8);planform.quadraticCurveTo(-46.4,-6.4,-48.0,-0.8);
+planform.quadraticCurveTo(-28.8,12.0,-12.8,22.4);planform.quadraticCurveTo(-3.6,30.4,0,36);
+// Body extrude
+var bMesh=new THREE.Mesh(new THREE.ExtrudeGeometry(planform,{depth:1.76,bevelEnabled:true,bevelSegments:3,bevelSize:0.56,bevelThickness:0.48}),bwbMat);
+bMesh.rotation.x=-Math.PI/2;drone.add(bMesh);
+var hump=new THREE.Mesh(new THREE.SphereGeometry(14.4,18,10),huMat);hump.scale.set(0.72,0.24,1.45);hump.position.set(0,1.6,3.2);drone.add(hump);
+var cockpit=new THREE.Mesh(new THREE.SphereGeometry(4.4,14,8,0,Math.PI*2,0,Math.PI*0.55),glassMat);cockpit.position.set(0,2.4,9.6);drone.add(cockpit);
+var navpod=new THREE.Mesh(new THREE.BoxGeometry(5.2,2.24,5.2),npMat);navpod.position.set(0,-1.6,12.4);drone.add(navpod);
+[[1.28,-1.6,14.56],[-1.28,-1.6,14.56]].forEach(function(lp){
+  var lens=new THREE.Mesh(new THREE.CylinderGeometry(0.60,0.60,0.35,10),glassMat);lens.rotation.x=Math.PI/2;lens.position.set(lp[0],lp[1],lp[2]);drone.add(lens);
+});
+[[-46.4,0,-9.6],[46.4,0,-9.6]].forEach(function(vp){
+  var vs=new THREE.Mesh(new THREE.BoxGeometry(0.80,5.76,5.44),bwbMat);vs.position.set(vp[0],2.56,vp[2]);vs.rotation.z=vp[0]>0?0.16:-0.16;drone.add(vs);
+});
+[[-6.8,0],[6.8,0]].forEach(function(ep){
+  var noz=new THREE.Mesh(new THREE.CylinderGeometry(1.60,2.08,3.04,12),exhMat);noz.rotation.x=Math.PI/2;noz.position.set(ep[0],0.32,-17.20);drone.add(noz);
+  var glow=new THREE.Mesh(new THREE.CylinderGeometry(1.12,1.60,0.80,10),glowMat);glow.rotation.x=Math.PI/2;glow.position.set(ep[0],0.32,-18.08);drone.add(glow);
+});
+var engLightL=new THREE.PointLight(0xff5500,5,40);drone.add(engLightL);engLightL.position.set(-6.8,0,-18.5);
+var engLightR=new THREE.PointLight(0xff5500,5,40);drone.add(engLightR);engLightR.position.set(6.8,0,-18.5);
+var nlG=new THREE.Mesh(new THREE.SphereGeometry(0.8,6,4),new THREE.MeshBasicMaterial({color:0x00ff44}));nlG.position.set(48.8,0,-4.4);drone.add(nlG);
+var nlR=new THREE.Mesh(new THREE.SphereGeometry(0.8,6,4),new THREE.MeshBasicMaterial({color:0xff2222}));nlR.position.set(-48.8,0,-4.4);drone.add(nlR);
+// LIDAR sweep
+var lidarGrp=new THREE.Group();
+var ssShape=new THREE.Shape();ssShape.moveTo(0,0);var sR=160,sSpan=0.65;
+for(var ssi=0;ssi<=12;ssi++)ssShape.lineTo(sR*Math.sin(-sSpan/2+ssi*(sSpan/12)),sR*Math.cos(-sSpan/2+ssi*(sSpan/12)));ssShape.lineTo(0,0);
+var sweepMat=new THREE.MeshBasicMaterial({color:0x00ffaa,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+var sweepMesh=new THREE.Mesh(new THREE.ShapeGeometry(ssShape,12),sweepMat);sweepMesh.rotation.x=Math.PI/2;lidarGrp.add(sweepMesh);
+var edgeLineMat=new THREE.LineBasicMaterial({color:0x00ffcc,transparent:true,opacity:0});
+lidarGrp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,-1,0),new THREE.Vector3(sR*Math.sin(sSpan/2),-1,sR*Math.cos(sSpan/2))]),edgeLineMat));
+var coneMat=new THREE.MeshBasicMaterial({color:0x00aaff,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+var slamCone=new THREE.Mesh(new THREE.ConeGeometry(48,96,18,1,true),coneMat);slamCone.rotation.x=Math.PI;slamCone.position.set(0,-48,0);lidarGrp.add(slamCone);
+drone.add(lidarGrp);
+
+// ══════════════════════════════════════════════════════════════
+// EXPLOSION
+// ══════════════════════════════════════════════════════════════
+var expActive=false,expParticles=null,expVels=[],expLife=[];
+var expLight=new THREE.PointLight(0xff4400,0,2200);scene.add(expLight);
+function triggerExplosion(pos){
+  expActive=true;var positions=new Float32Array(EXPLOSION_N*3),colors=new Float32Array(EXPLOSION_N*3);
+  expVels=[];expLife=[];
+  for(var ei=0;ei<EXPLOSION_N;ei++){
+    positions[ei*3]=pos.x+(Math.random()-0.5)*80;positions[ei*3+1]=pos.y+Math.random()*60;positions[ei*3+2]=pos.z+(Math.random()-0.5)*80;
+    var th=Math.random()*Math.PI*2,ph=Math.random()*Math.PI,sp=8+Math.random()*42;
+    expVels.push(new THREE.Vector3(sp*Math.sin(ph)*Math.cos(th),sp*Math.cos(ph)*0.9+4,sp*Math.sin(ph)*Math.sin(th)));
+    var hot=Math.random();colors[ei*3]=1.0;colors[ei*3+1]=hot*0.55;colors[ei*3+2]=hot>0.72?0.3:0;expLife.push(0.8+Math.random()*2.5);
+  }
+  var geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(positions,3));geo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+  expParticles=new THREE.Points(geo,new THREE.PointsMaterial({size:8,vertexColors:true,transparent:true,opacity:1.0,sizeAttenuation:true}));
+  scene.add(expParticles);expLight.position.copy(pos);expLight.intensity=180;
+}
+function updateExplosion(){
+  if(!expActive||!expParticles)return;
+  var pa=expParticles.geometry.attributes.position.array,ca=expParticles.geometry.attributes.color.array,any=false;
+  for(var ei=0;ei<EXPLOSION_N;ei++){
+    expLife[ei]-=0.016;if(expLife[ei]<=0){pa[ei*3+1]-=99999;continue;}any=true;
+    pa[ei*3]+=expVels[ei].x;pa[ei*3+1]+=expVels[ei].y;pa[ei*3+2]+=expVels[ei].z;
+    expVels[ei].multiplyScalar(0.93);expVels[ei].y-=0.6;ca[ei*3+1]*=0.978;
+  }
+  expParticles.geometry.attributes.position.needsUpdate=true;expParticles.geometry.attributes.color.needsUpdate=true;
+  expLight.intensity*=0.965;
+  if(!any){scene.remove(expParticles);expParticles=null;expActive=false;expLight.intensity=0;}
+}
+var TRAIL_N=140;var trailBuf=new Float32Array(TRAIL_N*3);var trailGeo=new THREE.BufferGeometry();
+trailGeo.setAttribute('position',new THREE.BufferAttribute(trailBuf,3));trailGeo.setDrawRange(0,0);
+scene.add(new THREE.Points(trailGeo,new THREE.PointsMaterial({color:0xff5500,size:4,transparent:true,opacity:0.48,sizeAttenuation:true})));
+var trailCount=0;
+function addTrail(pos){
+  if(trailCount<TRAIL_N){trailBuf[trailCount*3]=pos.x+(Math.random()-0.5)*18;trailBuf[trailCount*3+1]=pos.y+(Math.random()-0.5)*10;trailBuf[trailCount*3+2]=pos.z+(Math.random()-0.5)*18;trailCount++;trailGeo.setDrawRange(0,trailCount);trailGeo.attributes.position.needsUpdate=true;}
+}
+
+// ══════════════════════════════════════════════════════════════
+// ★ AI CONSOLE — fast milestones, instant lock on first anchor
+// ══════════════════════════════════════════════════════════════
+var aiConsoleActive=false,consoleDone=false,msgIndex=0;
+var anchorAlphaVerified=false,anchorBetaVerified=false;
+var lastCapMs=0,capFrameNum=0,matchConf=0;
+var bboxState={showRock:false,showBarracks:false};
+
+// ══════════════════════════════════════════════════════════════
+// ★ GEOMETRY-BASED VISIBILITY DETECTION
+// The drone only detects targets when a camera ACTUALLY sees them.
+// No timer-based detection. Nothing seen through terrain.
+// ══════════════════════════════════════════════════════════════
+function getCameraVisibility(worldPt, cam){
+  var v=worldPt.clone().project(cam);
+  if(v.z<-1||v.z>1)return 0;  // behind camera or beyond far plane
+  var cx=Math.abs(v.x), cy=Math.abs(v.y);
+  if(cx>1||cy>1)return 0;      // outside screen frustum
+  return Math.max(0,(1-cx)*(1-cy)); // 1 at centre, 0 at edge
+}
+var VIS_THRESHOLD=0.06;        // min score to count as "seen"
+function isSeenByAnyCamera(worldPt){
+  return Math.max(getCameraVisibility(worldPt,downCam),
+                  getCameraVisibility(worldPt,noseCam));
+}
+// Accumulated sighting counters — must be in-camera for 1.2s to confirm
+var rockSightedMs=0, barrsSightedMs=0;
+var SIGHT_CONFIRM_MS=1200;
+// Track which detections have already been logged
+var milestonesFired={};
+
+// ── AI console text milestones (narrative only, no detection) ──
+var AI_MILESTONES=[
+  {ms:50,  cls:'con-crit',txt:'> \u26a0 CRITICAL: GPS SEVERED. NAVPOD AUTONOMY ENGAGED.'},
+  {ms:200, cls:'',        txt:'> LINKING TO DOWNWARD SLAM & FORWARD NOSE CAMS...'},
+  {ms:380, cls:'con-ok',  txt:'> D435i STEREO FEEDS: 1280\u00d7720 @ 30Hz \u2014 NOMINAL'},
+  {ms:500, cls:'',        txt:'> CONTINUOUS SATELLITE BASELINE SYNC ACTIVE.'},
+  {ms:750, cls:'',        txt:'> SCANNING HORIZON FOR TARGET SIGNATURES...'},
+  {ms:1000,cls:'',        txt:'> ORB-SLAM3: KEYPOINTS 0/128 \u2014 ACQUIRING TERRAIN MAP'},
+  {ms:1400,cls:'',        txt:'> NADIR CAM: COMPARING LIVE FEED TO SATELLITE BASELINE...'},
+  {ms:2500,cls:'',        txt:'> NADIR CAM: 64 TERRAIN KEYPOINTS LOCKED. SEARCHING...'},
+  {ms:3300,cls:'',        txt:'> SCANNING FOR ANCHOR POINT ALPHA (ARC ASSEMBLY HALL)...'},
+];
+function aiLog(txt,cls){
+  var el=document.createElement('span');el.className='con-line'+(cls?' '+cls:'');el.textContent=txt;
+  var log=document.getElementById('consoleLog');log.appendChild(el);log.scrollTop=log.scrollHeight;
+}
+function updateConsole(){
+  if(!aiConsoleActive||!jammingStartMs)return;
+  var elapsed=Date.now()-jammingStartMs;
+  // Text milestones
+  while(msgIndex<AI_MILESTONES.length){
+    var m=AI_MILESTONES[msgIndex];
+    if(elapsed>=m.ms){aiLog(m.txt,m.cls);msgIndex++;}else break;
+  }
+  // Nadir frame ticker
+  if(elapsed-lastCapMs>=1400&&capFrameNum<60){
+    lastCapMs=elapsed;capFrameNum++;
+    aiLog('> NADIR FRAME #'+String(capFrameNum).padStart(3,'0')+
+      ' -- COMPARING TERRAIN (conf:'+Math.round(matchConf*100)+'%)');
+  }
+  // ── Rock detection: geometry only ──
+  var rockPtCheck=new THREE.Vector3(ANC_A.x,tgy+10+60,ANC_A.z); // ★ Arc Hall roof
+  var rockVis=isSeenByAnyCamera(rockPtCheck);
+  if(rockVis>VIS_THRESHOLD){
+    rockSightedMs+=16;
+    if(rockSightedMs>=SIGHT_CONFIRM_MS&&!anchorAlphaVerified){
+      anchorAlphaVerified=true;bboxState.showRock=true;
+      if(!milestonesFired.rock){
+        milestonesFired.rock=true;
+        aiLog('> [LOCK] ANCHOR \u03b1 (ARC ASSEMBLY HALL) VERIFIED \u2014 CONF '+
+          Math.round(70+rockVis*28)+'%','con-anchor');
+        document.getElementById('anchorA').style.display='block';
+        setEl('eAA','VERIFIED','ok');
+        setTimeout(function(){document.getElementById('anchorA').style.display='none';},4000);
+      }
+    }
+  }else{rockSightedMs=Math.max(0,rockSightedMs-8);}
+  // ── Barracks detection: geometry only ──
+  var barrPtCheck=new THREE.Vector3(ANC_B.x,tgy+10+48,ANC_B.z); // ★ Warehouse Row roof
+  var barrVis=isSeenByAnyCamera(barrPtCheck);
+  if(barrVis>VIS_THRESHOLD){
+    barrsSightedMs+=16;
+    if(barrsSightedMs>=SIGHT_CONFIRM_MS&&!anchorBetaVerified){
+      anchorBetaVerified=true;bboxState.showBarracks=true;
+      if(!milestonesFired.barrs){
+        milestonesFired.barrs=true;
+        aiLog('> [LOCK] WAREHOUSE ROW VERIFIED \u2014 CONF '+
+          Math.round(68+barrVis*30)+'%','con-anchor');
+        document.getElementById('anchorB').style.display='block';
+        setEl('eAB','VERIFIED','ok');
+        setTimeout(function(){document.getElementById('anchorB').style.display='none';},4000);
+      }
+    }
+  }else{barrsSightedMs=Math.max(0,barrsSightedMs-8);}
+  // ── Confirm lock when rock seen long enough ──
+  if(anchorAlphaVerified&&!consoleDone&&rockSightedMs>=SIGHT_CONFIRM_MS+600){
+    consoleDone=true;
+    if(!milestonesFired.match){
+      milestonesFired.match=true;
+      aiLog('> \u2605\u2605\u2605 VISUAL MATCH CONFIRMED. TARGET LOCKED. \u2605\u2605\u2605','con-ok');
+      setTimeout(function(){aiLog('> TERMINAL DIVE INITIATED \u2193\u2193\u2193','con-crit');},800);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ★ LIVE INTEL CANVAS ANIMATION — shows photo-matching process
+// Scan line sweeps the stored satellite photo; feature crosses
+// activate as the scan line crosses them, visualising ORB matching.
+// ══════════════════════════════════════════════════════════════
+var intelScanY=0;
+var INTEL_FEATURES=[
+  // Rock cluster features [x, y, active, activatedAt]
+  [89,42,false,0],[81,54,false,0],[99,58,false,0],[74,48,false,0],[94,35,false,0],
+  // Barracks features
+  [82,107,false,0],[98,111,false,0],[116,107,false,0],[98,120,false,0],
+  [88,125,false,0],[108,125,false,0],[126,82,false,0]
+];
+var intelCvsEl=null;
+function updateIntelCanvasAnimation(){
+  if(!intelCvsEl)intelCvsEl=document.getElementById('intelCanvas');
+  var ctx=intelCvsEl.getContext('2d');
+  var cw=intelCvsEl.width,ch=intelCvsEl.height;
+  var elapsed=jammingStartMs?(Date.now()-jammingStartMs):0;
+  // Fade overlay so base drawing shows through
+  ctx.fillStyle='rgba(0,13,6,0.22)';
+  ctx.fillRect(0,0,cw,ch);
+  // Scan line position
+  intelScanY=(elapsed*0.018)%ch;
+  // Draw scan line gradient
+  ctx.save();
+  var g=ctx.createLinearGradient(0,intelScanY-8,0,intelScanY+4);
+  g.addColorStop(0,'rgba(0,255,140,0)');
+  g.addColorStop(0.5,'rgba(0,255,140,0.45)');
+  g.addColorStop(1,'rgba(0,255,140,0.80)');
+  ctx.fillStyle=g;
+  ctx.fillRect(0,intelScanY-8,cw,12);
+  ctx.restore();
+  // Activate features as scan line passes
+  INTEL_FEATURES.forEach(function(f){
+    if(!f[2]&&intelScanY>f[1]&&matchConf>0.04){f[2]=true;f[3]=Date.now();}
+    if(intelScanY<8&&f[1]>30)f[2]=false; // reset on new cycle
+  });
+  // Draw active feature crosses
+  INTEL_FEATURES.forEach(function(f){
+    if(!f[2])return;
+    var age=Date.now()-f[3];
+    var alpha=Math.min(1,age/280);
+    var isRock=(f[1]<75);
+    var col=isRock?'rgba(255,165,0,'+alpha.toFixed(2)+')':'rgba(0,255,150,'+alpha.toFixed(2)+')';
+    ctx.save();
+    ctx.strokeStyle=col;ctx.lineWidth=1.2;
+    ctx.shadowColor=col;ctx.shadowBlur=3;
+    ctx.beginPath();
+    ctx.moveTo(f[0]-4,f[1]);ctx.lineTo(f[0]+4,f[1]);
+    ctx.moveTo(f[0],f[1]-4);ctx.lineTo(f[0],f[1]+4);
+    ctx.stroke();
+    if(age>350){
+      ctx.globalAlpha=Math.min(1,(age-350)/250)*0.65;
+      ctx.beginPath();ctx.arc(f[0],f[1],7,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.restore();
+  });
+  // Confidence bar at bottom
+  var bw=Math.round(cw*matchConf);
+  ctx.fillStyle='rgba(0,20,10,0.55)';ctx.fillRect(3,ch-14,cw-6,7);
+  if(bw>0){
+    var bg=ctx.createLinearGradient(3,0,3+bw,0);
+    bg.addColorStop(0,'rgba(0,160,70,0.85)');
+    bg.addColorStop(1,anchorAlphaVerified?'rgba(0,255,140,0.95)':'rgba(0,210,90,0.85)');
+    ctx.fillStyle=bg;ctx.fillRect(3,ch-14,bw-6,7);
+  }
+  ctx.fillStyle='rgba(0,200,80,0.55)';ctx.font='5px Courier New';
+  ctx.fillText(anchorAlphaVerified?'MATCH CONFIRMED':'SCANNING... '+Math.round(matchConf*100)+'%',5,ch-8);
+  // Highlight confirmed targets
+  if(anchorAlphaVerified){
+    var p=0.5+0.5*Math.sin(Date.now()*0.006);
+    ctx.save();ctx.strokeStyle='rgba(255,165,0,'+(0.55+p*0.4)+')';
+    ctx.lineWidth=1.5;ctx.shadowColor='rgba(255,165,0,0.7)';ctx.shadowBlur=5;
+    ctx.setLineDash([3,2]);ctx.beginPath();ctx.arc(89,48,15,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+  }
+  if(anchorBetaVerified){
+    var p2=0.5+0.5*Math.sin(Date.now()*0.007+1);
+    ctx.save();ctx.strokeStyle='rgba(0,255,150,'+(0.55+p2*0.4)+')';
+    ctx.lineWidth=1.5;ctx.shadowColor='rgba(0,255,150,0.6)';ctx.shadowBlur=4;
+    ctx.setLineDash([3,2]);ctx.strokeRect(70,100,60,30);ctx.restore();
+  }
+}
+
+// ★ DUAL-CAMERA TACTICAL BOUNDING BOX + KEYPOINT OVERLAY
+//   drawTacticalBbox now also draws animated CV feature-point
+//   dots inside each box and returns the 2-D screen-space rect
+//   so match-line drawing can connect to it.
+// ══════════════════════════════════════════════════════════════
+
+// ── Canvas setup ─────────────────────────────────────────────
+var noseBboxCvs=document.getElementById('noseBboxCanvas');
+noseBboxCvs.width=PW; noseBboxCvs.height=PH;
+var noseBboxCtx=noseBboxCvs.getContext('2d');
+
+var downBboxCvs=document.getElementById('downBboxCanvas');
+downBboxCvs.width=PW; downBboxCvs.height=PH;
+var downBboxCtx=downBboxCvs.getContext('2d');
+
+// ── Per-target/per-camera bbox center storage for match lines ─
+// null = not visible this frame; {cx,cy} = PiP-local pixel center
+var lastBbox={
+  rockDown:null, rockNose:null,
+  barracksDown:null, barracksNose:null,
+  hvtDown:null, hvtNose:null
+};
+
+// ── KEYPOINT SEEDS (12 pairs, normalized 0-1) ─────────────────
+// Each seed defines where a feature dot lives inside its bbox.
+// The dot drifts slightly over time to simulate live tracking.
+var KP_SEEDS=[0.15,0.72, 0.33,0.85, 0.55,0.22, 0.68,0.41,
+              0.90,0.10, 0.48,0.77, 0.22,0.58, 0.82,0.30,
+              0.38,0.65, 0.62,0.18, 0.12,0.44, 0.75,0.88];
+
+// ── UNIFIED TACTICAL BBOX + KEYPOINT PROJECTOR ───────────────
+// Returns {cx,cy,mnx,mny,mxx,mxy} in canvas pixels, or null if
+// the target is outside this camera's frustum.
+// kpCol: keypoint dot colour (null = no dots)
+function drawTacticalBbox(worldPt,hw,hh,hd,cam,ctx,cw,ch,col,lbl,kpCol){
+  var corners=[[-hw,-hh,-hd],[hw,-hh,-hd],[hw,hh,-hd],[-hw,hh,-hd],
+               [-hw,-hh, hd],[hw,-hh, hd],[hw,hh, hd],[-hw,hh, hd]];
+  var pts=corners.map(function(c){
+    var v=new THREE.Vector3(worldPt.x+c[0],worldPt.y+c[1],worldPt.z+c[2]).project(cam);
+    if(v.z<-1||v.z>1)return null;
+    return{x:(v.x*0.5+0.5)*cw, y:(-v.y*0.5+0.5)*ch};
+  }).filter(Boolean);
+  if(pts.length<3)return null;
+
+  var mnx=Infinity,mny=Infinity,mxx=-Infinity,mxy=-Infinity;
+  pts.forEach(function(p){
+    mnx=Math.min(mnx,p.x);mny=Math.min(mny,p.y);
+    mxx=Math.max(mxx,p.x);mxy=Math.max(mxy,p.y);
+  });
+  mnx=Math.max(0,mnx);mny=Math.max(0,mny);
+  mxx=Math.min(cw,mxx);mxy=Math.min(ch,mxy);
+  if(mxx-mnx<4||mxy-mny<4)return null;
+
+  var bw=mxx-mnx, bh=mxy-mny;
+
+  // ── Tactical corner-bracket rectangle ──
+  ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.setLineDash([]);
+  ctx.strokeRect(mnx,mny,bw,bh);
+  var cl=6;ctx.beginPath();
+  ctx.moveTo(mnx,mny+cl);ctx.lineTo(mnx,mny);ctx.lineTo(mnx+cl,mny);
+  ctx.moveTo(mxx-cl,mny);ctx.lineTo(mxx,mny);ctx.lineTo(mxx,mny+cl);
+  ctx.moveTo(mnx,mxy-cl);ctx.lineTo(mnx,mxy);ctx.lineTo(mnx+cl,mxy);
+  ctx.moveTo(mxx-cl,mxy);ctx.lineTo(mxx,mxy);ctx.lineTo(mxx,mxy-cl);
+  ctx.stroke();
+
+  // ── Animated CV keypoints (feature dots) inside the box ──
+  if(kpCol){
+    var t=Date.now()*0.001;
+    var nKpts=10;
+    ctx.save();
+    for(var ki=0;ki<nKpts;ki++){
+      var sx=KP_SEEDS[(ki*2)%KP_SEEDS.length];
+      var sy=KP_SEEDS[(ki*2+1)%KP_SEEDS.length];
+      // Small Lissajous drift per point — looks like a tracker re-evaluating
+      var jx=Math.sin(t*2.8+ki*1.73)*2.5+Math.cos(t*1.9+ki*0.91)*1.8;
+      var jy=Math.cos(t*3.2+ki*2.14)*2.5+Math.sin(t*2.1+ki*1.33)*1.8;
+      var px=mnx+sx*bw+jx;
+      var py=mny+sy*bh+jy;
+      if(px<mnx+2||px>mxx-2||py<mny+2||py>mxy-2)continue;
+      // Glow halo
+      ctx.shadowColor=kpCol;ctx.shadowBlur=4;
+      // Cross marker
+      ctx.strokeStyle=kpCol;ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(px-3,py);ctx.lineTo(px+3,py);
+      ctx.moveTo(px,py-3);ctx.lineTo(px,py+3);
+      ctx.stroke();
+      // Centre dot
+      ctx.shadowBlur=0;
+      ctx.fillStyle=kpCol;
+      ctx.fillRect(px-1,py-1,2,2);
+    }
+    ctx.shadowBlur=0;ctx.restore();
+  }
+
+  if(lbl){
+    ctx.font='bold 7px Courier New';
+    ctx.fillStyle=col;
+    ctx.fillText(lbl,mnx+2,mny-3);
+  }
+
+  return{mnx:mnx,mny:mny,mxx:mxx,mxy:mxy,cx:(mnx+mxx)*0.5,cy:(mny+mxy)*0.5};
+}
+
+// ── DUAL-CAMERA BBOX UPDATE ───────────────────────────────────
+function updateAllBboxes(){
+  noseBboxCtx.clearRect(0,0,PW,PH);
+  downBboxCtx.clearRect(0,0,PW,PH);
+  // Reset all stored bbox info each frame
+  for(var k in lastBbox)lastBbox[k]=null;
+
+  if(STATE<S.JAMMED){
+    noseBboxCvs.style.display='none';
+    downBboxCvs.style.display='none';
+    return;
+  }
+  noseBboxCvs.style.display='block';
+  downBboxCvs.style.display='block';
+
+  noseCam.updateMatrixWorld();
+  downCam.updateMatrixWorld();
+
+  var blink =Math.sin(Date.now()*0.008)>0;
+  var blink2=Math.sin(Date.now()*0.009+1.2)>0;
+
+  var rockPt    =new THREE.Vector3(ANC_A.x, tgy+10+60, ANC_A.z);  // ★ Arc Hall roof height
+  var barrPt    =new THREE.Vector3(ANC_B.x, tgy+10+48, ANC_B.z);  // ★ Warehouse roof height
+  var hvtPt     =new THREE.Vector3(TGT_X,   tgy+10+60, TGT_Z);
+
+  // Keypoint colour: green dots (changes to red on HVT lock)
+  var kpGreen='rgba(0,255,140,0.90)';
+  var kpOrange='rgba(255,165,0,0.90)';
+  var kpRed='rgba(255,60,0,0.92)';
+
+  if(bboxState.showRock&&(blink||anchorAlphaVerified)){
+    lastBbox.rockNose =drawTacticalBbox(rockPt,80,60,80,noseCam,noseBboxCtx,PW,PH,'rgba(255,160,0,0.92)','\u03b1 ARC HALL',kpOrange);
+    lastBbox.rockDown =drawTacticalBbox(rockPt,80,60,80,downCam,downBboxCtx,PW,PH,'rgba(255,160,0,0.92)','\u03b1 ARC HALL',kpOrange);
+  }
+  if(bboxState.showBarracks&&(blink2||anchorBetaVerified)){
+    lastBbox.barracksNose=drawTacticalBbox(barrPt,150,55,70,noseCam,noseBboxCtx,PW,PH,'rgba(0,255,150,0.92)','\u03b2 WAREHOUSES',kpGreen);
+    lastBbox.barracksDown=drawTacticalBbox(barrPt,150,55,70,downCam,downBboxCtx,PW,PH,'rgba(0,255,150,0.92)','\u03b2 WAREHOUSES',kpGreen);
+  }
+  if(STATE>=S.LOCK){
+    lastBbox.hvtNose =drawTacticalBbox(hvtPt,200,80,120,noseCam,noseBboxCtx,PW,PH,'rgba(255,30,0,0.98)','HVT \u2193',kpRed);
+    lastBbox.hvtDown =drawTacticalBbox(hvtPt,200,80,120,downCam,downBboxCtx,PW,PH,'rgba(255,30,0,0.98)','HVT \u2193',kpRed);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ★ INTEL CANVAS — static 2-D top-down satellite reference map
+//   drawn once at init. Represents the pre-loaded "photo" the
+//   NavPod carries into the jamming dome to navigate by.
+// ══════════════════════════════════════════════════════════════
+
+// Intel panel screen-space geometry (matches CSS positioning):
+//   Panel:  right:14px, top:296px, width:220px
+//   Canvas: padding 12px left, margin-top 6px after ph header (~18px)
+//     → canvas left  = W - 14 - 220 + 12       = W - 222
+//     → canvas top   = 296 + 18 + 6             = 320
+var INTEL_CVS_LEFT = 0; // computed from W in loop (W−222)
+var INTEL_CVS_TOP  = 320;
+var INTEL_CVS_W    = 196;
+var INTEL_CVS_H    = 168;
+
+// Feature screen-space positions within the intel canvas
+// (used by updateMatchLines to determine line start-points)
+// Rock cross: (89, 50)  →  Barracks cross: (98, 115)
+// ★ Intel canvas feature anchor pixel coords (used by match-line connector)
+// α = Arc Assembly Hall centre on the map → pixel (82, 48)
+// β = Warehouse Row centre on the map    → pixel (148, 110)
+var INTEL_ROCK_LX=82,  INTEL_ROCK_LY=48;   // α Arc Hall
+var INTEL_BARR_LX=148, INTEL_BARR_LY=110;  // β Warehouse Row
+
+function initIntelCanvas(){
+  var cvs=document.getElementById('intelCanvas');
+  var ctx=cvs.getContext('2d');
+  var cw=cvs.width,ch=cvs.height; // 196 × 168
+
+  // ── Sandy desert background ──────────────────────────────────
+  ctx.fillStyle='#BEA368';ctx.fillRect(0,0,cw,ch);
+  // Slight tonal variation — lighter hardstand area
+  ctx.fillStyle='rgba(200,180,120,0.45)';ctx.fillRect(28,20,130,100);
+
+  // ── Tactical grid (subtle) ───────────────────────────────────
+  ctx.strokeStyle='rgba(80,60,20,0.12)';ctx.lineWidth=0.5;
+  for(var gx=0;gx<cw;gx+=14){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,ch);ctx.stroke();}
+  for(var gy=0;gy<ch;gy+=14){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(cw,gy);ctx.stroke();}
+
+  // ── Coordinates + north arrow ────────────────────────────────
+  ctx.font='5px Courier New';
+  ctx.fillStyle='rgba(40,30,10,0.70)';
+  ctx.fillText('33.2801\u00b0N  44.3612\u00b0E',3,9);
+  ctx.fillText('\u2191N',cw-13,11);
+  ctx.strokeStyle='rgba(40,30,10,0.60)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cw-10,14);ctx.lineTo(cw-10,7);ctx.stroke();
+  ctx.fillText('100m',3,ch-3);
+  ctx.beginPath();ctx.moveTo(3,ch-8);ctx.lineTo(43,ch-8);ctx.stroke();
+  [3,13,23,33,43].forEach(function(tx){
+    ctx.beginPath();ctx.moveTo(tx,ch-10);ctx.lineTo(tx,ch-6);ctx.stroke();
+  });
+
+  // ── Perimeter berm ───────────────────────────────────────────
+  ctx.setLineDash([3,2]);
+  ctx.strokeStyle='rgba(80,60,20,0.50)';ctx.lineWidth=1;
+  ctx.strokeRect(14,14,170,140);
+  ctx.setLineDash([]);
+
+  // ── Tarmac hardstand (central apron) ─────────────────────────
+  ctx.fillStyle='rgba(160,140,90,0.60)';
+  ctx.fillRect(26,52,78,42);
+
+  // ── Access roads ─────────────────────────────────────────────
+  ctx.fillStyle='rgba(140,120,70,0.55)';
+  ctx.fillRect(14,100,170,6);   // east-west main road
+  ctx.fillRect(115,14,5,150);   // north-south service road
+
+  // ── Vegetation patch (north section, darker) ─────────────────
+  ctx.fillStyle='rgba(42,52,22,0.55)';
+  var vegPts=[[18,14],[78,14],[78,36],[64,44],[28,42],[18,36]];
+  ctx.beginPath();ctx.moveTo(vegPts[0][0],vegPts[0][1]);
+  vegPts.slice(1).forEach(function(p){ctx.lineTo(p[0],p[1]);});
+  ctx.closePath();ctx.fill();
+
+  // ── ARC ASSEMBLY HALL (α Anchor) — upper-left of compound ────
+  // Footprint: three-section arc. Draw as a curved top polygon.
+  ctx.fillStyle='rgba(40,72,130,0.75)';   // blue roof
+  ctx.strokeStyle='rgba(20,50,100,0.90)';ctx.lineWidth=1.2;
+  // Left wing
+  ctx.beginPath();
+  ctx.moveTo(20,26);ctx.lineTo(52,22);ctx.lineTo(52,40);ctx.lineTo(20,42);
+  ctx.closePath();ctx.fill();ctx.stroke();
+  // Centre block
+  ctx.beginPath();
+  ctx.moveTo(52,20);ctx.lineTo(88,20);ctx.lineTo(88,44);ctx.lineTo(52,44);
+  ctx.closePath();ctx.fill();ctx.stroke();
+  // Right wing
+  ctx.beginPath();
+  ctx.moveTo(88,22);ctx.lineTo(116,26);ctx.lineTo(116,42);ctx.lineTo(88,44);
+  ctx.closePath();ctx.fill();ctx.stroke();
+  // Front annex (lighter, tarmac)
+  ctx.fillStyle='rgba(160,140,90,0.70)';
+  ctx.fillRect(34,44,68,14);
+  ctx.strokeStyle='rgba(100,80,30,0.60)';ctx.lineWidth=0.7;
+  ctx.strokeRect(34,44,68,14);
+
+  // α anchor cross
+  ctx.strokeStyle='rgba(255,160,0,0.95)';ctx.lineWidth=1.2;
+  ctx.beginPath();
+  ctx.moveTo(INTEL_ROCK_LX-6,INTEL_ROCK_LY);ctx.lineTo(INTEL_ROCK_LX+6,INTEL_ROCK_LY);
+  ctx.moveTo(INTEL_ROCK_LX,INTEL_ROCK_LY-6);ctx.lineTo(INTEL_ROCK_LX,INTEL_ROCK_LY+6);
+  ctx.stroke();
+  ctx.fillStyle='rgba(255,160,0,0.92)';ctx.font='bold 5.5px Courier New';
+  ctx.fillText('\u03b1 ARC HALL',18,68);
+
+  // ── ORANGE COMMAND BUILDING — centre ─────────────────────────
+  ctx.fillStyle='rgba(180,70,24,0.80)';   // orange roof
+  ctx.fillRect(84,56,22,18);
+  ctx.strokeStyle='rgba(130,40,10,0.85)';ctx.lineWidth=0.8;ctx.strokeRect(84,56,22,18);
+  // Small annex
+  ctx.fillStyle='rgba(42,72,140,0.70)';
+  ctx.fillRect(84,74,16,12);ctx.strokeRect(84,74,16,12);
+
+  // ── SMALL BLUE SHELTERS — west side ──────────────────────────
+  ctx.fillStyle='rgba(38,70,120,0.72)';
+  ctx.strokeStyle='rgba(20,50,100,0.65)';ctx.lineWidth=0.7;
+  [[18,52],[18,62],[18,72],[30,52],[30,62],[30,72]].forEach(function(s){
+    ctx.fillRect(s[0],s[1],9,7);ctx.strokeRect(s[0],s[1],9,7);
+  });
+  // South-west shelters
+  [[18,110],[18,120],[30,110],[30,120],[42,120],[55,118]].forEach(function(s){
+    ctx.fillRect(s[0],s[1],9,7);ctx.strokeRect(s[0],s[1],9,7);
+  });
+
+  // ── WAREHOUSE ROW (β Anchor) — east side ─────────────────────
+  // Four parallel brown warehouses
+  var wColors=['rgba(90,50,20,0.78)','rgba(90,50,20,0.78)','rgba(90,50,20,0.78)','rgba(90,50,20,0.78)'];
+  [88,100,112,124].forEach(function(wz,wi){
+    ctx.fillStyle=wColors[wi];
+    ctx.fillRect(120,wz,46,10);
+    ctx.strokeStyle='rgba(60,30,10,0.85)';ctx.lineWidth=0.8;
+    ctx.strokeRect(120,wz,46,10);
+    // Ridge line
+    ctx.strokeStyle='rgba(40,20,5,0.45)';ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(120,wz+5);ctx.lineTo(166,wz+5);ctx.stroke();
+  });
+  // West access road to warehouses
+  ctx.fillStyle='rgba(140,120,70,0.45)';ctx.fillRect(115,88,5,48);
+
+  // β anchor cross
+  ctx.strokeStyle='rgba(0,255,150,0.95)';ctx.lineWidth=1.2;
+  ctx.beginPath();
+  ctx.moveTo(INTEL_BARR_LX-6,INTEL_BARR_LY);ctx.lineTo(INTEL_BARR_LX+6,INTEL_BARR_LY);
+  ctx.moveTo(INTEL_BARR_LX,INTEL_BARR_LY-6);ctx.lineTo(INTEL_BARR_LX,INTEL_BARR_LY+6);
+  ctx.stroke();
+  ctx.fillStyle='rgba(0,255,150,0.92)';ctx.font='bold 5.5px Courier New';
+  ctx.fillText('\u03b2 WAREHOUSE ROW',118,140);
+
+  // ── Helipad circle ────────────────────────────────────────────
+  ctx.strokeStyle='rgba(100,80,30,0.50)';ctx.lineWidth=0.8;ctx.setLineDash([2,2]);
+  ctx.beginPath();ctx.arc(70,18,9,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(100,80,30,0.40)';ctx.lineWidth=0.5;
+  ctx.beginPath();ctx.moveTo(66,18);ctx.lineTo(74,18);ctx.moveTo(70,14);ctx.lineTo(70,22);ctx.stroke();
+
+  // ── HVT targeting circle + crosshair ─────────────────────────
+  ctx.strokeStyle='rgba(255,30,0,0.75)';ctx.lineWidth=1.2;ctx.setLineDash([3,2]);
+  ctx.beginPath();ctx.arc(95,65,22,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(255,30,0,0.55)';ctx.lineWidth=0.8;
+  ctx.beginPath();
+  ctx.moveTo(95-26,65);ctx.lineTo(95+26,65);
+  ctx.moveTo(95,65-26);ctx.lineTo(95,65+26);
+  ctx.stroke();
+  ctx.fillStyle='rgba(255,30,0,0.88)';ctx.font='bold 5.5px Courier New';
+  ctx.fillText('HVT',100,54);
+
+  // ── Static feature keypoints ─────────────────────────────────
+  ctx.strokeStyle='rgba(0,200,120,0.55)';ctx.lineWidth=0.8;
+  [
+    [INTEL_ROCK_LX-18,INTEL_ROCK_LY-4],[INTEL_ROCK_LX+12,INTEL_ROCK_LY-8],
+    [INTEL_ROCK_LX-8,INTEL_ROCK_LY+10],[INTEL_ROCK_LX+20,INTEL_ROCK_LY+4],
+    [INTEL_BARR_LX-20,INTEL_BARR_LY-8],[INTEL_BARR_LX+8,INTEL_BARR_LY-4],
+    [INTEL_BARR_LX-12,INTEL_BARR_LY+6],[INTEL_BARR_LX+14,INTEL_BARR_LY+8],
+    [95,82],[78,58]
+  ].forEach(function(kp){
+    ctx.beginPath();
+    ctx.moveTo(kp[0]-2,kp[1]);ctx.lineTo(kp[0]+2,kp[1]);
+    ctx.moveTo(kp[0],kp[1]-2);ctx.lineTo(kp[0],kp[1]+2);
+    ctx.stroke();
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// ★ MATCH-LINE CANVAS — connects intel panel features to live PiPs
+//
+// Screen-space geometry (pure CSS math, no DOM query needed):
+//   Intel canvas left  = W - 14 - 220 + 12  =  W - 222
+//   Intel canvas top   = 296 + 18 + 6        =  320
+//
+//   Down PiP frame top-left  = (14,      H - 14 - 165) = (14,     H-179)
+//   Nose PiP frame top-left  = (W-14-220, H - 14 - 165) = (W-234, H-179)
+//   (The label above each PiP adds ~17px; frame itself starts at H-179)
+// ══════════════════════════════════════════════════════════════
+var matchLinesCvs=document.getElementById('matchLinesCanvas');
+var matchLinesCtx=matchLinesCvs.getContext('2d');
+matchLinesCvs.width=window.innerWidth;
+matchLinesCvs.height=window.innerHeight;
+
+// Helper: draw one glowing dashed connector from (x1,y1) to (x2,y2)
+function drawMatchLine(x1,y1,x2,y2,col){
+  // Wide glow pass
+  matchLinesCtx.save();
+  matchLinesCtx.strokeStyle=col;matchLinesCtx.lineWidth=2.5;
+  matchLinesCtx.shadowColor=col;matchLinesCtx.shadowBlur=12;
+  matchLinesCtx.globalAlpha=0.45;
+  matchLinesCtx.setLineDash([6,5]);
+  matchLinesCtx.beginPath();matchLinesCtx.moveTo(x1,y1);matchLinesCtx.lineTo(x2,y2);
+  matchLinesCtx.stroke();
+  // Sharp core pass
+  matchLinesCtx.globalAlpha=0.85;matchLinesCtx.lineWidth=1;matchLinesCtx.shadowBlur=4;
+  matchLinesCtx.setLineDash([4,6]);
+  matchLinesCtx.beginPath();matchLinesCtx.moveTo(x1,y1);matchLinesCtx.lineTo(x2,y2);
+  matchLinesCtx.stroke();
+  matchLinesCtx.restore();
+}
+
+function updateMatchLines(){
+  matchLinesCtx.clearRect(0,0,matchLinesCvs.width,matchLinesCvs.height);
+  if(STATE<S.JAMMED||!anchorAlphaVerified){
+    matchLinesCvs.style.display='none';return;
+  }
+  matchLinesCvs.style.display='block';
+
+  // Recompute intel canvas screen origin each frame (W may have changed)
+  INTEL_CVS_LEFT=W-222;
+
+  // Intel feature screen positions
+  var inRockX =INTEL_CVS_LEFT+INTEL_ROCK_LX, inRockY =INTEL_CVS_TOP+INTEL_ROCK_LY;
+  var inBarrX =INTEL_CVS_LEFT+INTEL_BARR_LX, inBarrY =INTEL_CVS_TOP+INTEL_BARR_LY;
+
+  // PiP frame origins (CSS → screen)
+  var downLeft=14,    downTop=H-179;
+  var noseLeft=W-234, noseTop=H-179;
+
+  // Animated dash offset — makes the lines "march" toward the target
+  var dashOff=(Date.now()*0.035)%11;
+  matchLinesCtx.lineDashOffset=-dashOff;
+
+  // ── ROCK lines (orange) ──
+  if(bboxState.showRock){
+    if(lastBbox.rockDown){
+      drawMatchLine(inRockX,inRockY, downLeft+lastBbox.rockDown.cx, downTop+lastBbox.rockDown.cy, 'rgba(255,165,0,0.88)');
+    }
+    if(lastBbox.rockNose){
+      drawMatchLine(inRockX,inRockY, noseLeft+lastBbox.rockNose.cx, noseTop+lastBbox.rockNose.cy, 'rgba(255,165,0,0.88)');
+    }
+  }
+  // ── BARRACKS lines (green) ──
+  if(bboxState.showBarracks){
+    if(lastBbox.barracksDown){
+      drawMatchLine(inBarrX,inBarrY, downLeft+lastBbox.barracksDown.cx, downTop+lastBbox.barracksDown.cy, 'rgba(0,255,150,0.85)');
+    }
+    if(lastBbox.barracksNose){
+      drawMatchLine(inBarrX,inBarrY, noseLeft+lastBbox.barracksNose.cx, noseTop+lastBbox.barracksNose.cy, 'rgba(0,255,150,0.85)');
+    }
+  }
+  // ── HVT lines (red) ──
+  if(STATE>=S.LOCK){
+    if(lastBbox.hvtDown){
+      drawMatchLine(inBarrX,inBarrY, downLeft+lastBbox.hvtDown.cx, downTop+lastBbox.hvtDown.cy, 'rgba(255,40,0,0.90)');
+    }
+    if(lastBbox.hvtNose){
+      drawMatchLine(inBarrX,inBarrY, noseLeft+lastBbox.hvtNose.cx, noseTop+lastBbox.hvtNose.cy, 'rgba(255,40,0,0.90)');
+    }
+  }
+
+  // Reset dash offset
+  matchLinesCtx.lineDashOffset=0;
+
+  // Update intel match confidence display
+  var matchPctVal=Math.round(matchConf*100);
+  document.getElementById('eIntelMatch').textContent=
+    anchorAlphaVerified?'MATCHED \u2713':(matchPctVal+'% SEARCHING');
+  document.getElementById('eIntelMatch').className=
+    'lv'+(anchorAlphaVerified?' ok':matchPctVal>40?' a':' w');
+  document.getElementById('intelMatchFill').style.width=matchPctVal+'%';
+}
+
+// ── Initialise intel canvas once DOM is ready ─────────────────
+initIntelCanvas();
+
+// ══════════════════════════════════════════════════════════════
+// HUD & UTILITIES
+// ══════════════════════════════════════════════════════════════
+var hudTick=0;
+function setEl(id,txt,cls){var e=document.getElementById(id);if(!e)return;e.textContent=txt;if(cls!==undefined)e.className='lv'+(cls?' '+cls:'');}
+function showMsg(txt,anim){var m=document.getElementById('msgTxt');m.textContent=txt;m.style.display=txt?'block':'none';m.className=anim||'';}
+
+function updateReticle(){
+  var r=document.getElementById('lockReticle');
+  if(STATE!==S.LOCK&&STATE!==S.DIVE){r.style.display='none';return;}
+  var p=new THREE.Vector3(TGT_X,tgy+10+120,TGT_Z).project(mainCam);
+  if(p.z>1){r.style.display='none';return;}
+  r.style.display='block';r.style.left=((p.x*0.5+0.5)*W-40)+'px';r.style.top=((-p.y*0.5+0.5)*H-40)+'px';
+}
+
+var slTimer=0;
+function drawSpeedLines(active){
+  var sl=document.getElementById('speedLines');sl.style.display=active?'block':'none';
+  if(!active){sl.innerHTML='';return;}
+  slTimer++;if(slTimer%3!==0)return;
+  var lines='',cnt=STATE===S.DIVE?50:20;
+  for(var i=0;i<cnt;i++){
+    var lx=Math.random()*W,ly=Math.random()*H,ll=(STATE===S.DIVE?70+Math.random()*130:25+Math.random()*55),lo=(STATE===S.DIVE?0.15+Math.random()*0.50:0.04+Math.random()*0.14);
+    lines+='<line x1="'+lx+'" y1="'+ly+'" x2="'+(lx+ll)+'" y2="'+ly+'" stroke="rgba(255,255,255,'+lo.toFixed(3)+')" stroke-width="0.8"/>';
+  }
+  sl.innerHTML=lines;
+}
+
+function updateHUD(pos,tang,bank){
+  hudTick++;
+  setEl('eALT',pos.y.toFixed(0)+' m');
+  var spd=(STATE===S.DIVE?1900:STATE===S.LAUNCH?Math.round(launchSpeed*22):(STATE>=S.INGRESS&&STATE<=S.LOCK)?600:0);
+  setEl('eSPD',spd+' kts',spd>500?'ok':spd>0?'a':'');
+  var hdg=(Math.atan2(tang.x,tang.z)*180/Math.PI+360)%360;
+  setEl('eHDG',Math.round(hdg).toString().padStart(3,'0')+'\u00b0');
+  setEl('eBANK',(bank*180/Math.PI).toFixed(1)+'\u00b0',Math.abs(bank)>0.45?'w':'');
+  setEl('ePITCH',(Math.asin(Math.max(-1,Math.min(1,tang.y)))*180/Math.PI).toFixed(1)+'\u00b0',Math.abs(tang.y)>0.38?'w':'');
+  setEl('eGF',(1/Math.max(0.1,Math.cos(Math.abs(bank)))).toFixed(1)+' G',parseFloat((1/Math.max(0.1,Math.cos(Math.abs(bank)))).toFixed(1))>3.5?'w':'');
+  var agl=pos.y-getH(pos.x,pos.z);
+  setEl('eAGL',agl.toFixed(0)+' m',agl<120?'w':agl<200?'a':'ok');
+  var inDome=Math.sqrt((pos.x-DOME_CX)*(pos.x-DOME_CX)+(pos.z-DOME_CZ)*(pos.z-DOME_CZ))<DOME_RADIUS;
+  setEl('eNAV',STATE>=S.JAMMED?'ORB-SLAM3':inDome?'GPS DEGRADING':'GPS \u25cf',STATE>=S.JAMMED?'w':inDome?'a':'ok');
+  if(ingressStartMs){
+    var et=Math.min((Date.now()-ingressStartMs)/1000,INGRESS_DURATION_S);
+    setEl('eING',Math.floor(et/60).toString().padStart(2,'0')+':'+Math.floor(et%60).toString().padStart(2,'0'));
+    document.getElementById('ingressFill').style.width=(et/INGRESS_DURATION_S*100)+'%';
+  }
+  if(jammingStartMs){
+    var ht=(Date.now()-jammingStartMs)/1000;
+    setEl('eHNT',Math.floor(ht/60).toString().padStart(2,'0')+':'+Math.floor(ht%60).toString().padStart(2,'0'),'a');
+  }
+  setEl('eWPD',diveTgt.distanceTo(pos).toFixed(0)+' m');
+  setEl('eCPU',(STATE>=S.JAMMED?(58+Math.floor(Math.random()*18)):(14+Math.floor(Math.random()*6)))+'%','a');
+  setEl('eSLAM',STATE>=S.JAMMED?'ACTIVE':'STANDBY',STATE>=S.JAMMED?'ok':'');
+  setEl('eVM',STATE>=S.LOCK?'LOCKED':'SCANNING',STATE>=S.LOCK?'w':'');
+  if(STATE<S.JAMMED){setEl('eAA','SEARCHING','a');setEl('eAB','SEARCHING','a');}
+  setEl('eTHR',STATE>=S.LOCK?'CRITICAL':'LOW',STATE>=S.LOCK?'w':'a');
+  setEl('eLINK',STATE>=S.JAMMED?'SEVERED':'SECURE',STATE>=S.JAMMED?'w':'ok');
+  setEl('eLAT',STATE>=S.JAMMED?'N/A':(5+Math.floor(Math.random()*6))+' ms',STATE>=S.JAMMED?'w':'');
+  setEl('eUPL',STATE>=S.JAMMED?'0 Mbps':(115+Math.floor(Math.random()*45))+' Mbps',STATE>=S.JAMMED?'w':'a');
+  var gpsEl=document.getElementById('t-gps');if(gpsEl)gpsEl.textContent=STATE>=S.JAMMED?'\u2b24 GPS DENIED':'\u2b24 GPS LOCKED';
+  var phases=['PRE-LAUNCH','CATAPULT','GPS INGRESS \u2014 15s','JAMMED \u2014 NAVPOD HUNT','TARGET LOCK','TERMINAL DIVE','DESTROYED'];
+  var ph=document.getElementById('t-phase');if(ph)ph.textContent=phases[STATE]||'';
+  setEl('pipRAGL','AGL: '+(pos.y-getH(pos.x,pos.z)).toFixed(0)+'m');
+  setEl('pipRStatus',STATE>=S.LOCK?'TGT LOCKED':STATE>=S.JAMMED?'HUNTING':'ACTIVE');
+  setEl('downCamAlt','ALT: '+pos.y.toFixed(0)+'m');
+  setEl('downCamStatus',STATE>=S.JAMMED?'SLAM':'ACTIVE');
+}
+
+// ══════════════════════════════════════════════════════════════
+// STATE MACHINE
+// ══════════════════════════════════════════════════════════════
+var S={PRE:0,LAUNCH:1,INGRESS:2,JAMMED:3,LOCK:4,DIVE:5,IMPACT:6};
+var STATE=S.PRE;
+var launchSpeed=0,launchProgress=0,splineT=0;
+var prevTangent=new THREE.Vector3(0,0,1);
+var diveTgt=new THREE.Vector3(TGT_X,tgy+10+46,TGT_Z);
+var diveVel=new THREE.Vector3();
+// ★ diveDirCurrent — unit vector for the smoothly-interpolated nose direction during dive.
+//   Initialized to the DIRECT vector from drone's lock-on position → diveTgt, so the
+//   drone never overshoots overhead. It slerps each frame for a smooth glide-slope entry.
+var diveDirCurrent=new THREE.Vector3(0,0,1);
+var chasePos=new THREE.Vector3(),chaseLook=new THREE.Vector3();
+var dronePos=new THREE.Vector3(LAUNCH_X,launchGy+60,LAUNCH_Z);
+var droneTang=new THREE.Vector3(0,0,1);
+var bankAngle=0;
+var ingressStartMs=null,jammingStartMs=null;
+// Autonomous nav
+var autoYaw=0,autoPitch=0,autoYawRate=0;
+var MAX_YAW_RATE=0.38;
+
+function orientDrone(tang,bank){var lp=drone.position.clone().sub(tang);drone.lookAt(lp);drone.rotateZ(bank);}
+function wrapAngle(a){while(a>Math.PI)a-=Math.PI*2;while(a<-Math.PI)a+=Math.PI*2;return a;}
+
+// ══════════════════════════════════════════════════════════════
+// ★ CREEPING LINE (LAWNMOWER) SEARCH PATTERN
+//
+// A systematic "creeping line" is the standard military tactic for
+// searching a GPS-denied area with an optical sensor. The aircraft
+// flies a straight leg at constant heading, executes a precise 180°
+// coordinated turn, then flies the return leg offset by the sensor
+// swath width. This keeps camera motion smooth (no blur for SLAM)
+// and guarantees coverage of the entire search area.
+//
+// State machine:
+//   STRAIGHT → fly heading-hold until sweepDist >= SWEEP_LEG_LENGTH
+//   TURN     → hold MAX_YAW_RATE bank until 180° of heading change
+//              accumulated in sweepTurnAcc, then flip turn direction
+//              for the next pass
+//
+// On anchorAlphaVerified the pattern is abandoned and the nose
+// snaps directly onto the confirmed target.
+// ══════════════════════════════════════════════════════════════
+var sweepState    = 'STRAIGHT'; // 'STRAIGHT' | 'TURN'
+var sweepDist     = 0;          // metres flown on current straight leg
+var sweepTurnDir  = 1;          // +1 = right turn, -1 = left turn
+var sweepTurnAcc  = 0;          // radians of turn accumulated this 180° arc
+var SWEEP_LEG_LENGTH = 1600;    // ★ metres per straight leg before turning
+
+function updateAutonomousNav(dt){
+
+  var yawRateTgt = 0; // will be set by whichever phase is active
+
+  if(!anchorAlphaVerified){
+    // ────────────────────────────────────────────────────────
+    // LOST PHASE — execute the creeping line pattern
+    // ────────────────────────────────────────────────────────
+    if(sweepState === 'STRAIGHT'){
+      // Wings level, maintain current heading exactly
+      yawRateTgt = 0;
+      sweepDist += CRUISE_SPEED * dt;
+
+      if(sweepDist >= SWEEP_LEG_LENGTH){
+        // Leg complete — begin 180° turn
+        sweepState   = 'TURN';
+        sweepTurnAcc = 0;
+        yawRateTgt   = MAX_YAW_RATE * sweepTurnDir;
+      }
+
+    } else { // sweepState === 'TURN'
+      // Hold steady bank — coordinated rate-1 turn
+      yawRateTgt = MAX_YAW_RATE * sweepTurnDir;
+
+      // Accumulate heading change (always positive regardless of direction)
+      sweepTurnAcc += Math.abs(autoYawRate) * dt;
+
+      if(sweepTurnAcc >= Math.PI){
+        // 180° complete — roll out onto new leg
+        sweepState   = 'STRAIGHT';
+        sweepDist    = 0;
+        sweepTurnDir *= -1;          // reverse turn direction for next pass
+        yawRateTgt   = 0;            // wings level immediately
+        autoYaw = wrapAngle(autoYaw); // prevent accumulation drift
+      }
+    }
+
+  } else {
+    // ────────────────────────────────────────────────────────
+    // LOCKED PHASE — target confirmed, fly direct intercept
+    // Abandon sweep completely; strong yaw to target bearing
+    // ────────────────────────────────────────────────────────
+    sweepState = 'STRAIGHT'; // clean up state for if we re-enter JAMMED
+    var dx = TGT_X - dronePos.x;
+    var dz = TGT_Z - dronePos.z;
+    var desYaw  = Math.atan2(dx, dz);
+    var yawErr  = wrapAngle(desYaw - autoYaw);
+    yawRateTgt  = Math.max(-MAX_YAW_RATE, Math.min(MAX_YAW_RATE, yawErr * 2.8));
+  }
+
+  // ── Integrate heading ──────────────────────────────────────
+  // Slew rate 2.8 dt — fast enough for the turn but not instantaneous
+  autoYawRate += (yawRateTgt - autoYawRate) * Math.min(1, dt * 2.8);
+  autoYaw     += autoYawRate * dt;
+  autoYaw      = wrapAngle(autoYaw);
+
+  // ── Altitude / pitch control (unchanged) ──────────────────
+  var lx=dronePos.x+Math.sin(autoYaw)*600,lz=dronePos.z+Math.cos(autoYaw)*600;
+  var terrAhead=getH(lx,lz),terrBelow=getH(dronePos.x,dronePos.z);
+  var reqAlt=Math.max(terrAhead+CRUISE_AGL,terrBelow+CRUISE_AGL);
+  var pitchTgt=Math.max(-0.28,Math.min(0.48,(reqAlt-dronePos.y)*0.0014));
+  autoPitch+=(pitchTgt-autoPitch)*Math.min(1,dt*1.8);
+  var cp=Math.cos(autoPitch),sp2=Math.sin(autoPitch);
+  dronePos.x+=Math.sin(autoYaw)*cp*CRUISE_SPEED*dt;
+  dronePos.z+=Math.cos(autoYaw)*cp*CRUISE_SPEED*dt;
+  dronePos.y+=sp2*CRUISE_SPEED*dt;
+
+  // ★ STRICT AGL FLOOR — terrain following, never disabled during hunt
+  dronePos.y=Math.max(dronePos.y,getH(dronePos.x,dronePos.z)+MIN_AGL);
+  bankAngle=Math.max(-1.35,Math.min(1.35,-autoYawRate/MAX_YAW_RATE*1.30));
+  droneTang.set(Math.sin(autoYaw)*cp,sp2,Math.cos(autoYaw)*cp).normalize();
+  orientDrone(droneTang,bankAngle);drone.position.copy(dronePos);
+}
+
+function triggerEWGlitch(){
+  var g=document.getElementById('ewGlitch'),b=document.getElementById('ewBanner');
+  g.classList.add('active');b.classList.add('show');
+  setTimeout(function(){g.classList.remove('active');g.style.display='none';},3200);
+  setTimeout(function(){b.classList.remove('show');},4800);
+}
+
+function launch(){
+  if(STATE!==S.PRE)return;
+  STATE=S.LAUNCH;launchSpeed=0.5;launchProgress=0;splineT=0;drone.visible=true;
+  document.getElementById('btnLaunch').style.display='none';
+  showMsg('LAUNCH SEQUENCE INITIATED','pulse');
+  setTimeout(function(){showMsg('');},2200);
+  setTimeout(function(){splineTube.material.opacity=0.10;},2400);
+}
+window.launch=launch;
+
+// ══════════════════════════════════════════════════════════════
+// MAIN LOOP
+// ══════════════════════════════════════════════════════════════
+var clock=0,lastMs=performance.now();
+// ══════════════════════════════════════════════════════════════
+// ★ PAUSE SYSTEM — freeze physics/AI, keep camera + render live
+//
+// Timer compensation strategy:
+//   All mission timestamps use Date.now() for wall-clock precision.
+//   On unpause we add the exact pause duration to every live
+//   Date.now()-based timestamp so they appear not to have advanced.
+//   lastMs (performance.now) gets the same offset so dt doesn't spike.
+// ══════════════════════════════════════════════════════════════
+var isPaused   = false;
+var pausedAtMs = 0;    // Date.now() at the moment we paused
+
+function togglePause(){
+  isPaused=!isPaused;
+  var btn=document.getElementById('btnPause');
+
+  if(isPaused){
+    // Record wall-clock pause start
+    pausedAtMs=Date.now();
+    btn.textContent='\u25b6 RESUME SIM';
+    btn.classList.add('paused');
+    // Automatically switch to free-cam so the user can pan immediately
+    if(chaseModeActive){
+      chaseModeActive=false;
+      document.getElementById('btnCam').textContent='\u25b7 Chase Cam';
+    }
+  }else{
+    // Calculate how long we were frozen
+    var pausedDurMs=Date.now()-pausedAtMs;
+
+    // ── Offset every Date.now()-based timestamp forward ──────
+    // This makes them believe no wall-clock time has passed.
+    if(ingressStartMs) ingressStartMs += pausedDurMs;
+    if(jammingStartMs) jammingStartMs += pausedDurMs;
+
+    // ── Offset performance.now-based lastMs ──────────────────
+    // Prevents dt from spiking to a giant value on the first
+    // frame after resume, which would cause the drone to teleport.
+    lastMs += pausedDurMs;
+
+    btn.textContent='\u23f8 PAUSE SIM';
+    btn.classList.remove('paused');
+  }
+}
+window.togglePause=togglePause;
+drone.position.copy(RAIL_START);drone.visible=false;
+
+function loop(){
+  requestAnimationFrame(loop);
+  var now=performance.now();
+
+  // ══════════════════════════════════════════════════════════
+  // ★ PAUSED PATH — skip ALL physics, AI, and timer updates.
+  //   Only camera controls and the three render passes run so
+  //   the user can pan around the frozen scene in free-cam.
+  // ══════════════════════════════════════════════════════════
+  if(isPaused){
+    if(!chaseModeActive) updateOrbitCam();
+    // Keep scene matrix fresh so bbox projections stay correct
+    scene.updateMatrixWorld(true);
+    updateAllBboxes();
+    updateMatchLines();
+    // Full 3-pass render (identical to the live path below)
+    renderer.setScissorTest(false);
+    renderer.setViewport(0,0,W,H);
+    mainCam.aspect=W/H;mainCam.updateProjectionMatrix();
+    renderer.setClearColor(scene.background,1);
+    renderer.clear(true,true,true);
+    renderer.render(scene,mainCam);
+    renderer.setScissorTest(true);
+    var dPipX2=14,dPipY2=14;
+    renderer.setScissor(dPipX2,dPipY2,PW,PH);
+    renderer.setViewport(dPipX2,dPipY2,PW,PH);
+    downCam.aspect=PW/PH;downCam.updateProjectionMatrix();
+    renderer.setClearColor(0x080c04,1);renderer.clear(true,true,true);
+    renderer.render(scene,downCam);
+    var nPipX2=W-14-PW,nPipY2=14;
+    renderer.setScissor(nPipX2,nPipY2,PW,PH);
+    renderer.setViewport(nPipX2,nPipY2,PW,PH);
+    noseCam.aspect=PW/PH;noseCam.updateProjectionMatrix();
+    renderer.setClearColor(0x040810,1);renderer.clear(true,true,true);
+    renderer.render(scene,noseCam);
+    renderer.setScissorTest(false);
+    // lastMs is NOT updated while paused — pausedDurMs is added on resume instead
+    return;
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // ★ LIVE PATH — normal simulation tick
+  // ══════════════════════════════════════════════════════════
+  var dt=Math.min((now-lastMs)/1000,0.10);lastMs=now;clock+=dt;
+  scene.updateMatrixWorld(true);
+
+  // Scene FX
+  mast.rotation.y+=0.008;
+  var exhI=3.5+Math.sin(clock*18)*1.5;
+  engLightL.intensity=engLightR.intensity=STATE===S.PRE?0.4:exhI;
+  glowMat.opacity=STATE===S.PRE?0.15:(0.70+Math.sin(clock*22)*0.22);
+  soldiers.forEach(function(sg){sg.userData.phase+=dt*0.4;var r=sg.userData.radius;sg.position.set(sg.userData.baseX+Math.cos(sg.userData.phase)*r,0,sg.userData.baseZ+Math.sin(sg.userData.phase)*r);});
+  campFireLight.intensity=3+Math.sin(clock*11)*1.5+Math.sin(clock*17)*0.8;
+  if(STATE===S.INGRESS){gpsGrp.position.set(dronePos.x,0,dronePos.z);gpsBeams.forEach(function(b,i){b.children[0].material.opacity=0.055+0.028*Math.sin(clock*8+i);});gpsGrp.visible=true;}else{gpsGrp.visible=false;}
+
+  // STATE MACHINE
+  if(STATE===S.PRE){
+    drone.visible=true;drone.position.copy(RAIL_START);drone.lookAt(RAIL_START.clone().sub(railDir));
+    document.getElementById('btnLaunch').style.display='block';
+    dronePos.copy(RAIL_START);droneTang.copy(railDir);bankAngle=0;
+    chaseModeActive=true;document.getElementById('btnCam').textContent='\u25a0 Free Cam';
+  }
+
+  else if(STATE===S.LAUNCH){
+    launchSpeed=Math.min(launchSpeed+LAUNCH_ACCELERATION,LAUNCH_MAX_SPEED);
+    launchProgress+=launchSpeed/railLen;
+    drone.position.lerpVectors(RAIL_START,RAIL_END,Math.min(launchProgress,1));
+    drone.lookAt(drone.position.clone().sub(railDir));
+    dronePos.copy(drone.position);droneTang.copy(railDir);addTrail(dronePos);
+    if(launchProgress>=1){STATE=S.INGRESS;splineT=0;ingressStartMs=Date.now();showMsg('');}
+  }
+
+  else if(STATE===S.INGRESS){
+    splineT=Math.min(splineT+DRONE_SPEED_PER_SEC*dt,1.0);
+    var sPos=spline.getPointAt(splineT);
+    var sTang=spline.getTangentAt(Math.min(splineT,0.9999));
+    var tD=new THREE.Vector3().subVectors(sTang,prevTangent);
+    var tBank=-tD.dot(new THREE.Vector3().crossVectors(sTang,new THREE.Vector3(0,1,0)))*BANK_MULT;
+    bankAngle+=(tBank-bankAngle)*0.08;bankAngle=Math.max(-1.3,Math.min(1.3,bankAngle));
+    orientDrone(sTang,bankAngle);drone.position.copy(sPos);dronePos.copy(sPos);droneTang.copy(sTang);prevTangent.copy(sTang);addTrail(dronePos);
+    var ingressElapsed=ingressStartMs?(Date.now()-ingressStartMs)/1000:0;
+    if(splineT>=0.9999&&ingressElapsed>=INGRESS_DURATION_S){
+      STATE=S.JAMMED;jammingStartMs=Date.now();
+      autoYaw=Math.atan2(sTang.x,sTang.z);autoPitch=Math.asin(Math.max(-1,Math.min(1,sTang.y)));autoYawRate=0;
+
+      // ★ AI INSTANT CONNECT — reset all tracking state at the exact JAMMED frame
+      aiConsoleActive=true;msgIndex=0;consoleDone=false;
+      anchorAlphaVerified=false;anchorBetaVerified=false;
+      // ★ Reset geometry-based sighting counters and milestone flags
+      rockSightedMs=0;barrsSightedMs=0;milestonesFired={};
+      // ★ Reset creeping-line sweep state — start fresh on dome entry
+      sweepState='STRAIGHT';sweepDist=0;sweepTurnDir=1;sweepTurnAcc=0;
+      lastCapMs=2000;  // ★ suppress nadir-frame ticker for first 2s so milestone logs dominate
+      capFrameNum=0;matchConf=0;bboxState.showRock=false;bboxState.showBarracks=false;
+
+      // ★ Show console panel
+      document.getElementById('aiConsole').style.display='block';
+      document.getElementById('consoleLog').innerHTML='';
+      // ★ Show stored intel panel — drone is now comparing live feeds to this
+      document.getElementById('intelPanel').style.display='block';
+
+      // ★ BOTH scan lines light up the exact frame we enter the dome
+      document.getElementById('downScanLine').style.display='block';
+      document.getElementById('liveScanLine').style.display='block';
+
+      // ★ Match confidence bar
+      document.getElementById('matchBar').style.display='block';
+      document.getElementById('matchPct').style.display='block';
+
+      triggerEWGlitch();
+      showMsg('\u26a0 GPS DENIED \u2014 NAVPOD AUTONOMOUS NAV ACTIVE','flash');
+      setTimeout(function(){showMsg('');},4000);
+    }
+  }
+
+  else if(STATE===S.JAMMED){
+    updateAutonomousNav(dt);addTrail(dronePos);
+    var huntElapsed=jammingStartMs?(Date.now()-jammingStartMs)/1000:0;
+    // ★ matchConf based on how long targets have been sighted, not pure time
+    // Ramps to 1.0 as the drone flies over and cameras accumulate sighting time
+    var sightProgress = Math.min(1.0, (rockSightedMs + barrsSightedMs*0.5) / (SIGHT_CONFIRM_MS*1.5));
+    // Also allow slow ambient ramp from terrain matching (even without seeing targets)
+    var ambientRamp = Math.min(0.45, huntElapsed / 40.0);
+    matchConf = Math.min(1.0, Math.max(sightProgress, ambientRamp));
+    document.getElementById('matchFill').style.width=(matchConf*100)+'%';
+    document.getElementById('matchPct').textContent='Match: '+Math.round(matchConf*100)+'%';
+    updateConsole();
+    // ★ INSTANT LOCK — no hunt timer requirement, just consoleDone
+    if(consoleDone){
+      STATE=S.LOCK;
+      tgtLight.intensity=8;
+      // ★ Kill both scan lines — AI has found its target
+      document.getElementById('liveScanLine').style.display='none';
+      document.getElementById('downScanLine').style.display='none';
+      showMsg('\u25bc TARGET LOCKED \u2014 WEAPONS FREE','flash');
+      setTimeout(function(){showMsg('');},1200);
+    }
+  }
+
+  else if(STATE===S.LOCK){
+    updateAutonomousNav(dt);addTrail(dronePos);
+    tgtLight.intensity=5+Math.sin(clock*8)*3;
+    // ★ LOCK → DIVE transition:
+    //   Compute diveDirCurrent as the DIRECT line from the drone's current
+    //   position to diveTgt. This is the true glide-slope angle — the drone
+    //   will never overshoot overhead because it starts already pointing at
+    //   the target. The lerp in DIVE will keep it locked on as it closes in.
+    diveDirCurrent.subVectors(diveTgt,dronePos).normalize();
+    STATE=S.DIVE;
+    chaseModeActive=true;
+    showMsg('');
+  }
+
+  else if(STATE===S.DIVE){
+    // ★ GLIDE-SLOPE DIVE — cruise-missile style diagonal nose-first attack
+    //
+    // Each frame: smoothly rotate diveDirCurrent toward the live (drone→target)
+    // unit vector using lerp+renormalize. Factor 0.055 gives a realistic ~1.5s
+    // nose-pitch-down arc from any approach angle. Since diveDirCurrent was
+    // initialized at the exact direct vector to target at lock-on time, the
+    // drone NEVER overshoots overhead — it flies a clean descending diagonal.
+    var toTgt=new THREE.Vector3().subVectors(diveTgt,dronePos).normalize();
+    diveDirCurrent.lerp(toTgt,0.055).normalize();
+
+    // Advance position along the current nose direction at dive speed
+    dronePos.addScaledVector(diveDirCurrent,DIVE_SPEED*dt);
+    drone.position.copy(dronePos);
+
+    // Orient the BWB mesh: nose points along diveDirCurrent, wings level (bank fades out)
+    bankAngle*=0.92; // bleed off banking as nose pitches down
+    orientDrone(diveDirCurrent,bankAngle);
+    droneTang.copy(diveDirCurrent);
+
+    addTrail(dronePos);drawSpeedLines(true);
+    if(dronePos.distanceTo(diveTgt)<100){
+      STATE=S.IMPACT;drone.visible=false;targetGrp.visible=false;
+      triggerExplosion(diveTgt);drawSpeedLines(false);
+      setTimeout(function(){document.getElementById('missionComplete').classList.add('show');},1600);
+    }
+  }
+
+  else if(STATE===S.IMPACT){updateExplosion();}
+
+  // Speed lines during flight
+  if(STATE===S.INGRESS||STATE===S.JAMMED){if(Math.random()<0.20)drawSpeedLines(true);}
+
+  // LIDAR
+  if(STATE===S.JAMMED||STATE===S.LOCK){sweepMat.opacity=0.11;edgeLineMat.opacity=0.75;coneMat.opacity=0.050;lidarGrp.rotation.y+=0.026;}
+  else{sweepMat.opacity=0;edgeLineMat.opacity=0;coneMat.opacity=STATE===S.INGRESS?0.018:0;}
+
+  // Chase camera
+  if(chaseModeActive&&STATE!==S.PRE){
+    if(STATE===S.DIVE){
+      // ★ DIVE CAMERA — rise up high behind the drone and look down the glide slope.
+      //   This gives a perfect overhead-diagonal view of the BWB plummeting nose-first
+      //   into the camp, with the target visibly framed below in the main viewport.
+      //   Camera retreats along the INVERSE of the dive vector and climbs 700u above.
+      var diveBack=diveDirCurrent.clone().negate().multiplyScalar(900);
+      var diveCamTgt=dronePos.clone().add(diveBack).add(new THREE.Vector3(0,700,0));
+      chasePos.lerp(diveCamTgt,0.028);          // slow lerp = smooth cinematic pan
+      chaseLook.lerp(diveTgt.clone().add(new THREE.Vector3(0,80,0)),0.055);
+      mainCam.position.copy(chasePos);mainCam.lookAt(chaseLook);
+    }else{
+      // Normal following chase cam for all other states
+      var behind=droneTang.clone().negate().multiplyScalar(FOLLOW_DIST);
+      var leanR=new THREE.Vector3().crossVectors(droneTang,new THREE.Vector3(0,1,0)).normalize();
+      var camTgt=dronePos.clone().add(behind).add(new THREE.Vector3(0,190,0));
+      camTgt.addScaledVector(leanR,bankAngle*120);
+      chasePos.lerp(camTgt,0.038);
+      chaseLook.lerp(dronePos.clone().add(droneTang.clone().multiplyScalar(300)),0.068);
+      mainCam.position.copy(chasePos);mainCam.lookAt(chaseLook);
+    }
+  }else if(!chaseModeActive){updateOrbitCam();}
+
+  // ★ NOSE CAM — forward sensor with state-dependent look direction:
+  //   • Pre-JAMMED: level forward scan with gentle terrain-grazing downward tilt
+  //   • JAMMED/LOCK: gradually biases toward the target direction so the encampment
+  //     enters the forward PiP from a long distance — proving nose-cam detection
+  //   • DIVE: locked onto target, following the nose down the glide slope
+  noseCam.position.copy(dronePos).add(new THREE.Vector3(0,14,0));
+  if(STATE>=S.JAMMED){
+    var nFwdBlend=droneTang.clone().normalize();
+    if(STATE>=S.DIVE){
+      // Terminal dive only — nose cam fully tracks the target
+      var tgtDir=new THREE.Vector3(TGT_X-dronePos.x, tgy+35-dronePos.y, TGT_Z-dronePos.z).normalize();
+      nFwdBlend.lerp(tgtDir,0.90).normalize();
+    }else if(STATE>=S.LOCK){
+      // Lock state — gentle partial bias toward target
+      var tgtDir2=new THREE.Vector3(TGT_X-dronePos.x, tgy+35-dronePos.y, TGT_Z-dronePos.z).normalize();
+      nFwdBlend.lerp(tgtDir2,0.35).normalize();
+    }
+    // JAMMED / hunting: fly nose camera straight forward — the drone
+    // does NOT know where the target is yet. Camera scans the horizon
+    // ahead, exactly as a blind autonomous scan should look.
+    nFwdBlend.y -= 0.12; // very slight downward tilt — scanning terrain ahead
+    nFwdBlend.normalize();
+    noseCam.lookAt(dronePos.clone().add(nFwdBlend.multiplyScalar(1200)));
+  }else{
+    var noseFwd=droneTang.clone().normalize();noseFwd.y-=0.18;noseFwd.normalize();
+    noseCam.lookAt(dronePos.clone().add(noseFwd.multiplyScalar(1100)));
+  }
+
+  // ★ DOWN CAM — attached to drone, looking straight down
+  //   up = drone's horizontal forward direction (so drone nose = top of image)
+  downCam.position.copy(dronePos).add(new THREE.Vector3(0,80,0));
+  var hFwd=new THREE.Vector3(droneTang.x,0,droneTang.z).normalize();
+  downCam.up.copy(hFwd);
+  downCam.lookAt(new THREE.Vector3(dronePos.x,dronePos.y-2000,dronePos.z));
+
+  // Scene FX
+  domeMat.opacity=0.032+Math.sin(clock*1.3)*0.018;
+  jamLight.intensity=5.5+Math.sin(clock*2.6)*2.5;
+  starField.rotation.y+=0.000038;
+  tgtLight.intensity=STATE>=S.LOCK?(5+Math.sin(clock*8)*3):STATE>=S.JAMMED?matchConf*3:0;
+  ancALight.intensity=anchorAlphaVerified?3.5:(1.2+Math.sin(clock*1.8)*0.5);
+  ancBLight.intensity=anchorBetaVerified?3.0:(1.0+Math.sin(clock*2.2)*0.4);
+
+  // HUD
+  updateHUD(dronePos,droneTang,bankAngle);
+  updateReticle();
+  updateAllBboxes(); // ★ dual-camera frustum-culled detection overlay
+  updateMatchLines(); // ★ intel-panel → live-PiP feature-match connector lines
+  if(STATE>=S.JAMMED) updateIntelCanvasAnimation(); // ★ live scan animation on stored photo
+  updateArchDiagram(); // ★ architecture panel — live node glow sync with STATE
+
+  // ════════════════════════════════════════════════════════════
+  // ★ RENDER LOOP — three passes with correct GL coordinates
+  //   WebGL y=0 is BOTTOM of canvas (opposite of CSS)
+  //
+  //   Pass 1: mainCam — full screen
+  //   Pass 2: downCam — left PiP  → CSS(left:14, bottom:14)  → GL(x=14, y=14)
+  //   Pass 3: noseCam — right PiP → CSS(right:14, bottom:14) → GL(x=W-14-PW, y=14)
+  // ════════════════════════════════════════════════════════════
+
+  // Pass 1: full screen main view
+  renderer.setScissorTest(false);
+  renderer.setViewport(0,0,W,H);
+  mainCam.aspect=W/H;mainCam.updateProjectionMatrix();
+  renderer.setClearColor(scene.background,1);
+  renderer.clear(true,true,true);
+  renderer.render(scene,mainCam);
+
+  renderer.setScissorTest(true);
+
+  // Pass 2: DOWN CAM — bottom-left PiP
+  // CSS position: left:14px, bottom:14px, width:PW, height:PH
+  // GL: x=14, y=14 (y from canvas bottom)
+  var dPipX=14, dPipY=14;
+  renderer.setScissor(dPipX,dPipY,PW,PH);
+  renderer.setViewport(dPipX,dPipY,PW,PH);
+  downCam.aspect=PW/PH;downCam.updateProjectionMatrix();
+  renderer.setClearColor(0x080c04,1);
+  renderer.clear(true,true,true);
+  renderer.render(scene,downCam);
+
+  // Pass 3: NOSE CAM — bottom-right PiP
+  // CSS position: right:14px, bottom:14px → left = W-14-PW
+  // GL: x=W-14-PW, y=14
+  var nPipX=W-14-PW, nPipY=14;
+  renderer.setScissor(nPipX,nPipY,PW,PH);
+  renderer.setViewport(nPipX,nPipY,PW,PH);
+  noseCam.aspect=PW/PH;noseCam.updateProjectionMatrix();
+  renderer.setClearColor(0x040810,1);
+  renderer.clear(true,true,true);
+  renderer.render(scene,noseCam);
+
+  renderer.setScissorTest(false);
+}
+
+// Init camera — look from behind the launch site toward the dome
+// (evaluated after LAUNCH_X/Z are set, so works for any spawn angle)
+chasePos.copy(mainCam.position);chaseLook.set(0,400,0);showMsg('');
+// Reposition orbit camera to start behind the catapult looking toward dome
+var initCamDist=4200;
+var initCamX=LAUNCH_X+Math.cos(launchAngle)*(-initCamDist*0.35);
+var initCamZ=LAUNCH_Z+Math.sin(launchAngle)*(-initCamDist*0.35);
+mainCam.position.set(initCamX,launchGy+1400,initCamZ);
+mainCam.lookAt(DOME_CX, 400, DOME_CZ);
+// Sync orbit params to match
+orb.theta=launchAngle+Math.PI;
+orb.r=3400;
+orbTgt.set(DOME_CX,400,DOME_CZ);
+document.getElementById('btnLaunch').style.display='block';
+// ★ Boot into desert day mode
+document.body.classList.add('day');
+document.getElementById('btnTheme').textContent='\u263e Night Mode';
+sunLight.intensity=4.8;fillLight.intensity=1.2;
+scene.background.set(0x9EC4DC);
+scene.fog.color.set(0xD4B87A);scene.fog.density=0.00005;
+terrain.material.color.set(0xC4A058);
+loop();
+
+// ══════════════════════════════════════════════════════════════
+// ★ ARCHITECTURE PANEL — toggle + live STATE sync
+// ══════════════════════════════════════════════════════════════
+var archOpen = false;
+function toggleArch(){
+  archOpen = !archOpen;
+  document.getElementById('archPanel').classList.toggle('open', archOpen);
+  document.getElementById('btnArch').textContent = archOpen ? '\u25bc HIDE ARCH' : '\u25c6 ARCH DIAGRAM';
+  // Auto-switch to free-cam so the scene doesn't follow drone while reading diagram
+  if(archOpen && chaseModeActive){
+    chaseModeActive = false;
+    document.getElementById('btnCam').textContent = '\u25b7 Chase Cam';
+  }
+}
+window.toggleArch = toggleArch;
+
+// Map SVG node IDs → the opacity class to apply based on mission STATE
+// Class meanings: an-dim (0.22) | an-idle (0.52) | an-active (1.0)
+function updateArchDiagram(){
+  if(!archOpen) return; // skip if panel is hidden — saves work
+
+  var st = STATE;  // current mission state integer
+  // Helper: set one SVG group's opacity class
+  function setNode(id, cls){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.remove('an-dim','an-idle','an-active');
+    el.classList.add(cls);
+  }
+  // Helper: set a group of related nodes to the same class
+  function setGroup(ids, cls){ ids.forEach(function(id){ setNode(id, cls); }); }
+
+  // ── PRE-LAUNCH ──────────────────────────────────────────────
+  if(st === S.PRE){
+    setGroup(['an-d435i','an-slamcam','an-orbslam','an-yolo','an-jetson',
+              'an-traj','an-mavlink','an-pixhawk','an-imu','an-ekf',
+              'an-pid','an-mixer','an-esc','an-servol','an-servor'], 'an-dim');
+    setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-dim');
+  }
+  // ── LAUNCH / INGRESS — GPS nav active, cameras online ──────
+  else if(st === S.LAUNCH || st === S.INGRESS){
+    setGroup(['an-d435i','an-slamcam'], 'an-active');
+    setGroup(['an-orbslam','an-yolo'], 'an-idle');
+    setNode('an-jetson', 'an-active');
+    setGroup(['an-traj','an-mavlink'], 'an-idle');
+    setNode('an-pixhawk', 'an-active');
+    setGroup(['an-imu','an-ekf'], 'an-active');
+    setGroup(['an-pid','an-mixer'], 'an-active');
+    setGroup(['an-esc','an-servol','an-servor'], 'an-active');
+    setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-active');
+  }
+  // ── JAMMED — ORB-SLAM3 hot, YOLO hunting, full inner loop ──
+  else if(st === S.JAMMED){
+    setNode('an-d435i', anchorAlphaVerified ? 'an-active' : 'an-idle');
+    setNode('an-slamcam', 'an-active');
+    setNode('an-orbslam', 'an-active'); // SLAM is the primary tool
+    setNode('an-yolo', matchConf > 0.4 ? 'an-active' : 'an-idle');
+    setNode('an-jetson', 'an-active');
+    setNode('an-traj', matchConf > 0.6 ? 'an-active' : 'an-idle');
+    setNode('an-mavlink', matchConf > 0.6 ? 'an-active' : 'an-idle');
+    setNode('an-pixhawk', 'an-active');
+    setGroup(['an-imu','an-ekf'], 'an-active');
+    setGroup(['an-pid','an-mixer'], 'an-active');
+    setGroup(['an-esc','an-servol','an-servor'], 'an-active');
+    setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-active');
+  }
+  // ── LOCK — target identified, all systems blazing ──────────
+  else if(st === S.LOCK){
+    setGroup(['an-d435i','an-slamcam','an-orbslam','an-yolo'], 'an-active');
+    setNode('an-jetson', 'an-active');
+    setNode('an-traj', 'an-active');
+    setNode('an-mavlink', 'an-active');
+    setGroup(['an-pixhawk','an-imu','an-ekf','an-pid','an-mixer'], 'an-active');
+    setGroup(['an-esc','an-servol','an-servor'], 'an-active');
+    setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-active');
+  }
+  // ── DIVE — inner loop at max, plant hammering ──────────────
+  else if(st === S.DIVE){
+    setGroup(['an-d435i','an-yolo'], 'an-active'); // nose cam locked onto target
+    setGroup(['an-slamcam','an-orbslam'], 'an-idle'); // SLAM not needed now
+    setNode('an-jetson', 'an-active');
+    setNode('an-traj', 'an-active');
+    setNode('an-mavlink', 'an-active');
+    setGroup(['an-pixhawk','an-imu','an-ekf'], 'an-active');
+    setGroup(['an-pid','an-mixer'], 'an-active');
+    setGroup(['an-esc','an-servol','an-servor'], 'an-active');
+    setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-active');
+  }
+  // ── IMPACT ─────────────────────────────────────────────────
+  else if(st === S.IMPACT){
+    setGroup(['an-d435i','an-slamcam','an-orbslam','an-yolo','an-jetson',
+              'an-traj','an-mavlink','an-pixhawk','an-imu','an-ekf',
+              'an-pid','an-mixer','an-esc','an-servol','an-servor'], 'an-dim');
+    setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-dim');
+  }
+
+  // ── State badge label + colour ─────────────────────────────
+  var badge = document.getElementById('arch-state-badge');
+  var labels = ['PRE-LAUNCH','CATAPULT','GPS INGRESS','JAMMED — HUNTING','TARGET LOCKED','TERMINAL DIVE','IMPACT'];
+  var colors = ['#607080','#00d4ff','#00aaff','#ffaa00','#ff4400','#ff2200','#888888'];
+  badge.textContent = labels[st] || '';
+  badge.style.color = colors[st] || '#607080';
+  badge.style.borderColor = colors[st] || '#607080';
+  badge.style.background = 'rgba('+hexToRgb(colors[st]||'#607080')+',0.10)';
+}
+
+// tiny hex→rgb helper for badge background
+function hexToRgb(hex){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return r+','+g+','+b;
+}
+window.hexToRgb = hexToRgb;
+
+})();
+</script>
+</body>
+</html>
