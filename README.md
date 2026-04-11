@@ -57,6 +57,9 @@ building, and helipad. NavPod hunts that exact compound. It doesn't work on a
 fictional map. It works on the real world.
 
 ---
+## Hardware Architecture
+
+![NavPod Hardware Architecture](hardware-architecture.jpg)
 
 ## Tech Stack
 - ROS2 | ArduPilot | ORB-SLAM3 | YOLOv8 | MAVLink
