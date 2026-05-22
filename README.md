@@ -59,6 +59,7 @@ fictional map. It works on the real world.
 ---
 ## Hardware Architecture
 
+
 ![NavPod Hardware Architecture](hardware-architecture.jpg)
 
 🔴 **[Live Simulation Demo](https://isalehalsubaie-hash.github.io/navpod-project)**
