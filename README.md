@@ -76,81 +76,32 @@ fictional map. It works on the real world.
 
 ---
 
-## Future Plans
-> The following upgrades are derived from senior engineering review notes. None of these are implemented yet — they are documented here as a roadmap for the next development phase.
+## What's Next
 
----
+### Terrain Navigation (TNav)
+GPS-aided positioning gets replaced with a full TNav pipeline. Pre-load a georeferenced 3D terrain map before launch, then match live nadir camera frames against it mid-flight to get a corrected position fix without any GPS signal. Evaluating ArcGIS for map prep, ORB-SLAM3 is already in the stack.
 
-### 1. Terrain Navigation (TNav) Module
-Replace GPS-aided positioning with a dedicated **Terrain Navigation** pipeline:
-- Pre-load a 3D terrain map (from satellite or ArcGIS export) before launch
-- During flight, extract live features from the nadir camera and match them against the stored map
-- Output a corrected position fix that resets INS drift without GPS
-- Tools under evaluation: **ArcGIS** (map prep), **Intelligent mapping** (cloud/edge hybrid), **ORB-SLAM3** (already integrated)
+### AI-Aided INS
+EKF3 alone drifts. The plan is to add an AI-aided INS block that predicts and corrects gyro drift (~5°/h) so we can hold 80%+ position accuracy across a full GPS-denied ingress. TNav corrections feed back in to bound the error growth between terrain fixes.
 
----
-
-### 2. AI-Aided INS with Drift Compensation
-The current EKF3 loop accumulates heading drift over time. Planned upgrade:
-- Integrate an **AI-aided INS** block that predicts and corrects gyro drift (~5°/h spec)
-- Target: 80% position accuracy maintained across a full GPS-denied ingress (no external fix)
-- TNav correction loop feeds back into INS to bound error growth — INS provides dead-reckoning between terrain fixes
-
----
-
-### 3. Three-Stage Navigation Architecture
+### Three-Stage Nav Modes
 ```
 [INav] ──(IMU + Baro)──► [INS] ──► Position Output
                            ▲
                         [GPS] (available) / [TNav] (GPS-denied)
 ```
-- **Stage 1 — GPS available**: Standard INS + GPS fusion (current state)
-- **Stage 2 — Silence mode (CAM only)**: GPS denied, terrain feature matching via nadir camera alone
-- **Stage 3 — Full silence mode (CAM + LiDAR)**: Add LiDAR depth layer for more robust feature extraction in low-texture terrain
+Stage 1: normal INS + GPS. Stage 2 (silence mode): terrain matching via nadir camera only. Stage 3 (full silence): LiDAR added for dense point-cloud features when terrain is low-texture or dusty.
 
----
+### LiDAR Layer
+Camera-only TNav degrades in featureless terrain. Adding a LiDAR alongside the nadir cam gives a dense 3D point cloud to pull features from — more robust fix, longer GPS-denied range.
 
-### 4. LiDAR Integration (Silence Mode)
-When GPS is jammed and camera-only matching degrades (dust, featureless terrain):
-- Add a **LiDAR sensor** alongside the existing nadir camera
-- LiDAR provides dense 3D point cloud → richer feature extraction → more reliable TNav fix
-- Estimated improvement: extend reliable GPS-denied range from current camera baseline
-
----
-
-### 5. Feature Extraction Pipeline for 3D Map Matching
+### HIL Sim in Unity
+Moving beyond WebGL to a proper hardware-in-the-loop setup:
 ```
-Satellite Image ──► 3D Map Generation ──► Feature Extraction
-                                                │
-                    ArcGIS / Intelligent ───────┘
-                    Mapping / SLAM
-
-Live Camera Feed ──► Transform / State Estimation (Tran_S.E) ──► Position Fix
+Ground Station ──► PX4 SITL ◄──── GPS sim
+                      │
+                  Unity Sim ◄── CAD model
+                      │ UDP
+                  AI Model ──► Position Output
 ```
-- Pre-flight: build a georeferenced 3D map from satellite imagery (ArcGIS or equivalent)
-- In-flight: extract terrain features in real-time, run **Transform/State Estimation** to align live view to stored map
-- Output: corrected position fed back into the navigation stack
-
----
-
-### 6. Unity Hardware-in-the-Loop Simulation Pipeline
-For validation before physical flight tests:
-```
-Ground Station (mission commands)
-        │
-        ▼
-      PX4 (control) ◄──── GPS sim
-        │
-        ▼
-    Unity Sim ◄──── CAD Plane Model
-        │
-       UDP
-        │
-        ▼
-    AI Model ──► Position Output
-```
-- Unity receives flight state via **UDP bridge** (replaces current WebGL-only sim)
-- PX4 SITL runs inside the loop — same firmware as hardware
-- AI model receives simulated sensor data and outputs position estimates
-- Target fidelity: **85% sim-to-real accuracy** validated in this pipeline before hardware flights
-- Dead Reckoning Integration (DRI) block added to bridge gap between terrain fixes
+Same PX4 firmware as the real hardware. Target is 85% sim-to-real fidelity before any physical flight test. DRI block bridges the gap between terrain fixes.
