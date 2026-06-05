@@ -61,7 +61,7 @@ fictional map. It works on the real world.
 
 ![NavPod Hardware Architecture](hardware-architecture-v2.jpg)
 
-🔴 **[Live Simulation Demo](https://isalehalsubaie-hash.github.io/navpod-project)**
+🔴 **[Live Simulation Demo](https://isalehalsubaie-hash.github.io/navpod-project/)**
 
 ## Tech Stack
 - ROS2 | ArduPilot | ORB-SLAM3 | YOLOv8 | MAVLink
