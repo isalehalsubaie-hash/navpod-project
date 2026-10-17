@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>NavPod — BWB Kinetic Strike | Iraqi Plains</title>
+<title>NavPod - BWB Kinetic Strike | Iraqi Plains</title>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;font-family:'Courier New',monospace}
@@ -52,7 +52,7 @@ body.day{
 .lv{font-size:7.5px;letter-spacing:1px;font-weight:700;color:var(--txt);text-align:right}
 .lv.w{color:var(--warn)}.lv.a{color:var(--accent)}.lv.ok{color:#00ffaa}
 .dv{height:1px;background:var(--hud-border);margin:5px 0}
-/* AI console — sits above the left PiP */
+/* AI console - sits above the left PiP */
 #aiConsole{position:fixed;bottom:200px;left:14px;background:var(--con-bg);
   border:1px solid var(--con-b);border-left:3px solid #00ffaa;
   padding:9px 13px;width:370px;border-radius:2px;z-index:11;pointer-events:none;display:none}
@@ -107,12 +107,12 @@ body.day{
   text-shadow:0 0 30px #ff2200;text-transform:uppercase;animation:ewP .35s step-end infinite}
 #ewBannerSub{font-size:8.5px;letter-spacing:3px;color:#ff8800;margin-top:8px;font-weight:700;text-transform:uppercase}
 @keyframes ewP{0%,100%{opacity:1}50%{opacity:.15}}
-/* ★ PiP frames — transparent background so WebGL shows through */
+/* ★ PiP frames - transparent background so WebGL shows through */
 .pip-wrap{position:fixed;z-index:20;pointer-events:none}
 .pip-label{font-size:6px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:3px}
 .pip-frame{border:1px solid var(--pip-b);border-radius:2px;overflow:hidden;
   box-shadow:0 2px 18px rgba(0,0,0,.7);position:relative;
-  background:transparent}   /* ★ transparent — WebGL draws inside */
+  background:transparent}   /* ★ transparent - WebGL draws inside */
 .pip-corner{position:absolute;font-size:5.5px;color:rgba(0,220,100,.70);
   background:rgba(0,8,4,.80);padding:1px 4px;z-index:4;letter-spacing:.5px;pointer-events:none}
 .tl{top:3px;left:3px}.tr{top:3px;right:3px}.bl{bottom:3px;left:3px}.br2{bottom:3px;right:3px}
@@ -122,16 +122,16 @@ body.day{
   animation:sa 1.2s linear infinite;display:none}
 .scan-line.r{background:linear-gradient(90deg,transparent,rgba(255,100,0,.85),transparent)}
 @keyframes sa{0%{top:0}100%{top:100%}}
-/* ★ Both PiPs at EXACT bottom corners — GL coords computed to match */
+/* ★ Both PiPs at EXACT bottom corners - GL coords computed to match */
 #pipDownWrap{bottom:14px;left:14px}
 #pipNoseWrap{bottom:14px;right:14px}
-/* ★ Nose bbox canvas overlay — EXACTLY over right PiP */
+/* ★ Nose bbox canvas overlay - EXACTLY over right PiP */
 #noseBboxCanvas{position:fixed;right:14px;bottom:14px;
   width:220px;height:165px;pointer-events:none;z-index:21;display:none}
-/* ★ Down bbox canvas overlay — EXACTLY over left PiP (SLAM nadir cam) */
+/* ★ Down bbox canvas overlay - EXACTLY over left PiP (SLAM nadir cam) */
 #downBboxCanvas{position:fixed;left:14px;bottom:14px;
   width:220px;height:165px;pointer-events:none;z-index:21;display:none}
-/* Controls — above the right PiP */
+/* Controls - above the right PiP */
 #ctrlWrap{position:fixed;bottom:200px;right:14px;display:flex;flex-direction:column;
   align-items:flex-end;gap:6px;z-index:20}
 .btn{background:var(--btn-bg);border:1px solid var(--btn-b);color:var(--btn-t);
@@ -142,7 +142,7 @@ body.day{
 #btnLaunch{background:var(--lb);border-color:var(--lbb);color:var(--lbt);
   font-size:11px;letter-spacing:2.5px;padding:10px 20px}
 .btn-row{display:flex;gap:6px}
-/* ★ PAUSE button — cyan/blue tactical theme, distinct from green controls */
+/* ★ PAUSE button - cyan/blue tactical theme, distinct from green controls */
 #btnPause{
   background:rgba(0,160,220,0.14);border-color:rgba(0,200,255,0.55);color:#00d4ff;
   font-size:8px;letter-spacing:2px;padding:8px 14px}
@@ -165,7 +165,7 @@ body.day{
    ★ STORED SATELLITE BASELINE INTEL PANEL
    Positioned below the #ai panel (right:14px).
    The 2D top-down map drawn on #intelCanvas is the "photo"
-   loaded into NavPod before launch — the drone matches this
+   loaded into NavPod before launch - the drone matches this
    to live camera feeds to locate itself without GPS.
 ══════════════════════════════════════════════════════════ */
 #intelPanel{
@@ -182,7 +182,7 @@ body.day{
   border:1px solid var(--hud-border);border-radius:2px;overflow:hidden;margin-top:3px}
 #intelMatchFill{height:100%;width:0%;background:linear-gradient(90deg,#00aa44,#00ffaa);
   transition:width .15s}
-/* ★ MATCH LINES — full-screen canvas that draws glowing lines
+/* ★ MATCH LINES - full-screen canvas that draws glowing lines
    from the stored intel panel's feature points to the live
    bounding boxes on whichever PiP camera can see them.
    z-index:30 sits above PiP frames (z:20) + bbox canvases (z:21)
@@ -192,7 +192,7 @@ body.day{
   pointer-events:none;z-index:30;display:none}
 
 /* ══════════════════════════════════════════════════════════════
-   ★ ARCHITECTURE PANEL — slides up from bottom
+   ★ ARCHITECTURE PANEL - slides up from bottom
    Live block diagram driven by mission STATE each frame.
 ══════════════════════════════════════════════════════════════ */
 #archPanel{
@@ -314,7 +314,7 @@ body.day{
   </svg>
 </div>
 
-<!-- ★ LEFT PiP — SLAM NADIR (downCam) — CSS bottom:14px left:14px, 220x165 -->
+<!-- ★ LEFT PiP - SLAM NADIR (downCam) - CSS bottom:14px left:14px, 220x165 -->
 <div class="pip-wrap" id="pipDownWrap">
   <div class="pip-label">&#8595; slam nadir cam</div>
   <div class="pip-frame" style="width:220px;height:165px">
@@ -326,10 +326,10 @@ body.day{
   </div>
 </div>
 
-<!-- ★ Down bbox canvas — EXACTLY over left PiP; frustum-culled detections drawn here -->
+<!-- ★ Down bbox canvas - EXACTLY over left PiP; frustum-culled detections drawn here -->
 <canvas id="downBboxCanvas"></canvas>
 
-<!-- ★ RIGHT PiP — FORWARD NOSE CAM — CSS bottom:14px right:14px, 220x165 -->
+<!-- ★ RIGHT PiP - FORWARD NOSE CAM - CSS bottom:14px right:14px, 220x165 -->
 <div class="pip-wrap" id="pipNoseWrap">
   <div class="pip-label" style="text-align:right">navpod forward sensor &#9664;</div>
   <div class="pip-frame" style="width:220px;height:165px">
@@ -341,11 +341,11 @@ body.day{
   </div>
 </div>
 
-<!-- ★ Bbox overlay canvas — EXACTLY matches right PiP position -->
+<!-- ★ Bbox overlay canvas - EXACTLY matches right PiP position -->
 <canvas id="noseBboxCanvas"></canvas>
 
 <!-- ══════════════════════════════════════════════════════════
-     ★ STORED SATELLITE BASELINE — top-down reference image
+     ★ STORED SATELLITE BASELINE - top-down reference image
      This is the "photo" pre-loaded into the NavPod at launch.
      The drone has no GPS; it visually matches live camera
      feeds to THIS image to determine where it is and where
@@ -363,7 +363,7 @@ body.day{
   </div>
 </div>
 
-<!-- ★ Full-screen match-lines canvas — glowing connectors from intel panel
+<!-- ★ Full-screen match-lines canvas - glowing connectors from intel panel
      features to live PiP bounding boxes, proving the AI is comparing
      the stored photo to the real-time 3D sensor feeds. -->
 <canvas id="matchLinesCanvas"></canvas>
@@ -375,7 +375,7 @@ body.day{
   </div>
   <!-- ★ Architecture panel toggle -->
   <button class="btn" id="btnArch" onclick="toggleArch()">&#9670; ARCH DIAGRAM</button>
-  <!-- ★ PAUSE — freezes physics/AI timers, keeps camera live for free-look analysis -->
+  <!-- ★ PAUSE - freezes physics/AI timers, keeps camera live for free-look analysis -->
   <button class="btn" id="btnPause" onclick="togglePause()">&#9646;&#9646; PAUSE SIM</button>
   <button class="btn" id="btnLaunch" onclick="launch()" style="display:none">
     &#9658;&#9658; EXECUTE LAUNCH
@@ -398,7 +398,7 @@ body.day{
 ════════════════════════════════════════════════════════════════ -->
 <div id="archPanel">
   <div id="arch-topbar">
-    <div id="arch-title-txt">◈ &nbsp;NavPod BWB — Bifurcated Control Architecture &nbsp;·&nbsp; Live Mission Sync</div>
+    <div id="arch-title-txt">◈ &nbsp;NavPod BWB - Bifurcated Control Architecture &nbsp;·&nbsp; Live Mission Sync</div>
     <div id="arch-state-badge" style="color:#00ff88;border-color:#00ff88;background:rgba(0,255,136,0.08)">PRE-LAUNCH</div>
     <button id="arch-close" onclick="toggleArch()">&#10005;</button>
   </div>
@@ -474,19 +474,19 @@ body.day{
 
 <!-- ── Zone backgrounds ── -->
 <rect x="10" y="52" width="1080" height="410" rx="8" fill="url(#agz-outer)" stroke="#00d4ff" stroke-width="1.1" stroke-opacity="0.30"/>
-<text x="26" y="44" font-family="Orbitron,monospace" font-size="8.5" fill="#00d4ff" fill-opacity="0.50" letter-spacing="3">OUTER LOOP — NavPod Edge Compute  ·  Jetson Orin Nano</text>
+<text x="26" y="44" font-family="Orbitron,monospace" font-size="8.5" fill="#00d4ff" fill-opacity="0.50" letter-spacing="3">OUTER LOOP - NavPod Edge Compute  ·  Jetson Orin Nano</text>
 <g stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.38">
   <path d="M10,62 L10,52 L20,52"/><path d="M1080,62 L1090,62 L1090,52 L1080,52"/>
   <path d="M10,452 L10,462 L20,462"/><path d="M1080,462 L1090,462 L1090,452"/>
 </g>
 <rect x="10" y="545" width="1080" height="352" rx="8" fill="url(#agz-inner)" stroke="#ff8c00" stroke-width="1.1" stroke-opacity="0.30"/>
-<text x="26" y="538" font-family="Orbitron,monospace" font-size="8.5" fill="#ff8c00" fill-opacity="0.50" letter-spacing="3">INNER LOOP — Flight Controller  ·  Pixhawk Cube Orange+ / ArduPilot</text>
+<text x="26" y="538" font-family="Orbitron,monospace" font-size="8.5" fill="#ff8c00" fill-opacity="0.50" letter-spacing="3">INNER LOOP - Flight Controller  ·  Pixhawk Cube Orange+ / ArduPilot</text>
 <g stroke="#ff8c00" stroke-width="1" fill="none" opacity="0.38">
   <path d="M10,555 L10,545 L20,545"/><path d="M1080,555 L1090,555 L1090,545 L1080,545"/>
   <path d="M10,887 L10,897 L20,897"/><path d="M1080,887 L1090,887 L1090,897"/>
 </g>
 <rect x="10" y="918" width="1080" height="85" rx="8" fill="url(#agz-plant)" stroke="#00ff88" stroke-width="1.1" stroke-opacity="0.30"/>
-<text x="26" y="912" font-family="Orbitron,monospace" font-size="8.5" fill="#00ff88" fill-opacity="0.50" letter-spacing="3">PLANT &amp; ACTUATORS — Physical Hardware</text>
+<text x="26" y="912" font-family="Orbitron,monospace" font-size="8.5" fill="#00ff88" fill-opacity="0.50" letter-spacing="3">PLANT &amp; ACTUATORS - Physical Hardware</text>
 <g stroke="#00ff88" stroke-width="1" fill="none" opacity="0.38">
   <path d="M10,928 L10,918 L20,918"/><path d="M1080,928 L1090,928 L1090,918 L1080,918"/>
 </g>
@@ -692,7 +692,7 @@ body.day{
 <!-- Feedback grey -->
 <path id="an-feedback" d="M854 968 L940 968 L940 678 L867 678" stroke="#607080" stroke-width="1.6" fill="none" opacity="0.45" stroke-dasharray="5,5" marker-end="url(#aafb)"/>
 <path d="M240 968 L142 968 L142 710" stroke="#607080" stroke-width="1.4" fill="none" opacity="0.38" stroke-dasharray="5,5" marker-end="url(#aafb)"/>
-<text font-family="Share Tech Mono,monospace" font-size="7.5" fill="#607080" fill-opacity="0.65" text-anchor="middle" transform="rotate(90,940,800)">Aerodynamic Response — Closed Loop</text>
+<text font-family="Share Tech Mono,monospace" font-size="7.5" fill="#607080" fill-opacity="0.65" text-anchor="middle" transform="rotate(90,940,800)">Aerodynamic Response - Closed Loop</text>
 
 <!-- ── ANIMATED FLOW DOTS (CSS-driven via animateMotion) ── -->
 <g id="an-dots-outer">
@@ -766,9 +766,9 @@ body.day{
 // ══════════════════════════════════════════════════════════════
 var LAUNCH_ACCELERATION = 0.30;     // ★ violent catapult kick
 var LAUNCH_MAX_SPEED    = 8.0;      // ★ screams off the rail
-var DRONE_SPEED_PER_SEC = 1/15;     // ★ screams through valleys — spline T=1.0 in 15 real-sec
-var CRUISE_SPEED        = 220;      // ★ methodical hunt — slow enough to watch AI work
-var DIVE_SPEED          = 800;      // ★ fast attack dive — visible but aggressive
+var DRONE_SPEED_PER_SEC = 1/15;     // ★ screams through valleys - spline T=1.0 in 15 real-sec
+var CRUISE_SPEED        = 220;      // ★ methodical hunt - slow enough to watch AI work
+var DIVE_SPEED          = 800;      // ★ fast attack dive - visible but aggressive
 var DOME_RADIUS         = 2000;
 var BANK_MULT           = 28;
 var EXPLOSION_N         = 600;
@@ -776,13 +776,13 @@ var SPLINE_TUBE_R       = 4;
 var FOLLOW_DIST         = 520;
 var CRUISE_AGL          = 300;
 var MIN_AGL             = 80;       // ★ strictly enforced in JAMMED, bypassed in DIVE
-var INGRESS_DURATION_S  = 15.0;     // ★ 15-sec sprint to the dome — skip the boring transit
+var INGRESS_DURATION_S  = 15.0;     // ★ 15-sec sprint to the dome - skip the boring transit
 // World coords
 var DOME_CX=0, DOME_CZ=600;
 var TGT_X=0,   TGT_Z=380;
 var ANC_A={x:-60,z:220};  // ★ Arc Assembly Hall (α anchor)
 var ANC_B={x:220,z:410};  // ★ Warehouse Row (β anchor)
-// ★ PiP pixel dimensions — MUST match HTML/CSS widths
+// ★ PiP pixel dimensions - MUST match HTML/CSS widths
 var PW=220, PH=165;
 
 // ══════════════════════════════════════════════════════════════
@@ -806,10 +806,10 @@ scene.fog=new THREE.FogExp2(0xD4B87A,0.00005); // ★ desert heat haze
 var mainCam=new THREE.PerspectiveCamera(68,W/H,1,20000);
 mainCam.position.set(0,1800,-3500);mainCam.lookAt(0,400,0);
 
-// ★ Nose cam — forward + slightly down
+// ★ Nose cam - forward + slightly down
 var noseCam=new THREE.PerspectiveCamera(72,PW/PH,1,18000);
 
-// ★ Down cam — SLAM nadir camera, straight down at terrain
+// ★ Down cam - SLAM nadir camera, straight down at terrain
 var downCam=new THREE.PerspectiveCamera(80,PW/PH,10,8000);
 
 window.addEventListener('resize',function(){
@@ -856,7 +856,7 @@ sunLight.position.set(-1500,4000,-800);scene.add(sunLight);
 var fillLight=new THREE.DirectionalLight(0xD4C090,1.2); // ★ sand-bounce fill
 fillLight.position.set(1500,800,2500);scene.add(fillLight);
 scene.add(new THREE.HemisphereLight(0x9EC4DC,0xC4A058,0.9)); // ★ sky/sand hemi
-var isDayMode=true; // ★ Iraqi plains — default to daylight
+var isDayMode=true; // ★ Iraqi plains - default to daylight
 function toggleTheme(){
   isDayMode=!isDayMode;
   document.body.classList.toggle('day',isDayMode);
@@ -872,7 +872,7 @@ function toggleTheme(){
 window.toggleTheme=toggleTheme;
 
 // ══════════════════════════════════════════════════════════════
-// ★ TERRAIN — smooth rolling hills with FORCED FLAT PLATEAU
+// ★ TERRAIN - smooth rolling hills with FORCED FLAT PLATEAU
 //   Plateau: within FLAT_INNER (400u) of target = perfectly flat
 //   Blend zone: 400→800u = smoothstep transition
 //   Beyond 800u: natural terrain
@@ -882,7 +882,7 @@ var FLAT_INNER= 400;   // fully flat within this radius of target
 var FLAT_OUTER= 800;   // fully natural terrain beyond this radius
 
 function rawH(x,z){
-  // ★ Iraqi alluvial plains — nearly flat, very gentle undulation
+  // ★ Iraqi alluvial plains - nearly flat, very gentle undulation
   var s1=28*Math.sin(x*0.00028+0.6)*Math.cos(z*0.00024+0.4);
   var s2=14*Math.cos(x*0.00045+1.2)*Math.sin(z*0.00038+0.8);
   var s3= 8*Math.sin((x+z)*0.00018+0.3);
@@ -899,7 +899,7 @@ function getH(x,z){
   return FLAT_H*(1-t)+rawH(x,z)*t;                  // blend
 }
 
-// ★ tgy: target sits exactly at FLAT_H — no guessing
+// ★ tgy: target sits exactly at FLAT_H - no guessing
 var tgy=FLAT_H;
 
 var TERR_SIZE=8000,TERR_SEGS=72;
@@ -945,12 +945,12 @@ var jarm1=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.8,28,8),jMat);jarm1.po
 var jarm2=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.8,28,8),jMat);jarm2.position.set(DOME_CX-12,jgy+46,DOME_CZ+12);scene.add(jarm2);
 var jarm3=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.8,28,8),jMat);jarm3.position.set(DOME_CX,jgy+46,DOME_CZ-14);scene.add(jarm3);
 var jTower=new THREE.Mesh(new THREE.CylinderGeometry(5,8,80,10),jMat);jTower.position.set(DOME_CX,jgy+40,DOME_CZ);scene.add(jTower);
-// ★ jamLight — pulsing red point light at the EW jammer tower (referenced in render loop)
+// ★ jamLight - pulsing red point light at the EW jammer tower (referenced in render loop)
 var jamLight=new THREE.PointLight(0xff2200,5.5,1200);
 jamLight.position.set(DOME_CX,jgy+90,DOME_CZ);scene.add(jamLight);
 
 // ══════════════════════════════════════════════════════════════
-// ★ TARGET — MILITARY ENCAMPMENT on RAISED FLAT PLATFORM
+// ★ TARGET - MILITARY ENCAMPMENT on RAISED FLAT PLATFORM
 //   tgy = FLAT_H = 300 (guaranteed flat terrain under it)
 //   targetGrp sits 10 units above tgy so nothing can clip
 // ══════════════════════════════════════════════════════════════
@@ -958,7 +958,7 @@ var targetGrp=new THREE.Group();
 targetGrp.position.set(TGT_X, tgy+10, TGT_Z);
 scene.add(targetGrp);
 
-// ★★★ DESERT MILITARY COMPOUND — rebuilt from satellite imagery
+// ★★★ DESERT MILITARY COMPOUND - rebuilt from satellite imagery
 //   Based on Iraqi plains compound featuring:
 //   α anchor: large curved arc assembly hall (blue corrugated roof)
 //   β anchor: row of 4 brown warehouses on east side
@@ -987,7 +987,7 @@ pad.position.set(0,-7,0);targetGrp.add(pad);
   wm.position.set(w[0],w[1],w[2]);targetGrp.add(wm);
 });
 
-// ── ARC ASSEMBLY HALL (α ANCHOR) — upper-center-left ─────────
+// ── ARC ASSEMBLY HALL (α ANCHOR) - upper-center-left ─────────
 // The most distinctive compound feature: curved arc hall, blue corrugated roof.
 // Composed of a central section + two angled wings forming a ~270u wide arc.
 // Group-local center: (-60, 0, -160) → world: (-60, -, 220)
@@ -1021,7 +1021,7 @@ pad.position.set(0,-7,0);targetGrp.add(pad);
   apron.position.set(-54,1,-62);targetGrp.add(apron);
 })();
 
-// ── BROWN WAREHOUSE ROW (β ANCHOR) — east side ───────────────
+// ── BROWN WAREHOUSE ROW (β ANCHOR) - east side ───────────────
 // Four parallel warehouses, brown/rust corrugated roofing.
 // Group-local row center: (+220, 0, +30) → world: (220, -, 410)
 (function buildWarehouses(){
@@ -1039,7 +1039,7 @@ pad.position.set(0,-7,0);targetGrp.add(pad);
   wr.position.set(135,1,20);targetGrp.add(wr);
 })();
 
-// ── ORANGE COMMAND BUILDING — center compound ─────────────────
+// ── ORANGE COMMAND BUILDING - center compound ─────────────────
 (function buildCmdBldg(){
   var b=new THREE.Mesh(new THREE.BoxGeometry(72,40,60),wallMat);
   b.position.set(28,20,58);targetGrp.add(b);
@@ -1052,7 +1052,7 @@ pad.position.set(0,-7,0);targetGrp.add(pad);
   ar.position.set(28,33,105);targetGrp.add(ar);
 })();
 
-// ── SMALL BLUE SHELTERS — scattered west/south ────────────────
+// ── SMALL BLUE SHELTERS - scattered west/south ────────────────
 [{x:-290,z:-55},{x:-240,z:-55},{x:-290,z:0},{x:-240,z:0},
  {x:-290,z:55},{x:-240,z:55},{x:-180,z:105},{x:-130,z:90},
  {x:-80,z:155},{x:-140,z:170},{x:75,z:-60},{x:125,z:-60},
@@ -1063,7 +1063,7 @@ pad.position.set(0,-7,0);targetGrp.add(pad);
   sr.position.set(sp.x,17,sp.z);targetGrp.add(sr);
 });
 
-// ── VEGETATION — north section (darker patches visible in sat image) ──
+// ── VEGETATION - north section (darker patches visible in sat image) ──
 (function buildVeg(){
   var positions=[
     {x:-148,z:-248,r:18},{x:-118,z:-258,r:13},{x:-94,z:-238,r:16},
@@ -1079,7 +1079,7 @@ pad.position.set(0,-7,0);targetGrp.add(pad);
   });
 })();
 
-// ── TARMAC AREAS — central hardstand + roads ─────────────────
+// ── TARMAC AREAS - central hardstand + roads ─────────────────
 // Central open hardstand in front of arc building
 var ts1=new THREE.Mesh(new THREE.BoxGeometry(320,2,200),tarmacMat);
 ts1.position.set(-40,1,-30);targetGrp.add(ts1);
@@ -1090,7 +1090,7 @@ rd1.position.set(0,1,168);targetGrp.add(rd1);
 var rd2=new THREE.Mesh(new THREE.BoxGeometry(14,2,280),tarmacMat);
 rd2.position.set(-340,1,80);targetGrp.add(rd2);
 
-// ── CIRCULAR FEATURE — helipad/decorative (visible in satellite) ──
+// ── CIRCULAR FEATURE - helipad/decorative (visible in satellite) ──
 var helipMat=new THREE.MeshStandardMaterial({color:0xA89060,roughness:0.90,metalness:0.0});
 var helip=new THREE.Mesh(new THREE.CylinderGeometry(38,38,1,20),helipMat);
 helip.position.set(-32,0.5,-285);targetGrp.add(helip);
@@ -1125,13 +1125,13 @@ mast.position.set(-62,72,-235);targetGrp.add(mast);
 var tgtLight=new THREE.PointLight(0xFFCC88,0,600);tgtLight.position.set(0,120,0);targetGrp.add(tgtLight);
 var campFireLight=new THREE.PointLight(0xFFE8AA,1.8,400);campFireLight.position.set(28,30,55);targetGrp.add(campFireLight);
 
-// soldiers array kept for compatibility (empty — no patrol soldiers in this compound)
+// soldiers array kept for compatibility (empty - no patrol soldiers in this compound)
 var soldiers=[];
 
 
-// ★ ANCHOR POINTS — both anchors now point at compound structures
+// ★ ANCHOR POINTS - both anchors now point at compound structures
 // α: Arc Assembly Hall (world -60, -, 220)  β: Warehouse Row (world 220, -, 410)
-// No separate geometry needed — the buildings themselves are the anchors.
+// No separate geometry needed - the buildings themselves are the anchors.
 // Tiny low-visibility sand-colored survey marker just to mark the spot.
 var ancA_gy=getH(ANC_A.x,ANC_A.z);
 var ancAGrp=new THREE.Group();ancAGrp.position.set(ANC_A.x,ancA_gy,ANC_A.z);scene.add(ancAGrp);
@@ -1147,7 +1147,7 @@ var ancBLight=new THREE.PointLight(0xFF8822,1.4,350);ancBLight.position.set(ANC_
 // CATAPULT LAUNCHER
 // ══════════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
-// ★ PROCEDURAL LAUNCH SITE — random position outside the dome
+// ★ PROCEDURAL LAUNCH SITE - random position outside the dome
 //   Every page-load places the catapult at a fresh random bearing
 //   and distance from the jamming dome centre.
 // ══════════════════════════════════════════════════════════════
@@ -1163,7 +1163,7 @@ var LAUNCH_Z = DOME_CZ + Math.sin(launchAngle) * launchDist;
 // Terrain-conforming base height at the chosen site
 var launchGy = getH(LAUNCH_X, LAUNCH_Z);
 
-// ── RAIL orientation — aim TOWARD the dome centre ─────────────
+// ── RAIL orientation - aim TOWARD the dome centre ─────────────
 // Flat horizontal unit vector from launch site → dome centre
 var launchToDome = new THREE.Vector3(
   DOME_CX - LAUNCH_X, 0, DOME_CZ - LAUNCH_Z).normalize();
@@ -1216,7 +1216,7 @@ launchSiteLight.position.copy(RAIL_START.clone().add(new THREE.Vector3(0,100,0))
 scene.add(launchSiteLight);
 
 // ══════════════════════════════════════════════════════════════
-// ★ PROCEDURAL SPLINE — 5–7 waypoints from RAIL_END to dome edge
+// ★ PROCEDURAL SPLINE - 5–7 waypoints from RAIL_END to dome edge
 //   Each refresh produces a unique curved ingress path.
 //   Altitude: always safely above terrain + 300–500 u clearance.
 //   Lateral noise: ±600 u on middle waypoints for organic curves.
@@ -1228,7 +1228,7 @@ scene.add(launchSiteLight);
 
   var pts = [];
 
-  // WP 0 — rail exit (exact RAIL_END)
+  // WP 0 - rail exit (exact RAIL_END)
   pts.push(RAIL_END.clone());
 
   // Dome entry point (a point on the dome perimeter facing the launch site)
@@ -1246,10 +1246,10 @@ scene.add(launchSiteLight);
     var bx = RAIL_END.x  + (domeEntryX - RAIL_END.x)  * t;
     var bz = RAIL_END.z  + (domeEntryZ - RAIL_END.z)  * t;
 
-    // Lateral noise (perpendicular to the corridor) — strongest in the middle
+    // Lateral noise (perpendicular to the corridor) - strongest in the middle
     var lateralNoise = Math.sin(t * Math.PI); // peaks at t=0.5
     var noiseAmp = 500 + Math.random() * 600; // 500–1100 u max swing
-    var noiseSign = (Math.random() < 0.5) ? 1 : -1; // consistent side per run? no — each mid varies
+    var noiseSign = (Math.random() < 0.5) ? 1 : -1; // consistent side per run? no - each mid varies
     var nx = bx + launchRight.x * lateralNoise * noiseAmp * noiseSign;
     var nz = bz + launchRight.z * lateralNoise * noiseAmp * noiseSign;
 
@@ -1262,7 +1262,7 @@ scene.add(launchSiteLight);
     pts.push(new THREE.Vector3(nx, ny, nz));
   }
 
-  // WP final — dome perimeter entry
+  // WP final - dome perimeter entry
   var domeEntryTerrain = getH(domeEntryX, domeEntryZ);
   pts.push(new THREE.Vector3(
     domeEntryX,
@@ -1284,7 +1284,7 @@ scene.add(splineTube);
 scene.add(new THREE.Mesh(new THREE.TubeGeometry(spline,100,SPLINE_TUBE_R*3,9,false),
   new THREE.MeshBasicMaterial({color:0x003366,transparent:true,opacity:0.14,side:THREE.BackSide})));
 
-// Waypoint markers — first is launch (orange), rest are nav blue
+// Waypoint markers - first is launch (orange), rest are nav blue
 SPLINE_PTS.forEach(function(pt,wi){
   var wm = new THREE.Mesh(
     new THREE.OctahedronGeometry(18,0),
@@ -1386,7 +1386,7 @@ function addTrail(pos){
 }
 
 // ══════════════════════════════════════════════════════════════
-// ★ AI CONSOLE — fast milestones, instant lock on first anchor
+// ★ AI CONSOLE - fast milestones, instant lock on first anchor
 // ══════════════════════════════════════════════════════════════
 var aiConsoleActive=false,consoleDone=false,msgIndex=0;
 var anchorAlphaVerified=false,anchorBetaVerified=false;
@@ -1410,7 +1410,7 @@ function isSeenByAnyCamera(worldPt){
   return Math.max(getCameraVisibility(worldPt,downCam),
                   getCameraVisibility(worldPt,noseCam));
 }
-// Accumulated sighting counters — must be in-camera for 1.2s to confirm
+// Accumulated sighting counters - must be in-camera for 1.2s to confirm
 var rockSightedMs=0, barrsSightedMs=0;
 var SIGHT_CONFIRM_MS=1200;
 // Track which detections have already been logged
@@ -1492,7 +1492,7 @@ function updateConsole(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// ★ LIVE INTEL CANVAS ANIMATION — shows photo-matching process
+// ★ LIVE INTEL CANVAS ANIMATION - shows photo-matching process
 // Scan line sweeps the stored satellite photo; feature crosses
 // activate as the scan line crosses them, visualising ORB matching.
 // ══════════════════════════════════════════════════════════════
@@ -1649,7 +1649,7 @@ function drawTacticalBbox(worldPt,hw,hh,hd,cam,ctx,cw,ch,col,lbl,kpCol){
     for(var ki=0;ki<nKpts;ki++){
       var sx=KP_SEEDS[(ki*2)%KP_SEEDS.length];
       var sy=KP_SEEDS[(ki*2+1)%KP_SEEDS.length];
-      // Small Lissajous drift per point — looks like a tracker re-evaluating
+      // Small Lissajous drift per point - looks like a tracker re-evaluating
       var jx=Math.sin(t*2.8+ki*1.73)*2.5+Math.cos(t*1.9+ki*0.91)*1.8;
       var jy=Math.cos(t*3.2+ki*2.14)*2.5+Math.sin(t*2.1+ki*1.33)*1.8;
       var px=mnx+sx*bw+jx;
@@ -1725,7 +1725,7 @@ function updateAllBboxes(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// ★ INTEL CANVAS — static 2-D top-down satellite reference map
+// ★ INTEL CANVAS - static 2-D top-down satellite reference map
 //   drawn once at init. Represents the pre-loaded "photo" the
 //   NavPod carries into the jamming dome to navigate by.
 // ══════════════════════════════════════════════════════════════
@@ -1756,7 +1756,7 @@ function initIntelCanvas(){
 
   // ── Sandy desert background ──────────────────────────────────
   ctx.fillStyle='#BEA368';ctx.fillRect(0,0,cw,ch);
-  // Slight tonal variation — lighter hardstand area
+  // Slight tonal variation - lighter hardstand area
   ctx.fillStyle='rgba(200,180,120,0.45)';ctx.fillRect(28,20,130,100);
 
   // ── Tactical grid (subtle) ───────────────────────────────────
@@ -1799,7 +1799,7 @@ function initIntelCanvas(){
   vegPts.slice(1).forEach(function(p){ctx.lineTo(p[0],p[1]);});
   ctx.closePath();ctx.fill();
 
-  // ── ARC ASSEMBLY HALL (α Anchor) — upper-left of compound ────
+  // ── ARC ASSEMBLY HALL (α Anchor) - upper-left of compound ────
   // Footprint: three-section arc. Draw as a curved top polygon.
   ctx.fillStyle='rgba(40,72,130,0.75)';   // blue roof
   ctx.strokeStyle='rgba(20,50,100,0.90)';ctx.lineWidth=1.2;
@@ -1830,7 +1830,7 @@ function initIntelCanvas(){
   ctx.fillStyle='rgba(255,160,0,0.92)';ctx.font='bold 5.5px Courier New';
   ctx.fillText('\u03b1 ARC HALL',18,68);
 
-  // ── ORANGE COMMAND BUILDING — centre ─────────────────────────
+  // ── ORANGE COMMAND BUILDING - centre ─────────────────────────
   ctx.fillStyle='rgba(180,70,24,0.80)';   // orange roof
   ctx.fillRect(84,56,22,18);
   ctx.strokeStyle='rgba(130,40,10,0.85)';ctx.lineWidth=0.8;ctx.strokeRect(84,56,22,18);
@@ -1838,7 +1838,7 @@ function initIntelCanvas(){
   ctx.fillStyle='rgba(42,72,140,0.70)';
   ctx.fillRect(84,74,16,12);ctx.strokeRect(84,74,16,12);
 
-  // ── SMALL BLUE SHELTERS — west side ──────────────────────────
+  // ── SMALL BLUE SHELTERS - west side ──────────────────────────
   ctx.fillStyle='rgba(38,70,120,0.72)';
   ctx.strokeStyle='rgba(20,50,100,0.65)';ctx.lineWidth=0.7;
   [[18,52],[18,62],[18,72],[30,52],[30,62],[30,72]].forEach(function(s){
@@ -1849,7 +1849,7 @@ function initIntelCanvas(){
     ctx.fillRect(s[0],s[1],9,7);ctx.strokeRect(s[0],s[1],9,7);
   });
 
-  // ── WAREHOUSE ROW (β Anchor) — east side ─────────────────────
+  // ── WAREHOUSE ROW (β Anchor) - east side ─────────────────────
   // Four parallel brown warehouses
   var wColors=['rgba(90,50,20,0.78)','rgba(90,50,20,0.78)','rgba(90,50,20,0.78)','rgba(90,50,20,0.78)'];
   [88,100,112,124].forEach(function(wz,wi){
@@ -1907,7 +1907,7 @@ function initIntelCanvas(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// ★ MATCH-LINE CANVAS — connects intel panel features to live PiPs
+// ★ MATCH-LINE CANVAS - connects intel panel features to live PiPs
 //
 // Screen-space geometry (pure CSS math, no DOM query needed):
 //   Intel canvas left  = W - 14 - 220 + 12  =  W - 222
@@ -1958,7 +1958,7 @@ function updateMatchLines(){
   var downLeft=14,    downTop=H-179;
   var noseLeft=W-234, noseTop=H-179;
 
-  // Animated dash offset — makes the lines "march" toward the target
+  // Animated dash offset - makes the lines "march" toward the target
   var dashOff=(Date.now()*0.035)%11;
   matchLinesCtx.lineDashOffset=-dashOff;
 
@@ -2083,7 +2083,7 @@ var launchSpeed=0,launchProgress=0,splineT=0;
 var prevTangent=new THREE.Vector3(0,0,1);
 var diveTgt=new THREE.Vector3(TGT_X,tgy+10+46,TGT_Z);
 var diveVel=new THREE.Vector3();
-// ★ diveDirCurrent — unit vector for the smoothly-interpolated nose direction during dive.
+// ★ diveDirCurrent - unit vector for the smoothly-interpolated nose direction during dive.
 //   Initialized to the DIRECT vector from drone's lock-on position → diveTgt, so the
 //   drone never overshoots overhead. It slerps each frame for a smooth glide-slope entry.
 var diveDirCurrent=new THREE.Vector3(0,0,1);
@@ -2130,7 +2130,7 @@ function updateAutonomousNav(dt){
 
   if(!anchorAlphaVerified){
     // ────────────────────────────────────────────────────────
-    // LOST PHASE — execute the creeping line pattern
+    // LOST PHASE - execute the creeping line pattern
     // ────────────────────────────────────────────────────────
     if(sweepState === 'STRAIGHT'){
       // Wings level, maintain current heading exactly
@@ -2138,21 +2138,21 @@ function updateAutonomousNav(dt){
       sweepDist += CRUISE_SPEED * dt;
 
       if(sweepDist >= SWEEP_LEG_LENGTH){
-        // Leg complete — begin 180° turn
+        // Leg complete - begin 180° turn
         sweepState   = 'TURN';
         sweepTurnAcc = 0;
         yawRateTgt   = MAX_YAW_RATE * sweepTurnDir;
       }
 
     } else { // sweepState === 'TURN'
-      // Hold steady bank — coordinated rate-1 turn
+      // Hold steady bank - coordinated rate-1 turn
       yawRateTgt = MAX_YAW_RATE * sweepTurnDir;
 
       // Accumulate heading change (always positive regardless of direction)
       sweepTurnAcc += Math.abs(autoYawRate) * dt;
 
       if(sweepTurnAcc >= Math.PI){
-        // 180° complete — roll out onto new leg
+        // 180° complete - roll out onto new leg
         sweepState   = 'STRAIGHT';
         sweepDist    = 0;
         sweepTurnDir *= -1;          // reverse turn direction for next pass
@@ -2163,7 +2163,7 @@ function updateAutonomousNav(dt){
 
   } else {
     // ────────────────────────────────────────────────────────
-    // LOCKED PHASE — target confirmed, fly direct intercept
+    // LOCKED PHASE - target confirmed, fly direct intercept
     // Abandon sweep completely; strong yaw to target bearing
     // ────────────────────────────────────────────────────────
     sweepState = 'STRAIGHT'; // clean up state for if we re-enter JAMMED
@@ -2175,7 +2175,7 @@ function updateAutonomousNav(dt){
   }
 
   // ── Integrate heading ──────────────────────────────────────
-  // Slew rate 2.8 dt — fast enough for the turn but not instantaneous
+  // Slew rate 2.8 dt - fast enough for the turn but not instantaneous
   autoYawRate += (yawRateTgt - autoYawRate) * Math.min(1, dt * 2.8);
   autoYaw     += autoYawRate * dt;
   autoYaw      = wrapAngle(autoYaw);
@@ -2191,7 +2191,7 @@ function updateAutonomousNav(dt){
   dronePos.z+=Math.cos(autoYaw)*cp*CRUISE_SPEED*dt;
   dronePos.y+=sp2*CRUISE_SPEED*dt;
 
-  // ★ STRICT AGL FLOOR — terrain following, never disabled during hunt
+  // ★ STRICT AGL FLOOR - terrain following, never disabled during hunt
   dronePos.y=Math.max(dronePos.y,getH(dronePos.x,dronePos.z)+MIN_AGL);
   bankAngle=Math.max(-1.35,Math.min(1.35,-autoYawRate/MAX_YAW_RATE*1.30));
   droneTang.set(Math.sin(autoYaw)*cp,sp2,Math.cos(autoYaw)*cp).normalize();
@@ -2220,7 +2220,7 @@ window.launch=launch;
 // ══════════════════════════════════════════════════════════════
 var clock=0,lastMs=performance.now();
 // ══════════════════════════════════════════════════════════════
-// ★ PAUSE SYSTEM — freeze physics/AI, keep camera + render live
+// ★ PAUSE SYSTEM - freeze physics/AI, keep camera + render live
 //
 // Timer compensation strategy:
 //   All mission timestamps use Date.now() for wall-clock precision.
@@ -2271,7 +2271,7 @@ function loop(){
   var now=performance.now();
 
   // ══════════════════════════════════════════════════════════
-  // ★ PAUSED PATH — skip ALL physics, AI, and timer updates.
+  // ★ PAUSED PATH - skip ALL physics, AI, and timer updates.
   //   Only camera controls and the three render passes run so
   //   the user can pan around the frozen scene in free-cam.
   // ══════════════════════════════════════════════════════════
@@ -2302,12 +2302,12 @@ function loop(){
     renderer.setClearColor(0x040810,1);renderer.clear(true,true,true);
     renderer.render(scene,noseCam);
     renderer.setScissorTest(false);
-    // lastMs is NOT updated while paused — pausedDurMs is added on resume instead
+    // lastMs is NOT updated while paused - pausedDurMs is added on resume instead
     return;
   }
 
   // ══════════════════════════════════════════════════════════
-  // ★ LIVE PATH — normal simulation tick
+  // ★ LIVE PATH - normal simulation tick
   // ══════════════════════════════════════════════════════════
   var dt=Math.min((now-lastMs)/1000,0.10);lastMs=now;clock+=dt;
   scene.updateMatrixWorld(true);
@@ -2351,12 +2351,12 @@ function loop(){
       STATE=S.JAMMED;jammingStartMs=Date.now();
       autoYaw=Math.atan2(sTang.x,sTang.z);autoPitch=Math.asin(Math.max(-1,Math.min(1,sTang.y)));autoYawRate=0;
 
-      // ★ AI INSTANT CONNECT — reset all tracking state at the exact JAMMED frame
+      // ★ AI INSTANT CONNECT - reset all tracking state at the exact JAMMED frame
       aiConsoleActive=true;msgIndex=0;consoleDone=false;
       anchorAlphaVerified=false;anchorBetaVerified=false;
       // ★ Reset geometry-based sighting counters and milestone flags
       rockSightedMs=0;barrsSightedMs=0;milestonesFired={};
-      // ★ Reset creeping-line sweep state — start fresh on dome entry
+      // ★ Reset creeping-line sweep state - start fresh on dome entry
       sweepState='STRAIGHT';sweepDist=0;sweepTurnDir=1;sweepTurnAcc=0;
       lastCapMs=2000;  // ★ suppress nadir-frame ticker for first 2s so milestone logs dominate
       capFrameNum=0;matchConf=0;bboxState.showRock=false;bboxState.showBarracks=false;
@@ -2364,7 +2364,7 @@ function loop(){
       // ★ Show console panel
       document.getElementById('aiConsole').style.display='block';
       document.getElementById('consoleLog').innerHTML='';
-      // ★ Show stored intel panel — drone is now comparing live feeds to this
+      // ★ Show stored intel panel - drone is now comparing live feeds to this
       document.getElementById('intelPanel').style.display='block';
 
       // ★ BOTH scan lines light up the exact frame we enter the dome
@@ -2393,11 +2393,11 @@ function loop(){
     document.getElementById('matchFill').style.width=(matchConf*100)+'%';
     document.getElementById('matchPct').textContent='Match: '+Math.round(matchConf*100)+'%';
     updateConsole();
-    // ★ INSTANT LOCK — no hunt timer requirement, just consoleDone
+    // ★ INSTANT LOCK - no hunt timer requirement, just consoleDone
     if(consoleDone){
       STATE=S.LOCK;
       tgtLight.intensity=8;
-      // ★ Kill both scan lines — AI has found its target
+      // ★ Kill both scan lines - AI has found its target
       document.getElementById('liveScanLine').style.display='none';
       document.getElementById('downScanLine').style.display='none';
       showMsg('\u25bc TARGET LOCKED \u2014 WEAPONS FREE','flash');
@@ -2410,7 +2410,7 @@ function loop(){
     tgtLight.intensity=5+Math.sin(clock*8)*3;
     // ★ LOCK → DIVE transition:
     //   Compute diveDirCurrent as the DIRECT line from the drone's current
-    //   position to diveTgt. This is the true glide-slope angle — the drone
+    //   position to diveTgt. This is the true glide-slope angle - the drone
     //   will never overshoot overhead because it starts already pointing at
     //   the target. The lerp in DIVE will keep it locked on as it closes in.
     diveDirCurrent.subVectors(diveTgt,dronePos).normalize();
@@ -2420,13 +2420,13 @@ function loop(){
   }
 
   else if(STATE===S.DIVE){
-    // ★ GLIDE-SLOPE DIVE — cruise-missile style diagonal nose-first attack
+    // ★ GLIDE-SLOPE DIVE - cruise-missile style diagonal nose-first attack
     //
     // Each frame: smoothly rotate diveDirCurrent toward the live (drone→target)
     // unit vector using lerp+renormalize. Factor 0.055 gives a realistic ~1.5s
     // nose-pitch-down arc from any approach angle. Since diveDirCurrent was
     // initialized at the exact direct vector to target at lock-on time, the
-    // drone NEVER overshoots overhead — it flies a clean descending diagonal.
+    // drone NEVER overshoots overhead - it flies a clean descending diagonal.
     var toTgt=new THREE.Vector3().subVectors(diveTgt,dronePos).normalize();
     diveDirCurrent.lerp(toTgt,0.055).normalize();
 
@@ -2459,7 +2459,7 @@ function loop(){
   // Chase camera
   if(chaseModeActive&&STATE!==S.PRE){
     if(STATE===S.DIVE){
-      // ★ DIVE CAMERA — rise up high behind the drone and look down the glide slope.
+      // ★ DIVE CAMERA - rise up high behind the drone and look down the glide slope.
       //   This gives a perfect overhead-diagonal view of the BWB plummeting nose-first
       //   into the camp, with the target visibly framed below in the main viewport.
       //   Camera retreats along the INVERSE of the dive vector and climbs 700u above.
@@ -2480,27 +2480,27 @@ function loop(){
     }
   }else if(!chaseModeActive){updateOrbitCam();}
 
-  // ★ NOSE CAM — forward sensor with state-dependent look direction:
+  // ★ NOSE CAM - forward sensor with state-dependent look direction:
   //   • Pre-JAMMED: level forward scan with gentle terrain-grazing downward tilt
   //   • JAMMED/LOCK: gradually biases toward the target direction so the encampment
-  //     enters the forward PiP from a long distance — proving nose-cam detection
+  //     enters the forward PiP from a long distance - proving nose-cam detection
   //   • DIVE: locked onto target, following the nose down the glide slope
   noseCam.position.copy(dronePos).add(new THREE.Vector3(0,14,0));
   if(STATE>=S.JAMMED){
     var nFwdBlend=droneTang.clone().normalize();
     if(STATE>=S.DIVE){
-      // Terminal dive only — nose cam fully tracks the target
+      // Terminal dive only - nose cam fully tracks the target
       var tgtDir=new THREE.Vector3(TGT_X-dronePos.x, tgy+35-dronePos.y, TGT_Z-dronePos.z).normalize();
       nFwdBlend.lerp(tgtDir,0.90).normalize();
     }else if(STATE>=S.LOCK){
-      // Lock state — gentle partial bias toward target
+      // Lock state - gentle partial bias toward target
       var tgtDir2=new THREE.Vector3(TGT_X-dronePos.x, tgy+35-dronePos.y, TGT_Z-dronePos.z).normalize();
       nFwdBlend.lerp(tgtDir2,0.35).normalize();
     }
-    // JAMMED / hunting: fly nose camera straight forward — the drone
+    // JAMMED / hunting: fly nose camera straight forward - the drone
     // does NOT know where the target is yet. Camera scans the horizon
     // ahead, exactly as a blind autonomous scan should look.
-    nFwdBlend.y -= 0.12; // very slight downward tilt — scanning terrain ahead
+    nFwdBlend.y -= 0.12; // very slight downward tilt - scanning terrain ahead
     nFwdBlend.normalize();
     noseCam.lookAt(dronePos.clone().add(nFwdBlend.multiplyScalar(1200)));
   }else{
@@ -2508,7 +2508,7 @@ function loop(){
     noseCam.lookAt(dronePos.clone().add(noseFwd.multiplyScalar(1100)));
   }
 
-  // ★ DOWN CAM — attached to drone, looking straight down
+  // ★ DOWN CAM - attached to drone, looking straight down
   //   up = drone's horizontal forward direction (so drone nose = top of image)
   downCam.position.copy(dronePos).add(new THREE.Vector3(0,80,0));
   var hFwd=new THREE.Vector3(droneTang.x,0,droneTang.z).normalize();
@@ -2529,15 +2529,15 @@ function loop(){
   updateAllBboxes(); // ★ dual-camera frustum-culled detection overlay
   updateMatchLines(); // ★ intel-panel → live-PiP feature-match connector lines
   if(STATE>=S.JAMMED) updateIntelCanvasAnimation(); // ★ live scan animation on stored photo
-  updateArchDiagram(); // ★ architecture panel — live node glow sync with STATE
+  updateArchDiagram(); // ★ architecture panel - live node glow sync with STATE
 
   // ════════════════════════════════════════════════════════════
-  // ★ RENDER LOOP — three passes with correct GL coordinates
+  // ★ RENDER LOOP - three passes with correct GL coordinates
   //   WebGL y=0 is BOTTOM of canvas (opposite of CSS)
   //
-  //   Pass 1: mainCam — full screen
-  //   Pass 2: downCam — left PiP  → CSS(left:14, bottom:14)  → GL(x=14, y=14)
-  //   Pass 3: noseCam — right PiP → CSS(right:14, bottom:14) → GL(x=W-14-PW, y=14)
+  //   Pass 1: mainCam - full screen
+  //   Pass 2: downCam - left PiP  → CSS(left:14, bottom:14)  → GL(x=14, y=14)
+  //   Pass 3: noseCam - right PiP → CSS(right:14, bottom:14) → GL(x=W-14-PW, y=14)
   // ════════════════════════════════════════════════════════════
 
   // Pass 1: full screen main view
@@ -2550,7 +2550,7 @@ function loop(){
 
   renderer.setScissorTest(true);
 
-  // Pass 2: DOWN CAM — bottom-left PiP
+  // Pass 2: DOWN CAM - bottom-left PiP
   // CSS position: left:14px, bottom:14px, width:PW, height:PH
   // GL: x=14, y=14 (y from canvas bottom)
   var dPipX=14, dPipY=14;
@@ -2561,7 +2561,7 @@ function loop(){
   renderer.clear(true,true,true);
   renderer.render(scene,downCam);
 
-  // Pass 3: NOSE CAM — bottom-right PiP
+  // Pass 3: NOSE CAM - bottom-right PiP
   // CSS position: right:14px, bottom:14px → left = W-14-PW
   // GL: x=W-14-PW, y=14
   var nPipX=W-14-PW, nPipY=14;
@@ -2575,7 +2575,7 @@ function loop(){
   renderer.setScissorTest(false);
 }
 
-// Init camera — look from behind the launch site toward the dome
+// Init camera - look from behind the launch site toward the dome
 // (evaluated after LAUNCH_X/Z are set, so works for any spawn angle)
 chasePos.copy(mainCam.position);chaseLook.set(0,400,0);showMsg('');
 // Reposition orbit camera to start behind the catapult looking toward dome
@@ -2599,7 +2599,7 @@ terrain.material.color.set(0xC4A058);
 loop();
 
 // ══════════════════════════════════════════════════════════════
-// ★ ARCHITECTURE PANEL — toggle + live STATE sync
+// ★ ARCHITECTURE PANEL - toggle + live STATE sync
 // ══════════════════════════════════════════════════════════════
 var archOpen = false;
 function toggleArch(){
@@ -2617,7 +2617,7 @@ window.toggleArch = toggleArch;
 // Map SVG node IDs → the opacity class to apply based on mission STATE
 // Class meanings: an-dim (0.22) | an-idle (0.52) | an-active (1.0)
 function updateArchDiagram(){
-  if(!archOpen) return; // skip if panel is hidden — saves work
+  if(!archOpen) return; // skip if panel is hidden - saves work
 
   var st = STATE;  // current mission state integer
   // Helper: set one SVG group's opacity class
@@ -2637,7 +2637,7 @@ function updateArchDiagram(){
               'an-pid','an-mixer','an-esc','an-servol','an-servor'], 'an-dim');
     setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-dim');
   }
-  // ── LAUNCH / INGRESS — GPS nav active, cameras online ──────
+  // ── LAUNCH / INGRESS - GPS nav active, cameras online ──────
   else if(st === S.LAUNCH || st === S.INGRESS){
     setGroup(['an-d435i','an-slamcam'], 'an-active');
     setGroup(['an-orbslam','an-yolo'], 'an-idle');
@@ -2649,7 +2649,7 @@ function updateArchDiagram(){
     setGroup(['an-esc','an-servol','an-servor'], 'an-active');
     setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-active');
   }
-  // ── JAMMED — ORB-SLAM3 hot, YOLO hunting, full inner loop ──
+  // ── JAMMED - ORB-SLAM3 hot, YOLO hunting, full inner loop ──
   else if(st === S.JAMMED){
     setNode('an-d435i', anchorAlphaVerified ? 'an-active' : 'an-idle');
     setNode('an-slamcam', 'an-active');
@@ -2664,7 +2664,7 @@ function updateArchDiagram(){
     setGroup(['an-esc','an-servol','an-servor'], 'an-active');
     setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-active');
   }
-  // ── LOCK — target identified, all systems blazing ──────────
+  // ── LOCK - target identified, all systems blazing ──────────
   else if(st === S.LOCK){
     setGroup(['an-d435i','an-slamcam','an-orbslam','an-yolo'], 'an-active');
     setNode('an-jetson', 'an-active');
@@ -2674,7 +2674,7 @@ function updateArchDiagram(){
     setGroup(['an-esc','an-servol','an-servor'], 'an-active');
     setGroup(['an-dots-outer','an-dots-mavlink','an-dots-inner','an-dots-plant'], 'an-active');
   }
-  // ── DIVE — inner loop at max, plant hammering ──────────────
+  // ── DIVE - inner loop at max, plant hammering ──────────────
   else if(st === S.DIVE){
     setGroup(['an-d435i','an-yolo'], 'an-active'); // nose cam locked onto target
     setGroup(['an-slamcam','an-orbslam'], 'an-idle'); // SLAM not needed now
@@ -2696,7 +2696,7 @@ function updateArchDiagram(){
 
   // ── State badge label + colour ─────────────────────────────
   var badge = document.getElementById('arch-state-badge');
-  var labels = ['PRE-LAUNCH','CATAPULT','GPS INGRESS','JAMMED — HUNTING','TARGET LOCKED','TERMINAL DIVE','IMPACT'];
+  var labels = ['PRE-LAUNCH','CATAPULT','GPS INGRESS','JAMMED - HUNTING','TARGET LOCKED','TERMINAL DIVE','IMPACT'];
   var colors = ['#607080','#00d4ff','#00aaff','#ffaa00','#ff4400','#ff2200','#888888'];
   badge.textContent = labels[st] || '';
   badge.style.color = colors[st] || '#607080';
