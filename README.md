@@ -6,6 +6,16 @@
 
 ---
 
+## 🏆 Achievement: 2nd Place, Defensathon 2026
+- 🥈 **2nd Place** (University Track), Team **SLAM FALCONS**
+- 💰 **15,000 SAR** prize
+- 👥 Selected among **12,000+** participants nationwide
+- 📺 Featured on Saudi News
+
+Organized with Tuwaiq Academy, Colleges of Excellence, the National Company for Mechanical Systems (NCMS), the General Authority for Military Industries (GAMI) and the General Authority for Defense Development (GADD).
+
+---
+
 ## The Problem
 Every precision-strike platform in service today depends on GPS. Modern EW systems 
 (like the Krasukha-4) can deny GPS across 200km in under 90 seconds. When that 
@@ -72,7 +82,7 @@ fictional map. It works on the real world.
 ---
 
 ## Status
-🔴 Active development - Defensathon 2026
+🥈 2nd Place at Defensathon 2026 (15,000 SAR). Development continues.
 
 ---
 
