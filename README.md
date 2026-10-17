@@ -82,11 +82,15 @@ fictional map. It works on the real world.
 ---
 
 ## Status
-🥈 2nd Place at Defensathon 2026 (15,000 SAR). Development continues.
+🥈 2nd Place at Defensathon 2026 (15,000 SAR).
+
+🚀 **Next stage: ApexNav at SAIF.** The project continues as **ApexNav**, an upgraded model built on the NavPod architecture, heading to SAIF.
 
 ---
 
 ## What's Next
+
+NavPod is evolving into **ApexNav**, the upgraded model we are taking to SAIF. The roadmap below is what drives that upgrade.
 
 ### Terrain Navigation (TNav)
 GPS-aided positioning gets replaced with a full TNav pipeline. Pre-load a georeferenced 3D terrain map before launch, then match live nadir camera frames against it mid-flight to get a corrected position fix without any GPS signal. Evaluating ArcGIS for map prep, ORB-SLAM3 is already in the stack.
