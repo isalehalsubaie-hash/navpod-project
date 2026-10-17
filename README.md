@@ -73,9 +73,9 @@ fictional map. It works on the real world.
 
 *Concept layout of the v2.0-F pod. Final shell per the SolidWorks drawing: 240 mm long, Ø75 mm body, 575 g mass budget (±5 g).*
 
-🔴 **[Live Simulation Demo](https://raw.githack.com/isalehalsubaie-hash/navpod-project/main/index.html)**
+🔴 **[Live Simulation Demo](https://isalehalsubaie-hash.github.io/navpod-project/)**
 
-👤 **[My Portfolio](https://raw.githack.com/isalehalsubaie-hash/navpod-project/main/portfolio/index.html)**
+👤 **[My Portfolio](https://isalehalsubaie-hash.github.io/navpod-project/portfolio/)**
 
 ## Tech Stack
 - ROS2 | ArduPilot | ORB-SLAM3 | YOLOv8 | MAVLink
