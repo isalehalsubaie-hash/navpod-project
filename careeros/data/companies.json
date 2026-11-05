@@ -1,0 +1,1518 @@
+[
+ {
+  "name": "SAMI (Saudi Arabian Military Industries)",
+  "aliases": [
+   "SAMI Autonomous",
+   "SAMI-AEC"
+  ],
+  "industry": "Defence",
+  "location": "Riyadh",
+  "careersUrl": "https://www.sami.com.sa/en/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "DEF",
+   "UAV",
+   "ROB"
+  ],
+  "departments": [
+   "SAMI Autonomous (new 2026 unmanned company)",
+   "SAMI Land",
+   "SAMI Aerospace Mechanics",
+   "SAMI Advanced Electronics"
+  ],
+  "typicalRoles": [
+   "Systems engineer",
+   "Test engineer",
+   "Co-op trainee"
+  ],
+  "keywords": [
+   "systems engineering",
+   "UAV",
+   "autonomous",
+   "integration"
+  ],
+  "internshipPrograms": "Subsidiaries run co-op programs (SAMI Aerospace Mechanics 2026: Mechanical Engineering listed, Saudi only, GPA 2.75/4). SAMI-AEC co-op 2026 closed June 2026.",
+  "graduatePrograms": "STEP 2.0 for newly hired Saudi graduates (per search results).",
+  "talentPool": "Check careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Created SAMI Autonomous in February 2026 (Breaking Defense). An aggregator showed a SAMI Autonomous co-op listing valid to late November 2026, but the original could not be located. sami.com.sa did not load from the research environment.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "GAMI (General Authority for Military Industries)",
+  "aliases": [],
+  "industry": "Defence regulator",
+  "location": "Riyadh",
+  "careersUrl": "https://www.gami.gov.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF"
+  ],
+  "departments": [
+   "Localization",
+   "Industrial development"
+  ],
+  "typicalRoles": [
+   "Analyst",
+   "Engineer"
+  ],
+  "keywords": [
+   "localization",
+   "defence industry"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Government jobs via Jadarat",
+  "lastChecked": "2026-11-05",
+  "notes": "Defensathon 2026 co-organiser. Good networking route: you already have a Defensathon result they co-sponsored.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "GADD (General Authority for Defense Development)",
+  "aliases": [],
+  "industry": "Defence R&D",
+  "location": "Riyadh",
+  "careersUrl": "https://www.gadd.gov.sa",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "DEF",
+   "ROB",
+   "UAV"
+  ],
+  "departments": [
+   "R&D programs"
+  ],
+  "typicalRoles": [
+   "Research engineer"
+  ],
+  "keywords": [
+   "R&D",
+   "defence technology"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Government jobs via Jadarat",
+  "lastChecked": "2026-11-05",
+  "notes": "Defensathon 2026 co-organiser. Site did not load from the research environment.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "INTRA Defense Technologies",
+  "aliases": [],
+  "industry": "Defence UAS manufacturer",
+  "location": "Riyadh",
+  "careersUrl": "https://intra.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "UAV",
+   "DEF"
+  ],
+  "departments": [
+   "UAS engineering",
+   "Production"
+  ],
+  "typicalRoles": [
+   "UAV engineer",
+   "Test engineer"
+  ],
+  "keywords": [
+   "UAS",
+   "fixed-wing",
+   "ground control"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Riyadh company that designs, manufactures and supports unmanned aerial systems (third-party profiles). Careers page loads but showed no listings to an automated reader.",
+  "opportunityType": "C",
+  "whyNote": ""
+ },
+ {
+  "name": "Taqnia (incl. Taqnia Space / defence subsidiaries)",
+  "aliases": [],
+  "industry": "Technology / defence",
+  "location": "Riyadh",
+  "careersUrl": "https://www.taqnia.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF",
+   "UAV"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "satellite",
+   "defence"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Main site reachable; /careers returned 404 on 2026-11-05.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Terra Drone Arabia",
+  "aliases": [],
+  "industry": "Drone services / inspection",
+  "location": "Riyadh",
+  "careersUrl": "https://terra-drone.com.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "UAV",
+   "INSP"
+  ],
+  "departments": [
+   "Inspection",
+   "Survey"
+  ],
+  "typicalRoles": [
+   "Drone pilot",
+   "Survey engineer",
+   "Inspection engineer"
+  ],
+  "keywords": [
+   "drone inspection",
+   "photogrammetry",
+   "LiDAR"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Signed an MoU with ITQAN Institute for drone inspection training (2025 recap). Small team (directory lists 11 to 50). Strong match for your M300 survey and GACA licence.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Airbus Defence and Space Saudi / Airbus Helicopters",
+  "aliases": [],
+  "industry": "Aerospace and defence",
+  "location": "Riyadh, Jeddah, Taif",
+  "careersUrl": "https://www.airbus.com/en/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF",
+   "UAV",
+   "ROB"
+  ],
+  "departments": [
+   "Systems Engineering",
+   "V&V",
+   "Integration",
+   "Helicopter MRO"
+  ],
+  "typicalRoles": [
+   "Engineering Apprentice",
+   "Avionics technician"
+  ],
+  "keywords": [
+   "systems engineering",
+   "V&V",
+   "integration",
+   "ITCOMs"
+  ],
+  "internshipPrograms": "Engineering Apprentice for System Engineering (Riyadh) open on LinkedIn 2026-11-05",
+  "graduatePrograms": "",
+  "talentPool": "Airbus careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Actual vacancy in this database: Engineering Apprentice for System Engineering.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Lockheed Martin Saudi Arabia",
+  "aliases": [],
+  "industry": "Aerospace and defence",
+  "location": "Riyadh",
+  "careersUrl": "https://www.lockheedmartinjobs.com/location/saudi-arabia-jobs/694/102358/2",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF"
+  ],
+  "departments": [
+   "Engineering",
+   "Programs"
+  ],
+  "typicalRoles": [
+   "Engineer",
+   "Intern"
+  ],
+  "keywords": [
+   "systems engineering",
+   "aerospace"
+  ],
+  "internshipPrograms": "Riyadh summer internship for Saudi engineering students completed September 2026",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Ran a Riyadh internship program in 2026.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Boeing (Saudi Arabia)",
+  "aliases": [],
+  "industry": "Aerospace and defence",
+  "location": "Riyadh",
+  "careersUrl": "https://jobs.boeing.com/location/riyadh-region-saudi-arabia-jobs/185/102358-108411/3",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF"
+  ],
+  "departments": [
+   "Services",
+   "Engineering"
+  ],
+  "typicalRoles": [
+   "Engineer",
+   "Field service"
+  ],
+  "keywords": [
+   "aircraft",
+   "sustainment"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Riyadh location page reachable.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "BAE Systems Saudi Arabia",
+  "aliases": [],
+  "industry": "Defence",
+  "location": "Riyadh, Taif, Dhahran",
+  "careersUrl": "https://jobsearch.baesystems.com/browse-jobs/location/riyadh-saudi-arabia",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF"
+  ],
+  "departments": [
+   "Aircraft maintenance",
+   "Geospatial",
+   "Training"
+  ],
+  "typicalRoles": [
+   "Technician",
+   "Geospatial specialist"
+  ],
+  "keywords": [
+   "RSAF",
+   "maintenance",
+   "geospatial"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Riyadh listings seen on 2026-11-05 are experienced roles (geospatial, remote sensing, avionics).",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Thales Saudi Arabia",
+  "aliases": [],
+  "industry": "Defence / security / aerospace",
+  "location": "Riyadh, Khobar",
+  "careersUrl": "https://careers.thalesgroup.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF"
+  ],
+  "departments": [
+   "Defence",
+   "Digital identity",
+   "Aerospace"
+  ],
+  "typicalRoles": [
+   "Engineer",
+   "Technician"
+  ],
+  "keywords": [
+   "defence electronics",
+   "integration"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Listings seen are experienced IT/maintenance roles.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "SAMI Advanced Electronics (SAMI-AEC)",
+  "aliases": [],
+  "industry": "Defence electronics",
+  "location": "Riyadh",
+  "careersUrl": "https://aecl.com",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "DEF",
+   "ROB"
+  ],
+  "departments": [
+   "Electronics manufacturing"
+  ],
+  "typicalRoles": [
+   "Co-op trainee",
+   "Engineer"
+  ],
+  "keywords": [
+   "electronics",
+   "defence"
+  ],
+  "internshipPrograms": "Co-op Training 2026 (closed June 2026; IT/CS/industrial majors)",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Partner of King Saud University for 25 years. Site did not load from the research environment.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Saudia Aerospace Engineering Industries (SAEI)",
+  "aliases": [],
+  "industry": "Aviation MRO",
+  "location": "Jeddah",
+  "careersUrl": "https://www.saei.com.sa",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "DEF",
+   "ME"
+  ],
+  "departments": [
+   "MRO",
+   "Engineering"
+  ],
+  "typicalRoles": [
+   "Engineer",
+   "Trainee"
+  ],
+  "keywords": [
+   "MRO",
+   "aircraft maintenance"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Site did not load from the research environment.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Alsalam Aerospace Industries",
+  "aliases": [],
+  "industry": "Aerospace MRO / defence",
+  "location": "Riyadh, Jeddah",
+  "careersUrl": "https://www.alsalam.aero",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "DEF"
+  ],
+  "departments": [
+   "MRO"
+  ],
+  "typicalRoles": [
+   "Avionics technician",
+   "Engineer"
+  ],
+  "keywords": [
+   "MRO",
+   "GACA licence"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Avionics technician listing (licence required) in this database.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "KACST",
+  "aliases": [],
+  "industry": "Government R&D",
+  "location": "Riyadh",
+  "careersUrl": "https://kacst.gov.sa",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "DEF",
+   "ROB",
+   "UAV"
+  ],
+  "departments": [
+   "Aeronautics",
+   "Robotics"
+  ],
+  "typicalRoles": [
+   "Research engineer"
+  ],
+  "keywords": [
+   "R&D"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Government jobs via Jadarat",
+  "lastChecked": "2026-11-05",
+  "notes": "Site did not load from the research environment.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Alfaisal University / AlfaisalX",
+  "aliases": [],
+  "industry": "Academia / robotics research",
+  "location": "Riyadh",
+  "careersUrl": "https://jobs.alfaisal.edu",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ROB",
+   "UAV"
+  ],
+  "departments": [
+   "AlfaisalX: Cognitive Robotics and Autonomous Agents"
+  ],
+  "typicalRoles": [
+   "Research engineer"
+  ],
+  "keywords": [
+   "robotics",
+   "UAV",
+   "agentic AI"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Faculty/staff jobs portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Research Engineer (#160626) in this database with unknown status.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Saudi Aramco",
+  "aliases": [],
+  "industry": "Energy",
+  "location": "Dhahran, Riyadh",
+  "careersUrl": "https://www.aramco.com/en/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "ENERGY",
+   "ME",
+   "INSP"
+  ],
+  "departments": [
+   "Inspection",
+   "Engineering services"
+  ],
+  "typicalRoles": [
+   "Engineer",
+   "Co-op"
+  ],
+  "keywords": [
+   "Aramco standards",
+   "inspection"
+  ],
+  "internshipPrograms": "University Internship Program: registration closed on 2026-11-05, orientation 17 Jan 2027, start 18 Jan 2027",
+  "graduatePrograms": "",
+  "talentPool": "jobs.aramco.com profile",
+  "lastChecked": "2026-11-05",
+  "notes": "Watch the University Internship Program page for the registration window.",
+  "opportunityType": "C",
+  "whyNote": ""
+ },
+ {
+  "name": "Luberef (Saudi Aramco Base Oil Company)",
+  "aliases": [],
+  "industry": "Energy / refining",
+  "location": "Jeddah, Yanbu",
+  "careersUrl": "",
+  "careersCheck": "No careers URL recorded",
+  "tracks": [
+   "ENERGY",
+   "ME"
+  ],
+  "departments": [
+   "Refineries"
+  ],
+  "typicalRoles": [
+   "Co-op intern"
+  ],
+  "keywords": [
+   "refinery",
+   "maintenance"
+  ],
+  "internshipPrograms": "Co-Op 2027 Training Program open on LinkedIn 2026-11-05",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Actual vacancy in this database.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "SABIC",
+  "aliases": [],
+  "industry": "Petrochemicals",
+  "location": "Riyadh, Jubail",
+  "careersUrl": "https://www.sabic.com/en/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 406); open it in your own browser",
+  "tracks": [
+   "ENERGY",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "petrochemical"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Careers page returned HTTP 406 to the automated check.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Ma'aden",
+  "aliases": [],
+  "industry": "Mining",
+  "location": "Riyadh, Ras Al Khair",
+  "careersUrl": "https://www.maaden.com.sa/en/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 404); open it in your own browser",
+  "tracks": [
+   "ENERGY",
+   "INSP"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "mining"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Relevant to MIRQAB (mining water value model) and JNH underground mining autonomy.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "ACWA Power",
+  "aliases": [],
+  "industry": "Power and water",
+  "location": "Riyadh",
+  "careersUrl": "https://www.acwapower.com/en/careers/",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 404); open it in your own browser",
+  "tracks": [
+   "ENERGY"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "power",
+   "desalination",
+   "renewables"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Careers URL returned 404; find the current path from the homepage.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Saudi Electricity Company",
+  "aliases": [],
+  "industry": "Utilities",
+  "location": "Riyadh",
+  "careersUrl": "https://www.se.com.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "transmission",
+   "power"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Site reachable.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Saline Water / SWPC",
+  "aliases": [],
+  "industry": "Water",
+  "location": "Riyadh",
+  "careersUrl": "https://www.swpc.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "desalination"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "SWPC site reachable. SWCC has been restructured; confirm the current entity name before applying.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Marafiq",
+  "aliases": [],
+  "industry": "Utilities",
+  "location": "Jubail, Yanbu",
+  "careersUrl": "https://www.marafiq.com.sa",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "ENERGY"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "utilities"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Site did not load from the research environment.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Sipchem / Tasnee / Sadara",
+  "aliases": [],
+  "industry": "Petrochemicals",
+  "location": "Jubail",
+  "careersUrl": "https://www.sadara.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "petrochemical"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Grouped watchlist entry.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "alfanar",
+  "aliases": [],
+  "industry": "Electrical manufacturing / EPC",
+  "location": "Riyadh",
+  "careersUrl": "https://www.alfanar.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY",
+   "ME",
+   "PM"
+  ],
+  "departments": [
+   "Precast",
+   "Projects",
+   "Electric"
+  ],
+  "typicalRoles": [
+   "Fresh graduate engineer",
+   "Site engineer"
+  ],
+  "keywords": [
+   "electrical",
+   "EPC"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Several listings in this database (mostly electrical or 2+ years).",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Zamil Industrial / Zamil Air Conditioners",
+  "aliases": [],
+  "industry": "Manufacturing / HVAC",
+  "location": "Dammam, Riyadh",
+  "careersUrl": "https://www.zamil.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ME",
+   "BD"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Sales engineer",
+   "Design engineer"
+  ],
+  "keywords": [
+   "HVAC",
+   "steel"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Sales engineer listing in this database.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Riyadh Cables",
+  "aliases": [],
+  "industry": "Manufacturing",
+  "location": "Riyadh",
+  "careersUrl": "https://www.riyadh-cables.com",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 000); open it in your own browser",
+  "tracks": [
+   "ME",
+   "ENERGY"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "cables"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Site did not load from the research environment.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Parsons",
+  "aliases": [],
+  "industry": "Engineering / PM consultancy",
+  "location": "Riyadh",
+  "careersUrl": "https://www.parsons.com/careers/",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "PM",
+   "ME",
+   "HSE"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Field engineer (Saudi National)",
+   "Safety coordinator"
+  ],
+  "keywords": [
+   "construction management"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "7 listings in this database, mostly experienced; Safety Coordinator (Saudi National) accepts fresh graduates.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "AtkinsRéalis",
+  "aliases": [],
+  "industry": "Engineering consultancy",
+  "location": "Riyadh",
+  "careersUrl": "https://careers.atkinsrealis.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ME",
+   "PM"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Mechanical inspector"
+  ],
+  "keywords": [
+   "MEP",
+   "inspection"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Jacobs",
+  "aliases": [],
+  "industry": "Engineering consultancy",
+  "location": "Riyadh",
+  "careersUrl": "https://www.jacobs.com/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "PM",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "program management"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Worley",
+  "aliases": [],
+  "industry": "EPC / energy",
+  "location": "Al Khobar",
+  "careersUrl": "https://www.worley.com/en/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 500); open it in your own browser",
+  "tracks": [
+   "ENERGY",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "EPC"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Careers page returned HTTP 500 during the check.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Wood",
+  "aliases": [],
+  "industry": "Engineering / energy",
+  "location": "Al Khobar",
+  "careersUrl": "https://www.woodplc.com/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 403); open it in your own browser",
+  "tracks": [
+   "ENERGY",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [
+   "asset integrity"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "KBR",
+  "aliases": [],
+  "industry": "Engineering",
+  "location": "Al Khobar",
+  "careersUrl": "https://www.kbr.com/en/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Engineer"
+  ],
+  "keywords": [],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Bechtel",
+  "aliases": [],
+  "industry": "EPC",
+  "location": "Riyadh",
+  "careersUrl": "https://jobs.bechtel.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "PM",
+   "ENERGY"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Field engineer"
+  ],
+  "keywords": [
+   "EPC"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Technip Energies / TechnipFMC",
+  "aliases": [],
+  "industry": "Energy EPC / equipment",
+  "location": "Dhahran",
+  "careersUrl": "https://www.technipenergies.com/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY",
+   "PM"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Planning intern"
+  ],
+  "keywords": [
+   "planning"
+  ],
+  "internshipPrograms": "TechnipFMC Planning Intern open on LinkedIn 2026-11-05",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "WSP Middle East",
+  "aliases": [],
+  "industry": "Engineering consultancy",
+  "location": "Riyadh",
+  "careersUrl": "https://www.wsp.com/en-sa/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "PM",
+   "ME",
+   "HSE"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Site engineer",
+   "HSE"
+  ],
+  "keywords": [
+   "MEP",
+   "PMC"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Six listings in this database, all experienced.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Egis",
+  "aliases": [],
+  "industry": "Engineering consultancy",
+  "location": "Riyadh",
+  "careersUrl": "https://www.egis-group.com/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 404); open it in your own browser",
+  "tracks": [
+   "PM",
+   "HSE"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "HSE engineer"
+  ],
+  "keywords": [],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Careers URL returned 404; use the homepage.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Dar Al-Handasah",
+  "aliases": [],
+  "industry": "Engineering consultancy",
+  "location": "Riyadh",
+  "careersUrl": "https://www.dar.com/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ME",
+   "PM"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Mechanical engineer"
+  ],
+  "keywords": [
+   "MEP design"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Hitachi Energy",
+  "aliases": [],
+  "industry": "Power technology",
+  "location": "Riyadh, Dammam",
+  "careersUrl": "https://www.hitachienergy.com/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY",
+   "BD",
+   "PM"
+  ],
+  "departments": [
+   "Tendering",
+   "Projects",
+   "Quality"
+  ],
+  "typicalRoles": [
+   "Intern",
+   "Graduate trainee"
+  ],
+  "keywords": [
+   "power quality",
+   "tendering"
+  ],
+  "internshipPrograms": "Tendering Intern, Project Engineering Intern, QC Technician Intern open 2026-11-05",
+  "graduatePrograms": "Global Power+ program (cohort began 1 Nov 2026)",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "Several internships in this database.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Siemens Energy",
+  "aliases": [],
+  "industry": "Energy technology",
+  "location": "Riyadh, Dammam",
+  "careersUrl": "https://jobs.siemens-energy.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Graduate intern"
+  ],
+  "keywords": [
+   "gas turbines",
+   "grid"
+  ],
+  "internshipPrograms": "Future Energy Graduates Internship Program (Engineering) KSA 2026/27",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "ENGIE Middle East",
+  "aliases": [],
+  "industry": "Energy",
+  "location": "Riyadh, Jubail",
+  "careersUrl": "",
+  "careersCheck": "No careers URL recorded",
+  "tracks": [
+   "ENERGY",
+   "PM"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Graduate project engineer"
+  ],
+  "keywords": [
+   "energy transition"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "R&F GBU Graduate Program, 24 months with a secondment abroad",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "engie.com/en/careers returned 404; apply via the LinkedIn listing.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Saipem",
+  "aliases": [],
+  "industry": "Energy EPC",
+  "location": "Dhahran, Dammam",
+  "careersUrl": "https://www.saipem.com/en/careers",
+  "careersCheck": "Not reachable from the research environment on 2026-11-05 (HTTP 403); open it in your own browser",
+  "tracks": [
+   "ENERGY",
+   "HSE",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "GDP trainee"
+  ],
+  "keywords": [
+   "offshore",
+   "quality",
+   "HSE"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "Graduate Development Program (HSE, Quality) for Saudi fresh graduates",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Honeywell",
+  "aliases": [],
+  "industry": "Automation / building technologies",
+  "location": "Riyadh, Dhahran",
+  "careersUrl": "https://careers.honeywell.com",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "BD",
+   "ROB"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Application sales engineer",
+   "Intern"
+  ],
+  "keywords": [
+   "fire and security",
+   "automation"
+  ],
+  "internshipPrograms": "Intern - Bachelors Systems Eng (Saudi only; Mechanical not listed)",
+  "graduatePrograms": "",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Jensen Hughes",
+  "aliases": [],
+  "industry": "Fire protection engineering",
+  "location": "Riyadh",
+  "careersUrl": "https://www.jensenhughes.com/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "HSE",
+   "ME"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Graduate trainee"
+  ],
+  "keywords": [
+   "fire and life safety"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "1-year Tamheer/Tawteen graduate program for Saudi nationals",
+  "talentPool": "Global careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Kidde Global Solutions",
+  "aliases": [],
+  "industry": "Fire and security products",
+  "location": "Riyadh",
+  "careersUrl": "",
+  "careersCheck": "No careers URL recorded",
+  "tracks": [
+   "BD",
+   "HSE"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Pre-sales engineer"
+  ],
+  "keywords": [
+   "fire detection",
+   "life safety"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Pre-Sales Engineer (Saudi National, entry level) open on LinkedIn 2026-11-05.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "Clean Birds",
+  "aliases": [],
+  "industry": "Drone services (cleaning)",
+  "location": "Riyadh",
+  "careersUrl": "",
+  "careersCheck": "No careers URL recorded",
+  "tracks": [
+   "UAV"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Drone pilot"
+  ],
+  "keywords": [
+   "GACA",
+   "drone operations"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Unknown",
+  "lastChecked": "2026-11-05",
+  "notes": "Drone Pilot role open to all nationalities, GACA licence a plus.",
+  "opportunityType": "A",
+  "whyNote": ""
+ },
+ {
+  "name": "JNH Systems",
+  "aliases": [],
+  "industry": "Autonomous systems",
+  "location": "Riyadh",
+  "careersUrl": "",
+  "careersCheck": "No careers URL recorded",
+  "tracks": [
+   "UAV",
+   "ROB",
+   "BD"
+  ],
+  "departments": [
+   "Autonomous Systems Division"
+  ],
+  "typicalRoles": [],
+  "keywords": [],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Current employer (part-time)",
+  "lastChecked": "2026-11-05",
+  "notes": "Your current employer. Ask about full-time conversion after January 2027.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "QSS AI & Robotics",
+  "aliases": [],
+  "industry": "Robotics / UAV",
+  "location": "Riyadh",
+  "careersUrl": "",
+  "careersCheck": "No careers URL recorded",
+  "tracks": [
+   "UAV",
+   "ROB"
+  ],
+  "departments": [
+   "Drones department"
+  ],
+  "typicalRoles": [],
+  "keywords": [],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Former internship (offer of extended internship and role, per portfolio)",
+  "lastChecked": "2026-11-05",
+  "notes": "Portfolio says you were offered an extended internship and a role after it. A warm lead for after graduation.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "NEOM",
+  "aliases": [],
+  "industry": "Giga-project",
+  "location": "Tabuk",
+  "careersUrl": "https://www.neom.com/en-us/careers",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ENERGY",
+   "PM",
+   "ROB"
+  ],
+  "departments": [],
+  "typicalRoles": [
+   "Graduate"
+  ],
+  "keywords": [
+   "giga-project"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "KAUST",
+  "aliases": [],
+  "industry": "Academia / research",
+  "location": "Thuwal",
+  "careersUrl": "https://www.kaust.edu.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ROB",
+   "UAV"
+  ],
+  "departments": [
+   "Robotics Bay (opened Oct 2025)"
+  ],
+  "typicalRoles": [
+   "Research assistant"
+  ],
+  "keywords": [
+   "robotics"
+  ],
+  "internshipPrograms": "",
+  "graduatePrograms": "",
+  "talentPool": "Careers portal",
+  "lastChecked": "2026-11-05",
+  "notes": "",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Saudi Space Agency",
+  "aliases": [],
+  "industry": "Government space",
+  "location": "Riyadh",
+  "careersUrl": "https://ssa.gov.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "DEF"
+  ],
+  "departments": [
+   "Space Academy",
+   "SARI-II"
+  ],
+  "typicalRoles": [],
+  "keywords": [
+   "CubeSat",
+   "space systems"
+  ],
+  "internshipPrograms": "Space Academy training programs H2 2026 (courses, not paid internships)",
+  "graduatePrograms": "",
+  "talentPool": "Government jobs via Jadarat",
+  "lastChecked": "2026-11-05",
+  "notes": "You led Team SIRAJ in SARI-II.",
+  "opportunityType": "D",
+  "whyNote": ""
+ },
+ {
+  "name": "Misk Hub programs",
+  "aliases": [],
+  "industry": "Talent programs",
+  "location": "Riyadh",
+  "careersUrl": "https://hub.misk.org.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "PM",
+   "BD",
+   "STRAT"
+  ],
+  "departments": [],
+  "typicalRoles": [],
+  "keywords": [],
+  "internshipPrograms": "",
+  "graduatePrograms": "Misk x employer GDPs open in windows; none open for engineering on 2026-11-05",
+  "talentPool": "Misk Hub account",
+  "lastChecked": "2026-11-05",
+  "notes": "You are a Misk/Akwaf leadership program graduate.",
+  "opportunityType": "B",
+  "whyNote": ""
+ },
+ {
+  "name": "HRDF (Tamheer)",
+  "aliases": [],
+  "industry": "Government talent fund",
+  "location": "Riyadh",
+  "careersUrl": "https://www.hrdf.org.sa",
+  "careersCheck": "Reachable (HTTP 200) on 2026-11-05",
+  "tracks": [
+   "ME",
+   "HSE",
+   "PM"
+  ],
+  "departments": [],
+  "typicalRoles": [],
+  "keywords": [],
+  "internshipPrograms": "",
+  "graduatePrograms": "Tamheer on-the-job training for Saudi graduates",
+  "talentPool": "Register on HRDF / Jadarat",
+  "lastChecked": "2026-11-05",
+  "notes": "Several Tamheer listings in this database.",
+  "opportunityType": "B",
+  "whyNote": ""
+ }
+]

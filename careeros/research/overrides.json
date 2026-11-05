@@ -1,0 +1,405 @@
+{
+ "LI-4409410656": {
+  "deadline": "2026-11-06",
+  "tracks": [
+   "STRAT"
+  ],
+  "devPotential": 5,
+  "devNote": "Global bank, structured off-cycle program",
+  "notes": "Off-cycle internship, two intakes: January to June 2027 (deadline 31 July 2026, passed) and July to December 2027 (deadline 6 November 2026). Requires expected graduation between January 2027 and December 2028, fluency in English and Arabic, MS Word and Excel. Rolling admission. Corporate banking is outside engineering but matches your strategy/finance track and your business-case work.",
+  "priority": "urgent"
+ },
+ "LI-4465939394": {
+  "tracks": [
+   "DEF",
+   "UAV",
+   "ROB"
+  ],
+  "devPotential": 5,
+  "devNote": "Airbus Defence and Space Saudi; apprenticeship with stated potential for a permanent position",
+  "notes": "Employer entity: Airbus Defence and Space Saudi Limited. Apprenticeship contract, entry level. Systems engineering, V&V, integration and ITCOMs. Requires a Bachelor's or Master's degree in engineering, so confirm they accept final-semester applicants or a start after January 2027. Domestic travel required."
+ },
+ "LI-4480885639": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Program cohort began 1 November 2026 and requires a completed bachelor's degree. Not open to you for this cohort; watch for the next intake after graduation."
+   }
+  ],
+  "devPotential": 5,
+  "notes": "Hitachi Energy Global Power+ rotational graduate program. Local (Saudi) citizens only, 0 to 2 years of experience."
+ },
+ "LI-4478611078": {
+  "tracks": [
+   "BD",
+   "HSE",
+   "ME"
+  ],
+  "devPotential": 4,
+  "notes": "Saudi National. Entry level. Degrees accepted include Mechanical and Fire Protection Engineering. Fire and life safety knowledge is a plus, which links to your Athlath firefighting drawing review."
+ },
+ "LI-4484204483": {
+  "tracks": [
+   "BD",
+   "ENERGY",
+   "PM"
+  ],
+  "notes": "Advert targets fresh graduates. Electrical preferred; Mechanical and Industrial accepted. Dammam based."
+ },
+ "LI-4487298092": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Majors listed are Electrical, Computer, Electronics Engineering, Computer Science and Process Instrumentation & Control. Mechanical Engineering is not listed."
+   }
+  ]
+ },
+ "LI-4481747657": {
+  "notes": "Saudi nationals only. Degree in Electrical, Computer or related engineering. Fire and security standards (NFPA, FM, UL) knowledge mentioned."
+ },
+ "LI-4480029765": {
+  "tracks": [
+   "ME",
+   "HSE"
+  ],
+  "notes": "Tamheer on-the-job training at CEER (Saudi EV company), King Abdullah Economic City. Requires being a recent graduate eligible for Tamheer, so this opens only after you graduate."
+ },
+ "LI-4481561721": {
+  "devPotential": 4,
+  "notes": "Fresh graduates encouraged. Bachelor's in Mechanical Engineering. Coordinating mechanical trades on major construction projects: closest match to your Athlath MEP internship."
+ },
+ "LI-4478218478": {
+  "notes": "0 to 3 years. Mechanical, Electrical or Mechatronics. Pharmaceutical plant maintenance, Riyadh."
+ },
+ "LI-4485053796": {
+  "constraints": {
+   "nationality": "saudi"
+  },
+  "notes": "Title says Saudi Graduate Engineer Trainee. Fresh mechanical graduates, Jubail. Reverse engineering, component design and inspection. Apply by email to candidates@tescosaudi.com per the advert."
+ },
+ "LI-4486879234": {
+  "devPotential": 5,
+  "notes": "ENGIE R&F GBU Graduate Program (24 months) with a 6-month secondment abroad. Degree in engineering, 0 to 2 years including internships. Strong international mobility commitment required."
+ },
+ "LI-4487718665": {
+  "devPotential": 5,
+  "notes": "Same ENGIE graduate program, Digital Transformation role, Riyadh or Jubail."
+ },
+ "LI-4464024283": {
+  "tracks": [
+   "BD",
+   "STRAT"
+  ],
+  "notes": "Saudi nationals. Second-semester COOP starting January 2027, must graduate in 2027 and be available for a full-time graduate role in September 2027. Confirm how a January 2027 co-op fits your January 2027 graduation."
+ },
+ "LI-4483919857": {
+  "tracks": [
+   "UAV",
+   "INSP"
+  ],
+  "devPotential": 3,
+  "devNote": "Riyadh drone-services start-up, operator role",
+  "notes": "Open to all nationalities. GACA drone licence is a nice-to-have, which you hold. Arabic required. Operator-level role rather than engineering."
+ },
+ "LI-4477439260": {
+  "tracks": [
+   "ME",
+   "ENERGY"
+  ],
+  "devPotential": 5,
+  "notes": "3-month full-time internship starting summer 2027, final-year students who will have graduated by the end of the internship. You graduate January 2027, so confirm they accept someone who has already graduated when the internship starts.",
+  "manualFlags": [
+   {
+    "level": 1,
+    "msg": "Internship starts summer 2027 and asks for final-year students who graduate by the end of it. You graduate January 2027, before it starts; confirm you still qualify."
+   }
+  ]
+ },
+ "LI-4477429581": {
+  "exclude": "IT hardware technician internship (server repair), not one of your tracks"
+ },
+ "LI-4460725756": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Requires proven hands-on VRF/VRV installation and commissioning experience. Your MEP internship involved routing around VRF units, not installing them."
+   }
+  ]
+ },
+ "LI-4474325675": {
+  "tracks": [
+   "HSE",
+   "ME"
+  ],
+  "devPotential": 4,
+  "notes": "Jensen Hughes (fire protection engineering) 1-year Tamheer/Tawteen program for Saudi fresh graduates. Fire and Life Safety, QC, Mechanical and HSE exposure."
+ },
+ "LI-4484721163": {
+  "notes": "Saudi National. 0 to 3 years of HSE experience; fresh graduates with an HSE background considered. Al Jawf (Al Sinaiyah) site."
+ },
+ "LI-4479996065": {
+  "devPotential": 5,
+  "notes": "Siemens Energy graduate internship, 6 to 12 months, Dammam and Riyadh. Strictly for 2025, 2026 or 2027 graduates; Mechanical accepted."
+ },
+ "LI-4486142183": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Requires experience in mechanical inspection on construction or industrial projects (years not stated)."
+   }
+  ]
+ },
+ "LI-4486541386": {
+  "type": "Internship",
+  "title_note": "Listed as 'Quality Inspector' but the advert text describes an AECOM internship (Intern 2 = completion of second year of study).",
+  "notes": "Advert body is a generic AECOM internship description. Confirm the actual discipline with AECOM."
+ },
+ "LI-4483541741": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Asks for a Bachelor's in Environmental Engineering."
+   }
+  ]
+ },
+ "LI-4484986222": {
+  "constraints": {
+   "coopLetter": true,
+   "studentOnly": true
+  },
+  "notes": "Currently pursuing a bachelor's in any engineering discipline. Duration defined by the company and your university, so a university training letter is likely needed."
+ },
+ "LI-4479802631": {
+  "tracks": [
+   "ME",
+   "ENERGY"
+  ],
+  "constraints": {
+   "coopLetter": true,
+   "studentOnly": true
+  },
+  "devPotential": 4,
+  "notes": "Luberef (Saudi Aramco Base Oil Company) co-op 2027 at Jeddah/Yanbu refineries and Jeddah HQ. Saudi only. Minimum GPA 2.5/4 or 3.5/5."
+ },
+ "LI-4485973577": {
+  "notes": "Saipem GDP (HSE), Dhahran. Saudi fresh graduates, up to 1 year of experience. Mechanical listed among accepted degrees.",
+  "constraints": {
+   "nationality": "saudi"
+  }
+ },
+ "LI-4485989205": {
+  "notes": "Saipem GDP (Quality), Dhahran. Saudi fresh graduates; Mechanical graduates may develop as Piping Inspectors.",
+  "constraints": {
+   "nationality": "saudi"
+  }
+ },
+ "LI-4483377886": {
+  "exclude": "Data analyst GDP for AI/IT/Computer Science graduates"
+ },
+ "LI-4473491406": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Asks for hands-on plant equipment troubleshooting experience and experience leading engineering projects."
+   }
+  ]
+ },
+ "LI-4463074077": {
+  "notes": "P&G LEADgen management internship 2027, Process Engineer, Dammam. For students currently studying engineering. Confirm timing against your January 2027 graduation."
+ },
+ "LI-4480061251": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Open to current students who will return to their studies after the work term. You graduate January 2027, so this only works if the term ends before graduation."
+   }
+  ]
+ },
+ "LI-4476647735": {
+  "notes": "Hassan Allam Holding GDP, 18-month rotation, employment from day one. Mainly fresh engineering graduates. Five assessment stages."
+ },
+ "LI-4483585495": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Requires a graduation date in 2026. You graduate January 2027."
+   }
+  ]
+ },
+ "LI-4487584355": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Exclusively for people who have completed their bachelor's degree. Re-check after you graduate in January 2027."
+   }
+  ],
+  "tracks": [
+   "STRAT"
+  ]
+ },
+ "LI-4481208507": {
+  "exclude": "Real estate valuation internship for finance/real estate students"
+ },
+ "LI-4317972288": {
+  "exclude": "Requires US Army THAAD battery service"
+ },
+ "LI-4317963818": {
+  "exclude": "Requires US Army air defence operator service"
+ },
+ "LI-4476477001": {
+  "tracks": [
+   "BD",
+   "STRAT"
+  ],
+  "notes": "Mastercard 18-month Launch Program 2027 (Business Development). Payments industry, not engineering."
+ },
+ "LI-4477170450": {
+  "tracks": [
+   "BD"
+  ],
+  "notes": "Technology sales internship (cloud, cybersecurity, data and AI). Business-development track only."
+ },
+ "LI-4486068703": {
+  "exclude": "Hotel internship"
+ },
+ "LI-4478981429": {
+  "exclude": "Retail industrial engineering internship in Jeddah, low relevance"
+ },
+ "LI-4478985754": {
+  "exclude": "Retail project management internship in Jeddah, low relevance"
+ },
+ "LI-4483576240": {
+  "exclude": "Finance reconciliation Tamheer role for accounting graduates"
+ },
+ "LI-4486870573": {
+  "exclude": "Finance trainee, accounting"
+ },
+ "LI-4487263353": {
+  "exclude": "Medical imaging technologist"
+ },
+ "LI-4485364983": {
+  "exclude": "Logistics coordinator, not engineering"
+ },
+ "LI-4478051263": {
+  "exclude": "Ticketing platform co-op, not engineering"
+ },
+ "LI-4486142935": {
+  "exclude": "Telecom co-op without engineering scope stated"
+ },
+ "LI-4455876914": {
+  "exclude": "Fund administration co-op"
+ },
+ "LI-4476409460": {
+  "exclude": "Platform operations trainee, not engineering"
+ },
+ "LI-4482427978": {
+  "exclude": "Requires graduation in 2028"
+ },
+ "LI-4449523156": {
+  "exclude": "Duplicate re-post of the Airbus Defence and Space Systems Engineering Apprentice (same text); kept LI-4465939394"
+ },
+ "LI-4480045154": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Valid GACA Aircraft Maintenance Licence (Avionics / B2) is mandatory."
+   }
+  ],
+  "tracks": [
+   "DEF"
+  ]
+ },
+ "LI-4408495370": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Requires B2 avionics licensing and practical experience on Dauphin/Panther (AS365) helicopters."
+   }
+  ],
+  "tracks": [
+   "DEF"
+  ]
+ },
+ "LI-4458059332": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Practical experience on H215 (AS532) is mandatory; B2 avionics role."
+   }
+  ],
+  "tracks": [
+   "DEF"
+  ]
+ },
+ "LI-4474049985": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Instructor role for H125 B2 electrical/avionics; requires licensed, experienced technicians."
+   }
+  ],
+  "tracks": [
+   "DEF"
+  ]
+ },
+ "LI-4484940758": {
+  "manualFlags": [
+   {
+    "level": 3,
+    "msg": "Requires a recognised aircraft maintenance apprenticeship and extensive post-qualification maintenance experience."
+   }
+  ],
+  "tracks": [
+   "DEF"
+  ]
+ },
+ "LI-4278292023": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Continuing airworthiness roles normally require aviation maintenance or airworthiness experience; the public listing does not state requirements. Confirm before applying."
+   }
+  ],
+  "tracks": [
+   "DEF"
+  ]
+ },
+ "LI-4478547912": {
+  "exclude": "IT infrastructure role (3 to 5 years)"
+ },
+ "LI-4471896079": {
+  "exclude": "Cloud operations role (4+ years)"
+ },
+ "LI-4487527094": {
+  "exclude": "Telecom research role (2+ years, telecom focus)"
+ },
+ "LI-4460996631": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Asks for a Bachelor's in Electrical or Control Engineering."
+   }
+  ],
+  "notes": "Siemens Tamayuz program, Electrification & Automation, Jeddah. Fresh graduates."
+ },
+ "LI-4484212573": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Asks for a Bachelor's in Electrical or Industrial Engineering."
+   }
+  ],
+  "notes": "Hitachi Energy project management trainee, Dammam. Lean / continuous improvement support."
+ },
+ "LI-4451798014": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "Asks for an HSE diploma undergraduate."
+   }
+  ],
+  "tracks": [
+   "HSE"
+  ]
+ }
+}

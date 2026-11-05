@@ -1,0 +1,6 @@
+build/node_modules/
+build/package*.json
+build/scored.json
+tests/out/
+research/one.html
+research/*.log

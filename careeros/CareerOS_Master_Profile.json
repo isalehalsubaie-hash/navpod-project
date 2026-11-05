@@ -1,0 +1,1845 @@
+{
+  "meta": {
+    "version": 1,
+    "built": "2026-11-05",
+    "statusLegend": {
+      "verified_doc": "Verified from uploaded documentation (your own CVs, portfolio, repository, letters)",
+      "confirmed_user": "Confirmed by you",
+      "needs_confirmation": "Requires confirmation",
+      "suggested": "Suggested but not established"
+    },
+    "sources": [
+      {
+        "id": "S-CV1017",
+        "label": "Saleh_Alsubaie_CV.pdf (current CV, 2026-10-17, workspace /portfolio and Google Drive)",
+        "date": "2026-10-17"
+      },
+      {
+        "id": "S-CVCOOP",
+        "label": "Saleh_Alsubaie_CV_COOP.pdf (earlier co-op CV, Google Drive, modified 2026-08-22)",
+        "date": "2026-08-22"
+      },
+      {
+        "id": "S-PORT",
+        "label": "Portfolio site portfolio/index.html (isalehalsubaie-hash.github.io/navpod-project/portfolio)",
+        "date": "2026-11-05"
+      },
+      {
+        "id": "S-README",
+        "label": "NavPod repository README (github.com/isalehalsubaie-hash/navpod-project)",
+        "date": "2026-11-05"
+      },
+      {
+        "id": "S-REC",
+        "label": "Recommendation letter, Yehia Koheel, Defensathon coach (Google Drive, 2026-06-03, title and contact fields still blank)",
+        "date": "2026-06-03"
+      },
+      {
+        "id": "S-PREF",
+        "label": "Your own statement in your Claude profile preferences",
+        "date": "2026-11-05"
+      }
+    ]
+  },
+  "personal": {
+    "name": "Saleh Abdullah Alsubaie",
+    "email": "iSalehAlsubaie@gmail.com",
+    "phone": "+966 50 338 2302",
+    "city": "Riyadh",
+    "country": "Saudi Arabia",
+    "linkedin": "https://linkedin.com/in/saleh-alsubaie-43a872269",
+    "portfolio": "https://isalehalsubaie-hash.github.io/navpod-project/portfolio/",
+    "github": "https://github.com/isalehalsubaie-hash",
+    "languages": [
+      "Arabic",
+      "English"
+    ],
+    "nationality": {
+      "value": "",
+      "status": "needs_confirmation",
+      "note": "Not stated in any document. Many Saudi programs are restricted to Saudi nationals, so set this in Settings to unlock GREEN eligibility for them."
+    },
+    "gender": {
+      "value": "",
+      "status": "needs_confirmation",
+      "note": "Only used when a posting is restricted by gender. Leave blank if you prefer."
+    },
+    "workAuthorization": {
+      "value": "",
+      "status": "needs_confirmation",
+      "note": "Right to work in Saudi Arabia (citizen / Iqama). Not documented."
+    },
+    "availability": {
+      "value": "",
+      "status": "needs_confirmation",
+      "note": "Earliest full-time start date and co-op window. Needed for application forms."
+    },
+    "salaryExpectation": {
+      "value": "",
+      "status": "needs_confirmation",
+      "note": "Never auto-filled. Enter your own figure."
+    }
+  },
+  "education": {
+    "degree": "Bachelor's Degree in Mechanical Engineering",
+    "university": "Imam Mohammad Ibn Saud Islamic University (IMSIU)",
+    "city": "Riyadh",
+    "start": "2022",
+    "expectedGraduation": "2027-01",
+    "graduated": false,
+    "status": "verified_doc",
+    "evidence": [
+      "S-CV1017",
+      "S-CVCOOP",
+      "S-PORT"
+    ],
+    "academicStatus": "Final-year (senior) student. Not yet graduated. Expected graduation January 2027.",
+    "gpa": {
+      "value": "",
+      "status": "needs_confirmation",
+      "note": "Not documented. Aramco and many graduate programs set GPA minimums."
+    },
+    "coopRequired": {
+      "value": "",
+      "status": "needs_confirmation",
+      "note": "Your CVs say you are seeking a cooperative training placement. Confirm whether IMSIU requires co-op before graduation, its minimum length, and whether the university can issue a training letter. This decides eligibility for Aramco's University Internship Program and similar co-op schemes."
+    },
+    "courses": [
+      {
+        "title": "ME 1446 Gas Dynamics: PSP shock mapping test campaign (sole author)",
+        "date": "2026-06",
+        "status": "verified_doc",
+        "evidence": [
+          "S-PORT"
+        ]
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": "E01",
+      "type": "employment",
+      "title": "UAV Systems Engineer / Business Development Engineer (Part-time)",
+      "org": "JNH Systems (Autonomous Systems Division)",
+      "location": "Riyadh",
+      "start": "2026-04",
+      "end": "Present",
+      "bullets": [
+        "Built the business strategy and technical validation plan for an autonomy initiative (underground mining), covering competitive benchmarking, use case definition and presentations to senior stakeholders",
+        "Led business development for the docking station line, turning CAPEX and OPEX per station into payback and margin curves that set pricing and go-to-market direction",
+        "Led the company presence at LEAP 2026, lifting booth engagement 35% and securing 2 new POC agreements",
+        "Owned the mechanical design of the docking station from requirements to working prototype, coordinating suppliers and design reviews",
+        "Worked on GPS-denied LiDAR SLAM for underground mining drones: benchmarked approaches (KISS-ICP, Gazebo) and wrote a test plan across five simulation modules",
+        "Designed a universal GCS enclosure: IP65 case, LiFePO4 power, thermal management and FEA-checked retention hardware; passive charging funnel CAD for the docking station",
+        "Produced the GCS engineering document including link verification; booth and pitch materials aimed at government buyers"
+      ],
+      "skills": [
+        "uav",
+        "bizdev",
+        "businesscase",
+        "capex",
+        "gtm",
+        "marketresearch",
+        "mechdesign",
+        "prototyping",
+        "vendor",
+        "stakeholder",
+        "presentation",
+        "slam",
+        "lidar",
+        "gazebo",
+        "fea",
+        "onshape",
+        "telemetry",
+        "systemsintegration",
+        "testing",
+        "mining",
+        "autonomy",
+        "documentation"
+      ],
+      "tracks": [
+        "UAV",
+        "ROB",
+        "DEF",
+        "BD",
+        "ME",
+        "STRAT"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP",
+        "S-PORT"
+      ],
+      "notes": "LEAP 2026 figures (35% engagement, 2 POC agreements) are self-reported on your CV. Be ready to explain how engagement was measured."
+    },
+    {
+      "id": "E02",
+      "type": "internship",
+      "title": "Business Development Intern (Business Development & Partnerships)",
+      "org": "TalMal",
+      "location": "Riyadh",
+      "start": "2026-10",
+      "end": "Present",
+      "bullets": [
+        "Source and onboard merchants into the network of a Saudi salary-backed pay-later fintech",
+        "Pitch the service to employers so their employees can benefit from it"
+      ],
+      "skills": [
+        "bizdev",
+        "stakeholder",
+        "presentation",
+        "communication"
+      ],
+      "tracks": [
+        "BD",
+        "STRAT"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-PORT"
+      ],
+      "notes": "Fintech role. Relevant for business tracks, usually low relevance for engineering roles."
+    },
+    {
+      "id": "E03",
+      "type": "internship",
+      "title": "UAV Engineering Intern",
+      "org": "QSS AI & Robotics",
+      "location": "Riyadh",
+      "start": "2026-06",
+      "end": "2026-08",
+      "bullets": [
+        "Designed a fixed-wing platform from a clean sheet, carrying it from concept through detailed design to build",
+        "Owned the full bill of materials, selecting propulsion, avionics and structural components against cost and performance targets",
+        "Released 45+ part drawings in SolidWorks; took the airframe from CAD to 3D-printed parts with CNC and laser cutting along the way",
+        "Set up Mission Planner and flight parameters for the lab's platforms",
+        "Presented the drones department and its platforms to visiting delegations and investors",
+        "Offered an extended internship and a role after it (per portfolio)"
+      ],
+      "skills": [
+        "uav",
+        "fixedwing",
+        "solidworks",
+        "cad",
+        "bom",
+        "3dprinting",
+        "cnc",
+        "missionplanner",
+        "prototyping",
+        "drawings",
+        "presentation",
+        "mechdesign",
+        "manufacturing"
+      ],
+      "tracks": [
+        "UAV",
+        "DEF",
+        "ME",
+        "ROB"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP",
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "E04",
+      "type": "internship",
+      "title": "MEP Site Engineer Intern",
+      "org": "Athlath Construction (Al-Tawala Tower project)",
+      "location": "Riyadh",
+      "start": "2025-07",
+      "end": "2025-09",
+      "bullets": [
+        "Coordinated multidisciplinary site crews of 15+ tradesmen against daily targets on an active construction site",
+        "Reviewed 11+ engineering drawings across HVAC, plumbing and firefighting scopes and resolved clashes with contractors",
+        "Found and resolved 8 first-floor clashes (4 HVAC, 4 plumbing) and presented them with fixes to the project team",
+        "HVAC fixes: lowered a cable tray, resized the stair exhaust duct, reshaped a supply duct to clear a drop panel, rerouted fire branch lines around VRF units with paired 45 degree elbows",
+        "Plumbing fixes: moved 110, 76 and 50 mm mains from offices into corridors, dropped them under the AC duct, fixed a shower drain with a core opening",
+        "Oversaw on-site installations and enforced HSE requirements, working to a zero-incident standard",
+        "Proposed one shared schedule for electrical, mechanical and fire teams"
+      ],
+      "skills": [
+        "mep",
+        "hvac",
+        "plumbing",
+        "fireprotection",
+        "drawings",
+        "clash",
+        "installation",
+        "siteeng",
+        "hse",
+        "ducting",
+        "vrf",
+        "construction",
+        "teamwork",
+        "leadership"
+      ],
+      "tracks": [
+        "ME",
+        "HSE",
+        "PM"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP",
+        "S-PORT"
+      ],
+      "notes": "Evidence supports HVAC/plumbing/fire coordination, drawing review and clash resolution. It does not show that you designed complete HVAC systems."
+    },
+    {
+      "id": "P01",
+      "type": "project",
+      "title": "NavPod: GPS-denied navigation pod for fixed-wing UAV (Founder & Team Lead)",
+      "org": "Defensathon 2026, Team SLAM FALCONS",
+      "start": "2026-01",
+      "end": "Present",
+      "bullets": [
+        "Originated the concept and led a multidisciplinary team to 2nd place nationally (university track), 15,000 SAR prize",
+        "Built a MATLAB/Simulink model from scratch: 12-state 6-DOF BWB dynamics with elevon mixing, a 15-state EKF and L1 guidance",
+        "Defined the two-loop architecture separating AI mission processing (Jetson Orin Nano, ORB-SLAM3, YOLOv8) from flight stabilization (Pixhawk / ArduPilot) over MAVLink",
+        "Designed the pod in SolidWorks (240 mm, 75 mm diameter), ran CFD (SimScale) and owned the 575 g mass budget",
+        "Built a WebGL mission simulation used live at the final; featured in Saudi News coverage",
+        "Continuing as ApexNav for SAIF: terrain navigation, AI-aided INS drift correction, hardware-in-the-loop sim"
+      ],
+      "skills": [
+        "uav",
+        "fixedwing",
+        "navigation",
+        "slam",
+        "kalman",
+        "gnc",
+        "simulation",
+        "matlab",
+        "simulink",
+        "solidworks",
+        "cfd",
+        "computervision",
+        "mavlink",
+        "ardupilot",
+        "autopilot",
+        "systemseng",
+        "defence",
+        "leadership",
+        "presentation",
+        "procurement",
+        "costcontrol",
+        "embedded",
+        "ros"
+      ],
+      "tracks": [
+        "DEF",
+        "UAV",
+        "ROB",
+        "ME"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP",
+        "S-PORT",
+        "S-README",
+        "S-REC"
+      ]
+    },
+    {
+      "id": "P02",
+      "type": "project",
+      "title": "MIRQAB: drone-based water intelligence system for industrial operations (Founder)",
+      "org": "Own venture",
+      "start": "2026",
+      "end": "Present",
+      "bullets": [
+        "Built the value model on a live mining case: $484K gross annual value per facility, 3.2x return, 3.7-month payback"
+      ],
+      "skills": [
+        "uav",
+        "businesscase",
+        "finmodel",
+        "capex",
+        "feasibility",
+        "mining",
+        "water",
+        "remotesensing"
+      ],
+      "tracks": [
+        "UAV",
+        "INSP",
+        "ENERGY",
+        "BD",
+        "STRAT"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP"
+      ],
+      "notes": "Figures are a modelled value case, not realised revenue. Keep the wording 'value model'."
+    },
+    {
+      "id": "P03",
+      "type": "project",
+      "title": "Binban racetrack autonomous aerial survey (DJI Matrice 300 RTK)",
+      "org": "Tuwaiq Academy Drone Operations Camp",
+      "start": "2025-11",
+      "end": "2025-11",
+      "bullets": [
+        "Planned and flew an autonomous M300 RTK mission under GACA Part 107: 4,342 sqm, 24 waypoints, 147 photos at 0.69 cm/px GSD",
+        "Built the 3D mesh, orthomosaic and DSM in PIX4Dmatic"
+      ],
+      "skills": [
+        "uav",
+        "flightops",
+        "photogrammetry",
+        "pix4d",
+        "surveying",
+        "pointcloud",
+        "gaca",
+        "multirotor"
+      ],
+      "tracks": [
+        "UAV",
+        "INSP"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP",
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "P04",
+      "type": "project",
+      "title": "Custom fixed-wing UAV assembly and autonomous waypoint flights",
+      "org": "Tuwaiq Academy Drone Systems Development",
+      "start": "2025-12",
+      "end": "2026-01",
+      "bullets": [
+        "Led assembly and structural integration of a printed fixed-wing (LW-PLA fuselage, carbon spars)",
+        "Configured ArduPilot and Mission Planner for autonomous waypoint missions and flight-tested the aircraft",
+        "Ran hardware-in-the-loop checks"
+      ],
+      "skills": [
+        "fixedwing",
+        "ardupilot",
+        "missionplanner",
+        "flightops",
+        "hil",
+        "3dprinting",
+        "manufacturing"
+      ],
+      "tracks": [
+        "UAV",
+        "DEF"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CVCOOP",
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "P05",
+      "type": "project",
+      "title": "PSP shock mapping on a supersonic wedge (ME 1446 Gas Dynamics, sole author)",
+      "org": "IMSIU",
+      "start": "2026-06",
+      "end": "2026-06",
+      "bullets": [
+        "Designed a 5-run test matrix (Mach 2 to 3, wedge 10 to 20 degrees) using pressure-sensitive paint",
+        "Wrote the data-reduction pipeline (in-situ Stern-Volmer fit) and the uncertainty budget",
+        "Design point checked against oblique-shock theory (beta about 45 degrees, 2.19x pressure jump)"
+      ],
+      "skills": [
+        "fluids",
+        "testing",
+        "dataanalysis",
+        "aerospace"
+      ],
+      "tracks": [
+        "DEF",
+        "ME"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "P06",
+      "type": "project",
+      "title": "6-DOF RCAM aircraft model linked to FlightGear",
+      "org": "Self-directed",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "Nonlinear 6-DOF dynamics for a research civil aircraft in Simulink, linked to FlightGear for live visual flight and state monitoring"
+      ],
+      "skills": [
+        "simulink",
+        "simulation",
+        "gnc",
+        "aerospace",
+        "matlab"
+      ],
+      "tracks": [
+        "DEF",
+        "UAV"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "P07",
+      "type": "project",
+      "title": "Fixed-wing flow study (SolidWorks Flow Simulation)",
+      "org": "Self-directed",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "Flow simulation on own fixed-wing design to check pressure distribution over wing, tail and fuselage before printing"
+      ],
+      "skills": [
+        "cfd",
+        "solidworks",
+        "fluids",
+        "fixedwing"
+      ],
+      "tracks": [
+        "UAV",
+        "ME",
+        "DEF"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "P08",
+      "type": "project",
+      "title": "Multirotor autopilot integration (Cube+ autopilot, 915 MHz telemetry, GNSS)",
+      "org": "Self-directed / Tuwaiq",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "Wired a Cube+ autopilot, 915 MHz telemetry and GNSS on a carbon multirotor, with the MAVLink data flow sketched out first"
+      ],
+      "skills": [
+        "autopilot",
+        "telemetry",
+        "mavlink",
+        "multirotor",
+        "electronics",
+        "systemsintegration"
+      ],
+      "tracks": [
+        "UAV",
+        "ROB"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "P09",
+      "type": "project",
+      "title": "TABAQAT: multi-sensor UAV mineral exploration concept",
+      "org": "Concept (demo data only)",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "Concept combining magnetics, hyperspectral and radiometrics into drill targets. Demo data only"
+      ],
+      "skills": [
+        "remotesensing",
+        "uav",
+        "mining"
+      ],
+      "tracks": [
+        "UAV",
+        "INSP",
+        "ENERGY"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ],
+      "notes": "Concept only. Do not present as a delivered project."
+    },
+    {
+      "id": "P10",
+      "type": "project",
+      "title": "MATLAB/Simulink simulations of rocket and aircraft dynamics (state space, EKF)",
+      "org": "Tuwaiq Academy bootcamps",
+      "start": "2025-10",
+      "end": "2026-01",
+      "bullets": [
+        "Built MATLAB/Simulink simulations of rocket and aircraft dynamics using state-space models and EKF sensor fusion"
+      ],
+      "skills": [
+        "matlab",
+        "simulink",
+        "simulation",
+        "kalman",
+        "rocketry"
+      ],
+      "tracks": [
+        "DEF",
+        "UAV"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CVCOOP"
+      ]
+    },
+    {
+      "id": "L01",
+      "type": "leadership",
+      "title": "Team lead and systems engineer, Team SIRAJ (6U CubeSat mission concept)",
+      "org": "Saudi Space Agency SARI-II competition",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "Systems engineer and team lead for a 6U CubeSat mission concept"
+      ],
+      "skills": [
+        "space",
+        "systemseng",
+        "leadership"
+      ],
+      "tracks": [
+        "DEF"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ],
+      "notes": "Outcome of the competition entry not documented."
+    },
+    {
+      "id": "L02",
+      "type": "leadership",
+      "title": "Professional Leadership Development Graduate (Afaq program, 17 hours)",
+      "org": "Misk Community / Akwaf Association",
+      "start": "2025-11",
+      "end": "2026-01",
+      "bullets": [
+        "Co-led a 5-member team on the Masar project, securing 2nd place",
+        "Presented on stage at the Afaq program"
+      ],
+      "skills": [
+        "leadership",
+        "teamwork",
+        "presentation"
+      ],
+      "tracks": [
+        "PM",
+        "BD"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP",
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "L03",
+      "type": "leadership",
+      "title": "Student Volunteer, Head of Events and Activities; PR Head for Riyadh regional qualifiers of the national Energython",
+      "org": "Energy Club",
+      "start": "2024-06",
+      "end": "Present",
+      "bullets": [
+        "Engaged in energy and sustainability awareness campaigns and technical events",
+        "Led public relations operations for the Riyadh regional qualifiers of the national Energython"
+      ],
+      "skills": [
+        "leadership",
+        "communication",
+        "renewables"
+      ],
+      "tracks": [
+        "ENERGY",
+        "BD"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CVCOOP"
+      ],
+      "notes": "Listed on the earlier co-op CV, not on the current CV. Confirm it is still current."
+    },
+    {
+      "id": "L04",
+      "type": "achievement",
+      "title": "Defensathon 2026: 2nd place, university track (15,000 SAR), Saudi News feature",
+      "org": "Tuwaiq Academy, Colleges of Excellence, NCMS, GAMI, GADD",
+      "start": "2026-05",
+      "end": "2026-05",
+      "bullets": [
+        "Recommendation letter from Defensathon coach Yehia Koheel (June 2026) praising perseverance and problem solving under pressure"
+      ],
+      "skills": [
+        "defence",
+        "uav",
+        "leadership"
+      ],
+      "tracks": [
+        "DEF",
+        "UAV"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-README",
+        "S-PORT",
+        "S-REC"
+      ],
+      "notes": "The recommendation letter still has blank title and contact fields. Complete it before using it as a reference."
+    },
+    {
+      "id": "T01",
+      "type": "training",
+      "title": "Drone Operations Camp (75 hours)",
+      "org": "Tuwaiq Academy",
+      "start": "2025-11",
+      "end": "2025-11",
+      "bullets": [
+        "Binban survey as final project"
+      ],
+      "skills": [
+        "flightops",
+        "uav",
+        "photogrammetry"
+      ],
+      "tracks": [
+        "UAV"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "T02",
+      "type": "training",
+      "title": "Drone Systems Development (90 hours)",
+      "org": "Tuwaiq Academy",
+      "start": "2026-01",
+      "end": "2026-01",
+      "bullets": [
+        "Simulation to flight"
+      ],
+      "skills": [
+        "uav",
+        "ardupilot",
+        "simulation"
+      ],
+      "tracks": [
+        "UAV"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "T03",
+      "type": "training",
+      "title": "Electronic Labs (soldering, circuits, Arduino)",
+      "org": "Tuwaiq Academy",
+      "start": "2025-10",
+      "end": "2025-10",
+      "bullets": [],
+      "skills": [
+        "electronics",
+        "embedded"
+      ],
+      "tracks": [
+        "ROB",
+        "UAV"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "T04",
+      "type": "training",
+      "title": "Launch Systems & Rockets program",
+      "org": "Tuwaiq Academy",
+      "start": "2026-09",
+      "end": "",
+      "bullets": [],
+      "skills": [
+        "rocketry"
+      ],
+      "tracks": [
+        "DEF"
+      ],
+      "status": "needs_confirmation",
+      "evidence": [
+        "S-PORT"
+      ],
+      "notes": "Portfolio lists it for Fall 2026. Confirm completion status and whether OpenRocket design and simulation work was part of it before it appears on a CV."
+    },
+    {
+      "id": "T05",
+      "type": "training",
+      "title": "Forward Program (structured problem solving)",
+      "org": "McKinsey & Company (McKinsey.org)",
+      "start": "2026-09",
+      "end": "2026-09",
+      "bullets": [],
+      "skills": [
+        "problemsolving",
+        "strategy"
+      ],
+      "tracks": [
+        "STRAT"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-PORT"
+      ]
+    },
+    {
+      "id": "C01",
+      "type": "certification",
+      "title": "GACA Part 107 Non-Recreational UAV License (commercial drone pilot)",
+      "org": "General Authority of Civil Aviation",
+      "start": "2025-11",
+      "end": "",
+      "bullets": [
+        "Passed at 81.67% (portfolio)"
+      ],
+      "skills": [
+        "gaca",
+        "flightops"
+      ],
+      "tracks": [
+        "UAV"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP",
+        "S-PORT",
+        "S-PREF"
+      ],
+      "notes": "Licence itself is documented on all CVs and the portfolio. Keep the licence number and expiry handy for applications."
+    },
+    {
+      "id": "C02",
+      "type": "certification",
+      "title": "165+ UAV flight hours",
+      "org": "",
+      "start": "",
+      "end": "",
+      "bullets": [],
+      "skills": [
+        "flightops"
+      ],
+      "tracks": [
+        "UAV"
+      ],
+      "status": "needs_confirmation",
+      "evidence": [
+        "S-CV1017",
+        "S-PREF",
+        "S-CVCOOP"
+      ],
+      "notes": "CONFLICT: the earlier co-op CV says '165+ hours of UAV training', the current CV says '165+ flight hours', and the Tuwaiq bootcamps total 165 training hours (75 + 90). Confirm your logged flight hours from a logbook before any application states flight hours."
+    },
+    {
+      "id": "C03",
+      "type": "certification",
+      "title": "Certified Associate in Project Management (CAPM)",
+      "org": "Project Management Institute",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "In progress (earlier CV said expected 11/2026)"
+      ],
+      "skills": [
+        "capm",
+        "pm"
+      ],
+      "tracks": [
+        "PM"
+      ],
+      "status": "needs_confirmation",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP"
+      ],
+      "notes": "IN PROGRESS. Never claim as held until you pass."
+    },
+    {
+      "id": "C04",
+      "type": "certification",
+      "title": "OSHA Safety Certification",
+      "org": "OSHA",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "In progress"
+      ],
+      "skills": [
+        "osha",
+        "hse"
+      ],
+      "tracks": [
+        "HSE"
+      ],
+      "status": "needs_confirmation",
+      "evidence": [
+        "S-CV1017"
+      ],
+      "notes": "IN PROGRESS. Confirm which course (OSHA 10 / 30, general industry or construction) and the provider."
+    },
+    {
+      "id": "C05",
+      "type": "certification",
+      "title": "TOEFL iBT",
+      "org": "ETS",
+      "start": "",
+      "end": "",
+      "bullets": [
+        "In progress"
+      ],
+      "skills": [
+        "english"
+      ],
+      "tracks": [],
+      "status": "needs_confirmation",
+      "evidence": [
+        "S-CV1017"
+      ],
+      "notes": "IN PROGRESS."
+    },
+    {
+      "id": "C06",
+      "type": "certification",
+      "title": "Saudi Council of Engineers (SCE) membership / professional accreditation",
+      "org": "Saudi Council of Engineers",
+      "start": "",
+      "end": "",
+      "bullets": [],
+      "skills": [
+        "sce"
+      ],
+      "tracks": [
+        "ME"
+      ],
+      "status": "suggested",
+      "evidence": [],
+      "notes": "Not held according to any document. Many engineering roles need SCE registration once you graduate. Add it here when you register."
+    },
+    {
+      "id": "X01",
+      "type": "achievement",
+      "title": "QSS wrap-up post reached nearly 12,000 people on LinkedIn",
+      "org": "LinkedIn",
+      "start": "2026-08",
+      "end": "",
+      "bullets": [],
+      "skills": [
+        "communication"
+      ],
+      "tracks": [
+        "BD"
+      ],
+      "status": "verified_doc",
+      "evidence": [
+        "S-PORT"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "kid": "solidworks",
+      "name": "SolidWorks",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E03",
+        "P01",
+        "P07"
+      ]
+    },
+    {
+      "kid": "onshape",
+      "name": "Onshape",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "cad",
+      "name": "CAD",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E03",
+        "E01",
+        "P01"
+      ]
+    },
+    {
+      "kid": "matlab",
+      "name": "MATLAB",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P10",
+        "P06"
+      ]
+    },
+    {
+      "kid": "simulink",
+      "name": "Simulink",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P10",
+        "P06"
+      ]
+    },
+    {
+      "kid": "ardupilot",
+      "name": "ArduPilot",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P04",
+        "P01"
+      ]
+    },
+    {
+      "kid": "missionplanner",
+      "name": "Mission Planner",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E03",
+        "P04"
+      ]
+    },
+    {
+      "kid": "pix4d",
+      "name": "PIX4Dmatic",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P03"
+      ]
+    },
+    {
+      "kid": "photogrammetry",
+      "name": "Photogrammetry",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P03"
+      ]
+    },
+    {
+      "kid": "pointcloud",
+      "name": "3D mesh / DSM / point-cloud outputs (PIX4Dmatic)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P03"
+      ],
+      "note": "Produced via PIX4Dmatic. Dedicated point-cloud processing beyond that is not documented."
+    },
+    {
+      "kid": "surveying",
+      "name": "Aerial survey and mapping",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P03"
+      ]
+    },
+    {
+      "kid": "slam",
+      "name": "SLAM (ORB-SLAM3 architecture, LiDAR SLAM benchmarking)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "E01"
+      ]
+    },
+    {
+      "kid": "kalman",
+      "name": "EKF / state estimation",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P10"
+      ]
+    },
+    {
+      "kid": "navigation",
+      "name": "Autonomous / GPS-denied navigation",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01"
+      ]
+    },
+    {
+      "kid": "gnc",
+      "name": "Guidance and control (L1 guidance, PID, elevon mixing)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P06"
+      ]
+    },
+    {
+      "kid": "simulation",
+      "name": "6-DOF simulation and modelling",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P06",
+        "P10"
+      ]
+    },
+    {
+      "kid": "cfd",
+      "name": "CFD (SimScale, SolidWorks Flow Simulation)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P07"
+      ]
+    },
+    {
+      "kid": "fea",
+      "name": "FEA (retention hardware check)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "bom",
+      "name": "Bill of Materials ownership",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E03",
+        "P01"
+      ]
+    },
+    {
+      "kid": "3dprinting",
+      "name": "3D printing",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E03",
+        "P04"
+      ]
+    },
+    {
+      "kid": "cnc",
+      "name": "CNC machining and laser cutting",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E03"
+      ]
+    },
+    {
+      "kid": "prototyping",
+      "name": "Prototyping",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "E03"
+      ]
+    },
+    {
+      "kid": "mavlink",
+      "name": "MAVLink",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P08"
+      ]
+    },
+    {
+      "kid": "telemetry",
+      "name": "Telemetry and ground control systems",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "P08"
+      ]
+    },
+    {
+      "kid": "autopilot",
+      "name": "Autopilot integration (Pixhawk / Cube)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "P08"
+      ]
+    },
+    {
+      "kid": "hil",
+      "name": "Hardware-in-the-loop checks",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P04"
+      ]
+    },
+    {
+      "kid": "gazebo",
+      "name": "Gazebo",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "lidar",
+      "name": "LiDAR (SLAM benchmarking)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "computervision",
+      "name": "Computer vision (YOLOv8 in NavPod architecture)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01"
+      ]
+    },
+    {
+      "kid": "systemseng",
+      "name": "Systems engineering (architecture, test plans)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "E01",
+        "L01"
+      ]
+    },
+    {
+      "kid": "testing",
+      "name": "Test planning and validation",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "P05"
+      ]
+    },
+    {
+      "kid": "mep",
+      "name": "MEP site coordination",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04"
+      ]
+    },
+    {
+      "kid": "hvac",
+      "name": "HVAC (installation coordination, clash resolution, duct rerouting)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04"
+      ]
+    },
+    {
+      "kid": "plumbing",
+      "name": "Plumbing (drawing review, rerouting mains)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04"
+      ]
+    },
+    {
+      "kid": "fireprotection",
+      "name": "Firefighting / fire protection (drawing review, fire branch rerouting)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04"
+      ]
+    },
+    {
+      "kid": "drawings",
+      "name": "Engineering drawing review",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04",
+        "E03"
+      ]
+    },
+    {
+      "kid": "clash",
+      "name": "Clash detection and resolution",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04"
+      ]
+    },
+    {
+      "kid": "installation",
+      "name": "Installation oversight",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04"
+      ]
+    },
+    {
+      "kid": "hse",
+      "name": "HSE compliance on site",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E04"
+      ]
+    },
+    {
+      "kid": "businesscase",
+      "name": "Business case development",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "P02"
+      ]
+    },
+    {
+      "kid": "finmodel",
+      "name": "Financial modelling (payback, margin, ROI)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "P02"
+      ]
+    },
+    {
+      "kid": "capex",
+      "name": "CAPEX/OPEX analysis",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "gtm",
+      "name": "Go-to-market strategy",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "marketresearch",
+      "name": "Competitive benchmarking",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "bizdev",
+      "name": "Business development",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "E02"
+      ]
+    },
+    {
+      "kid": "feasibility",
+      "name": "Feasibility study",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017"
+      ]
+    },
+    {
+      "kid": "proposal",
+      "name": "Proposal writing",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP"
+      ]
+    },
+    {
+      "kid": "riskassessment",
+      "name": "Risk assessment",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017",
+        "S-CVCOOP"
+      ]
+    },
+    {
+      "kid": "stakeholder",
+      "name": "Stakeholder management",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "E03"
+      ]
+    },
+    {
+      "kid": "vendor",
+      "name": "Vendor / supplier coordination",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "procurement",
+      "name": "Hardware procurement (NavPod demo build)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01"
+      ]
+    },
+    {
+      "kid": "pm",
+      "name": "Project lifecycle management",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "L02"
+      ]
+    },
+    {
+      "kid": "leadership",
+      "name": "Team leadership",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "L01",
+        "L02",
+        "E04"
+      ]
+    },
+    {
+      "kid": "presentation",
+      "name": "Executive and investor presentations",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "E03",
+        "L02"
+      ]
+    },
+    {
+      "kid": "documentation",
+      "name": "Engineering documentation",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01"
+      ]
+    },
+    {
+      "kid": "remotesensing",
+      "name": "Remote sensing",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017",
+        "P09"
+      ],
+      "note": "Concept-level (TABAQAT, MIRQAB)."
+    },
+    {
+      "kid": "gis",
+      "name": "Geospatial data (GIS)",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017"
+      ]
+    },
+    {
+      "kid": "inspection",
+      "name": "Asset inspection",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017"
+      ],
+      "note": "Listed on CV. No inspection job documented; describe as drone survey and site oversight experience."
+    },
+    {
+      "kid": "ros",
+      "name": "ROS 2",
+      "status": "confirmed_user",
+      "strength": "listed",
+      "evidence": [
+        "S-PREF",
+        "S-CVCOOP",
+        "S-README"
+      ]
+    },
+    {
+      "kid": "cpp",
+      "name": "C++",
+      "status": "confirmed_user",
+      "strength": "listed",
+      "evidence": [
+        "S-PREF",
+        "S-CV1017"
+      ]
+    },
+    {
+      "kid": "python",
+      "name": "Python",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CVCOOP"
+      ]
+    },
+    {
+      "kid": "px4",
+      "name": "PX4",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CVCOOP",
+        "S-README"
+      ],
+      "note": "ApexNav roadmap mentions PX4 SITL. Hands-on use not otherwise documented."
+    },
+    {
+      "kid": "gdt",
+      "name": "GD&T",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CVCOOP"
+      ]
+    },
+    {
+      "kid": "embedded",
+      "name": "Embedded hardware (Jetson, Arduino)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P01",
+        "T03"
+      ]
+    },
+    {
+      "kid": "electronics",
+      "name": "Electronics (soldering, wiring, circuits)",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "T03",
+        "P08"
+      ]
+    },
+    {
+      "kid": "pcb",
+      "name": "PCB design",
+      "status": "needs_confirmation",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017",
+        "S-PREF"
+      ],
+      "note": "Listed on both CVs and in your preferences as 'PCB work'. No PCB layout project is documented. Confirm tool (KiCad / Altium / EasyEDA) and a project."
+    },
+    {
+      "kid": "hvac",
+      "name": "HVAC Design (as listed on CV)",
+      "status": "needs_confirmation",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017"
+      ],
+      "note": "Your CV lists 'HVAC Design'. Documented work is HVAC coordination and clash resolution, not full system design. CareerOS will not use the word 'design' for HVAC until you confirm design work (load calcs, sizing, HAP etc.)."
+    },
+    {
+      "kid": "nfpa",
+      "name": "NFPA / SBC 801",
+      "status": "needs_confirmation",
+      "strength": "listed",
+      "evidence": [
+        "S-CVCOOP"
+      ],
+      "note": "Listed on the earlier CV only. Confirm what you applied."
+    },
+    {
+      "kid": "english",
+      "name": "English",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017"
+      ]
+    },
+    {
+      "kid": "arabic",
+      "name": "Arabic",
+      "status": "verified_doc",
+      "strength": "listed",
+      "evidence": [
+        "S-CV1017"
+      ]
+    },
+    {
+      "kid": "gaca",
+      "name": "GACA Part 107 drone licence",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "C01"
+      ]
+    },
+    {
+      "kid": "flightops",
+      "name": "UAV flight operations",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P03",
+        "P04"
+      ]
+    },
+    {
+      "kid": "uav",
+      "name": "UAV design and operations",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E01",
+        "E03",
+        "P01",
+        "P03"
+      ]
+    },
+    {
+      "kid": "fixedwing",
+      "name": "Fixed-wing UAV",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "E03",
+        "P04",
+        "P01"
+      ]
+    },
+    {
+      "kid": "multirotor",
+      "name": "Multirotor",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P03",
+        "P08"
+      ]
+    },
+    {
+      "kid": "systemsintegration",
+      "name": "Systems integration",
+      "status": "verified_doc",
+      "strength": "project",
+      "evidence": [
+        "P08",
+        "P01"
+      ]
+    },
+    {
+      "kid": "thermography",
+      "name": "Thermal imaging / thermography",
+      "status": "suggested",
+      "strength": "interest",
+      "evidence": [],
+      "note": "Career interest only. No documented thermal inspection work or certification (e.g. ITC / ASNT Level I thermography)."
+    },
+    {
+      "kid": "digitaltwin",
+      "name": "Digital twin",
+      "status": "suggested",
+      "strength": "interest",
+      "evidence": [],
+      "note": "Survey outputs (3D mesh, DSM) relate to digital twins, but no digital twin was documented."
+    },
+    {
+      "kid": "rocketry",
+      "name": "Rocket design and simulation (OpenRocket)",
+      "status": "needs_confirmation",
+      "strength": "listed",
+      "evidence": [
+        "P10",
+        "T04"
+      ],
+      "note": "Rocket dynamics simulation in MATLAB is documented. OpenRocket use is not documented."
+    }
+  ],
+  "careerTracks": [
+    {
+      "code": "DEF",
+      "priority": 1
+    },
+    {
+      "code": "UAV",
+      "priority": 1
+    },
+    {
+      "code": "ROB",
+      "priority": 1
+    },
+    {
+      "code": "ME",
+      "priority": 2
+    },
+    {
+      "code": "INSP",
+      "priority": 2
+    },
+    {
+      "code": "HSE",
+      "priority": 3
+    },
+    {
+      "code": "ENERGY",
+      "priority": 2
+    },
+    {
+      "code": "PM",
+      "priority": 2
+    },
+    {
+      "code": "BD",
+      "priority": 2
+    },
+    {
+      "code": "STRAT",
+      "priority": 3
+    }
+  ],
+  "integrityFlags": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "title": "Flight hours wording conflict",
+      "detail": "Current CV: '165+ flight hours'. Earlier co-op CV: '165+ hours of UAV training'. Tuwaiq bootcamps = 75 + 90 = 165 training hours. Confirm logged flight hours before stating them in any application.",
+      "item": "C02"
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "title": "'HVAC Design' listed but evidence shows coordination",
+      "detail": "Athlath evidence supports HVAC installation coordination, drawing review and clash resolution. Treat 'HVAC Design' as unconfirmed.",
+      "item": "E04"
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "title": "PCB Design not backed by a project",
+      "detail": "Electronics labs (soldering, circuits, Arduino) are documented. No PCB layout project is.",
+      "item": null
+    },
+    {
+      "id": "F4",
+      "severity": "high",
+      "title": "Certifications in progress",
+      "detail": "CAPM, OSHA and TOEFL are in progress. CareerOS never lists them as held.",
+      "item": "C03"
+    },
+    {
+      "id": "F5",
+      "severity": "high",
+      "title": "Not yet graduated",
+      "detail": "Expected graduation January 2027. Roles that require a completed degree before the start date are YELLOW or RED, never GREEN.",
+      "item": null
+    },
+    {
+      "id": "F6",
+      "severity": "medium",
+      "title": "Nationality and GPA not documented",
+      "detail": "Many Saudi programs require Saudi nationality and a minimum GPA. Set both in Settings.",
+      "item": null
+    },
+    {
+      "id": "F7",
+      "severity": "low",
+      "title": "MIRQAB figures are a value model",
+      "detail": "$484K, 3.2x and 3.7 months come from a modelled mining case. Keep the words 'value model'.",
+      "item": "P02"
+    },
+    {
+      "id": "F8",
+      "severity": "low",
+      "title": "Recommendation letter incomplete",
+      "detail": "Yehia Koheel's letter has blank title and contact fields.",
+      "item": "L04"
+    }
+  ]
+}
