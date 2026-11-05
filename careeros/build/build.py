@@ -33,6 +33,10 @@ parts = {
     "/*FONTW*/": read("data/font_widths.json"),
     "/*TAXONOMY*/": js_safe(read("src/taxonomy.js")),
     "/*ENGINE*/": js_safe(read("src/engine.js")),
+    "/*ENGINE2*/": js_safe(read("src/engine2.js")),
+    "/*JSPDF*/": js_safe(read("vendor/jspdf.umd.min.js")),
+    "/*PDFFONTS*/": json.dumps({k: base64.b64encode(open(P("vendor/fonts/SSP-" + n + ".ttf"), "rb").read()).decode() for k, n in [("r", "Regular"), ("b", "Bold"), ("i", "It"), ("bi", "BoldIt")]}),
+    "/*PDFRENDER*/": js_safe(read("src/pdfrender.js")),
     "/*APP*/": js_safe(app),
 }
 for k, v in parts.items():

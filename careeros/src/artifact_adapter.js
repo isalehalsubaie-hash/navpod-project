@@ -72,5 +72,14 @@ window.CAREEROS_HOOKS = (function () {
       catch (e2) { if (!/declin|cancel|abort/i.test(String(e2 && (e2.code || e2.message)))) toast("Download did not complete: " + (e2.message || e2), 5000); }
     }
   };
+  H.sample = () => withTimeout(cap("sample"), 10000);
+  H.mcp = async () => {
+    const m = await withTimeout(cap("mcp"), 10000); if (!m) return null;
+    return { callTool: async (server, tool, input) => {
+      if (typeof m.callTool === "function") return m.callTool(server, tool, input);
+      if (typeof m.server === "function") { const s = await m.server(server); return { payload: await s[tool](input) }; }
+      throw new Error("Connector API not available");
+    } };
+  };
   return H;
 })();

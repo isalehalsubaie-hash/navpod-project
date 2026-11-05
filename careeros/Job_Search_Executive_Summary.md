@@ -136,3 +136,10 @@ Airbus Defence and Space Saudi, SAMI (SAMI Autonomous), INTRA Defense Technologi
 - Major 2026 graduate programs (PIF, KAPSARC, Qiddiya, Misk x Tuwaiq) opened June to July 2026 and are closed.
 - SAMI created **SAMI Autonomous** in February 2026, the most direct defence-UAV employer to watch.
 - Bayt, GulfTalent and Indeed block automated access, so discovery relied on LinkedIn's public listings plus employer and program pages. See `Search_Methodology.md`.
+
+## Update: CareerOS 2.0 and research pass 2 (5 November 2026)
+
+- The database now holds **278 active opportunities** (was 176) after a second sweep of adjacent titles (project controls, facilities, process, operations readiness, calibration, HSE, Arabic terms). All IDs in this summary are unchanged.
+- Each job now also has a **career value** score (0 to 100). Notable new entries: Saipem Technical Officer GDP, Dhahran (CO-0181, ORANGE, value 85); Worley Operation Readiness Engineer, Ras Al-Khair (CO-0194, YELLOW, value 86); Siemens Energy graduate internship, Dammam listing (CO-0284, YELLOW); Larsen & Toubro Sub-contracts Engineer, Riyadh (CO-0199, YELLOW).
+- **Your Gmail shows 61 LinkedIn applications in the last 120 days.** Use *Import from Gmail* on your private CareerOS page to bring them into the tracker. Analytics then shows which tracks, channels and CV versions get responses. Record responses (Assessment, Interview, Rejected) so those numbers mean something.
+- Many of those 61 applications went to non-engineering roles (fintech, retail, HR-adjacent). The development map and career value suggest concentrating effort on the Green and Yellow engineering and technical-commercial roles above.

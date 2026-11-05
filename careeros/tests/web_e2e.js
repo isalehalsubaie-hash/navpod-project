@@ -17,11 +17,11 @@ const ok = (n, c, i) => console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' + 
   const p = await ctx.newPage(); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
   const url = 'file://' + path.resolve(__dirname, '../CareerOS_web.html');
   await p.goto(url); await p.waitForSelector('#nav a', { timeout: 30000 }); await p.waitForTimeout(800);
-  await p.click('.burger'); await p.click('#nav a[href="#/discover"]'); await p.waitForTimeout(500);
+  await p.click('#tabbar a[href="#/discover"]'); await p.waitForTimeout(500);
   ok('Internal routing to Discover', (await p.textContent('#title')) === 'Discover Opportunities');
   ok('URL hash untouched', !(await p.evaluate(() => location.hash)));
   await p.click('.job a.t >> nth=1'); await p.waitForTimeout(500); ok('Open job via card link', /Airbus|Engineering Apprentice/.test(await p.textContent('#title')), await p.textContent('#title'));
-  await p.click('#topActions >> text=Analyze and tailor my CV'); await p.waitForTimeout(500);
+  await p.click('#moreBtn'); await p.click('#actmenu >> text=Analyze and tailor my CV'); await p.waitForTimeout(500);
   await p.click('[data-act="optimize"]'); await p.waitForTimeout(600); await p.click('[data-act="acceptAll"]'); await p.waitForTimeout(500);
   await p.click('[data-act="makeVersion"]'); await p.waitForTimeout(600);
   ok('In-page confirm shown (browser confirm blocked)', !!(await p.$('#askmodal')));

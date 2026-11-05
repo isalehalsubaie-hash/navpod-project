@@ -33,7 +33,7 @@ route("cv", async () => {
   const atsP = M.pdfText ? E.atsAssessPdfText(M.pdfText, { orderOk: M.pdfOrderOk }) : null;
   const atsTable = (r) => `<table><tbody>${r.checks.map((c) => `<tr><td style="width:24px">${c.result === "pass" ? '<b class="ok">✓</b>' : c.result === "warn" ? '<b class="warnc">!</b>' : '<b class="bad">✗</b>'}</td><td><b class="small">${esc(c.name)}</b><div class="tiny muted">${esc(c.detail)}</div></td></tr>`).join("")}</tbody></table><p class="tiny muted">${esc(r.note)}</p>`;
   return {
-    title: "My Master CV", sub: "The protected reference document every tailored CV is copied from",
+    title: "CV Studio", sub: "Master CV, career-track versions, ATS checks and exports",
     actions: `<label class="btn primary">Upload CV (DOCX or PDF)<input type="file" accept=".docx,.pdf" class="hide" data-chg="uploadCV"></label>`,
     html: `${!M.approved && M.source && /reconstruct/i.test(M.source) ? `<div class="flag high"><b>Your master DOCX was reconstructed by CareerOS.</b> Only PDF versions of your CV were found (workspace and Google Drive). To make tailoring possible, CareerOS rebuilt the 17 Oct 2026 PDF as an editable DOCX with the same page size, margins, fonts, sizes, rules, bullets and right-aligned dates. Text is copied verbatim. Compare it with your PDF below, then either approve it or upload your original DOCX.<div class="row mt"><button class="btn primary" data-act="approveMaster">Approve reconstructed DOCX as master</button><label class="btn">Upload my original DOCX<input type="file" accept=".docx" class="hide" data-chg="uploadCV"></label></div></div>` : ""}
     <div class="grid g3 mt">
@@ -42,7 +42,7 @@ route("cv", async () => {
         <tr><th style="position:static">PDF reference</th><td class="small">${esc(M.pdfName || "None")}${M.pdfPages ? " · " + M.pdfPages + " page(s)" : ""}</td></tr>
         <tr><th style="position:static">Status</th><td class="small">${M.approved ? '<b class="ok">Approved by you</b>' : '<b class="warnc">Awaiting your approval</b>'}</td></tr>
         <tr><th style="position:static">Loaded</th><td class="small">${fmtDate(M.uploadedAt)}</td></tr></tbody></table>
-        <div class="row mt">${M.docxB64 ? `<button class="btn sm" data-act="dlMaster" data-k="docx">Download master DOCX</button>` : ""}${M.pdfB64 ? `<button class="btn sm" data-act="dlMaster" data-k="pdf">Download PDF</button>` : ""}</div></div>
+        <div class="row mt">${M.docxB64 ? `<button class="btn sm" data-act="dlMaster" data-k="docx">Download master DOCX</button><button class="btn sm" data-act="masterPdf">Export master PDF</button>` : ""}${M.pdfB64 ? `<button class="btn sm" data-act="dlMaster" data-k="pdf">Download PDF</button>` : ""}</div></div>
       <div class="card"><h2>Format lock</h2>
         <label class="row" style="cursor:pointer"><input type="checkbox" ${S.settings.formatLock ? "checked" : ""} data-chg="formatLock"> <b>LOCK ORIGINAL CV FORMAT: ${S.settings.formatLock ? "ON" : "OFF"}</b></label>
         <p class="small">When ON, tailoring only rewrites words inside existing paragraphs and runs. Page size, margins, fonts, sizes, colours, headings, section order, bullets, spacing, indentation, tabs and hyperlinks are untouched. Removing a paragraph is only offered as a suggestion that you must accept.</p>
@@ -58,10 +58,14 @@ route("cv", async () => {
     </div>
     <div class="grid g2 mt">
       <div class="card"><h2>ATS readability: master DOCX</h2>${atsD ? atsTable(atsD) : '<p class="muted">Upload a DOCX.</p>'}</div>
+      <div class="card"><h2>ATS risk check: Greenhouse guidance</h2>${mod ? (() => { const g = E.atsGreenhouse(mod, M.docxB64 ? Math.round(M.docxB64.length * 0.75) : null); return atsTable(g) + `<p class="tiny"><a href="${g.source}" target="_blank" rel="noopener">Greenhouse: Unsuccessful resume parse</a></p>`; })() : ""}</div>
       <div class="card"><h2>ATS readability: PDF version (actual text extraction)</h2>${atsP ? atsTable(atsP) : '<p class="muted">No PDF loaded.</p>'}
         ${M.pdfText ? `<details><summary>Show text exactly as extracted from the PDF</summary><pre class="doc">${esc(M.pdfText)}</pre></details>` : ""}</div>
     </div>
     <div class="card mt"><div class="row between"><h2>Master CV content (read-only preview)</h2><span class="tiny muted">Preview approximates layout. The DOCX file is the source of truth.</span></div>${mod ? cvPreview(mod.paragraphs) : '<p class="muted">No DOCX master.</p>'}</div>
+    <div class="card mt"><h2>Career-track CV versions</h2><p class="small">Five ready-to-tailor versions built from your master CV and your verified evidence. Each one is tuned to what the active adverts in that track ask for, and each change still needs your approval.</p>
+      <div class="tablewrap" style="max-height:none"><table><thead><tr><th>Version</th><th class="num">Adverts used</th><th>Status</th><th></th></tr></thead><tbody>${trackTargetsList().map((t) => { const vs = S.cvVersions.filter((v) => v.jobId === t.jobId); const last = vs[vs.length - 1]; return `<tr><td><b class="small">${esc(t.title)}</b></td><td class="num">${t.basedOn}</td><td class="small">${last ? esc(last.name) + " · coverage " + last.coverageBefore + "% → " + last.coverageAfter + "%" : S.optim[t.jobId] ? "Suggestions under review" : "Not built yet"}</td><td><div class="row" style="gap:4px"><a class="btn sm primary" href="#/optimize/${t.jobId}">${last ? "Revise" : "Build"}</a>${last ? `<button class="btn sm" data-act="dlVersion" data-v="${last.id}">DOCX</button><button class="btn sm" data-act="pdfVersion" data-v="${last.id}">PDF</button><button class="btn sm" data-act="viewChanges" data-v="${last.id}">Changes</button>` : ""}</div></td></tr>`; }).join("")}</tbody></table></div></div>
+    <div class="card mt"><h2>All tailored versions (${S.cvVersions.length})</h2>${versionsTable(S.cvVersions)}</div>
     <div class="card mt"><h2>Optional: simplified ATS version</h2><p class="small">Some portals parse plain single-column documents more reliably. This creates a separate, plain DOCX (Calibri 11, no tabs or rules) from the master text. It never replaces your locked original-format CV.</p><button class="btn" data-act="simpleDocx">Download simplified ATS DOCX</button></div>`,
   };
 });
@@ -158,8 +162,8 @@ route("optimize", (id) => {
   if (!M.model) return { title: "CV Optimizer", html: `<div class="flag high">No DOCX master CV is loaded. <a href="#/cv">Upload your DOCX</a>. With only a PDF, CareerOS can analyse but not edit with format preservation.</div>` };
   const c = C(j);
   const o = optimState(id);
-  let html = `<div class="row mb">${elPill(c.el.label, c.el.summary)}<span class="pill">Match ${c.m.total}/100</span><span class="pill">Master: ${esc(M.name)}</span><span class="pill">Format lock: ${S.settings.formatLock ? "ON" : "OFF"}</span>${!M.approved ? `<span class="pill" style="border-color:#f3dc9a">Master not yet approved</span>` : ""}</div>`;
-  if (c.el.label === "RED") html += `<div class="flag high">Eligibility is RED for this job: ${esc((c.el.reasons.find((r) => r.level === "RED") || {}).msg || "")} You can still tailor a CV, but a mandatory requirement appears to exclude you.</div>`;
+  let html = j.isTrack ? `<div class="note mb">Career-track version: built from ${j.basedOn} active adverts in this track. It is a reusable starting point; tailor again for each job you apply to.</div><div class="row mb"><span class="pill">Master: ${esc(M.name)}</span><span class="pill">Format lock: ${S.settings.formatLock ? "ON" : "OFF"}</span></div>` : `<div class="row mb">${elPill(c.el.label, c.el.summary)}<span class="pill">Match ${c.m.total}/100</span><span class="pill">Master: ${esc(M.name)}</span><span class="pill">Format lock: ${S.settings.formatLock ? "ON" : "OFF"}</span>${!M.approved ? `<span class="pill" style="border-color:#f3dc9a">Master not yet approved</span>` : ""}</div>`;
+  if (!j.isTrack && c.el.label === "RED") html += `<div class="flag high">Eligibility is RED for this job: ${esc((c.el.reasons.find((r) => r.level === "RED") || {}).msg || "")} You can still tailor a CV, but a mandatory requirement appears to exclude you.</div>`;
   if (!o) {
     html += `<div class="card"><h2>Current CV against this job</h2><div class="grid g3"><div class="tile"><div class="l">Keyword coverage</div><div class="v">${c.cov.keywordCoverage}%</div></div><div class="tile"><div class="l">Evidence coverage</div><div class="v">${c.cov.evidenceCoverage}%</div></div><div class="tile"><div class="l">Keywords to surface truthfully</div><div class="v">${c.cov.counts.supported + c.cov.counts.equivalent}</div></div></div>
       <p class="small mt">The optimizer reads the advert, your career profile and the master CV, then proposes changes. It only uses wording backed by evidence marked Verified or Confirmed. Nothing is applied until you accept it.</p>
@@ -199,7 +203,7 @@ function previewParas(model, acc) {
 function versionsTable(vs) {
   if (!vs.length) return `<p class="small muted">None yet.</p>`;
   return `<table><tbody>${vs.slice().reverse().map((v) => { const j = jobById(v.jobId); return `<tr><td class="small"><b>${esc(v.name)}</b><div class="tiny muted">${j ? esc(j.title + " · " + j.employer) : ""} · ${fmtDate(v.created)} · ${v.changes.length} change(s) · coverage ${v.coverageBefore}% → ${v.coverageAfter}%</div><div class="tiny ${v.integrity.ok ? "ok" : "bad"}">${esc(v.integrity.summary)}</div></td>
-    <td><div class="row" style="gap:4px"><button class="btn sm" data-act="dlVersion" data-v="${v.id}">DOCX</button><button class="btn sm" data-act="pdfVersion" data-v="${v.id}">PDF</button></div></td></tr>`; }).join("")}</tbody></table>`;
+    <td><div class="row" style="gap:4px"><button class="btn sm" data-act="dlVersion" data-v="${v.id}">DOCX</button><button class="btn sm" data-act="pdfVersion" data-v="${v.id}">PDF</button><button class="btn sm" data-act="viewChanges" data-v="${v.id}">Changes</button></div></td></tr>`; }).join("")}</tbody></table>`;
 }
 ACT.optimize = (d) => {
   const j = jobById(d.id), c = C(j);
@@ -249,9 +253,10 @@ ACT.makeVersion = async (d) => {
   const cov = E.cvCoverage(C(j).a, re.text, S.profile, { evidenceIndex: evidenceIndex() });
   const n = S.cvVersions.filter((v) => v.jobId === d.id).length + 1;
   const safe = (s) => s.replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 40);
-  const v = { id: uid("CV"), jobId: d.id, name: "Saleh_Alsubaie_CV_" + safe(j.employer) + "_" + safe(E.cleanTitle(j.title)) + "_v" + n + ".docx", created: TODAY(), changes: acc.map((a) => ({ id: a.id, type: a.type, paragraph: a.paragraph, original: a.original, proposed: a.proposed, op: a.op || "edit" })), bytesB64: bytesToB64(r.bytes), coverageBefore: C(j).cov.keywordCoverage, coverageAfter: cov.keywordCoverage, overflow: E.overflowEstimate(S.master.model, acc),
+  const v = { id: uid("CV"), jobId: d.id, isTrack: !!j.isTrack, name: j.isTrack ? "Saleh_Alsubaie_CV_TRACK_" + safe(j.title.replace(/ CV$/, "")) + "_v" + n + ".docx" : "Saleh_Alsubaie_CV_" + safe(j.employer) + "_" + safe(E.cleanTitle(j.title)) + "_v" + n + ".docx", created: TODAY(), changes: acc.map((a) => ({ id: a.id, type: a.type, section: a.section, paragraph: a.paragraph, original: a.original, proposed: a.proposed, op: a.op || "edit", reason: a.reason, evidence: a.evidence, coverageImpact: a.coverageImpact })), bytesB64: bytesToB64(r.bytes), coverageBefore: C(j).cov.keywordCoverage, coverageAfter: cov.keywordCoverage, overflow: E.overflowEstimate(S.master.model, acc),
     integrity: { ok, failed, mismatches: mism, masterUnchanged: masterHashBefore === masterHashAfter, layoutSame: metaSame, summary: ok ? "Integrity check passed: reopened, " + re.paragraphs.length + " paragraphs match, page setup and fonts identical, master unchanged." : "Integrity check found issues: " + (failed.length ? failed.length + " change(s) could not be applied (" + failed.map((f) => f.error).join("; ") + "). " : "") + (mism ? mism + " paragraph mismatch(es). " : "") + (!metaSame ? "Page setup differs. " : "") } };
   S.cvVersions.push(v);
+  if (j.isTrack) { logActivity("Career-track CV created: " + v.name); save(); rerender(); toast(ok ? "Track CV created and verified" : "Created with warnings", 4000); return; }
   const app = addToTracker(d.id);
   app.cvVersionId = v.id; if (["Discovered", "Not reviewed", "Interested", "To apply"].includes(app.status)) { app.status = "CV prepared"; app.history.push({ date: TODAY(), status: "CV prepared" }); }
   logActivity("Tailored CV created: " + v.name);
@@ -260,8 +265,23 @@ ACT.makeVersion = async (d) => {
 };
 async function sha(bytes) { const h = await crypto.subtle.digest("SHA-256", bytes); return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, "0")).join(""); }
 ACT.dlVersion = (d) => { const v = S.cvVersions.find((x) => x.id === d.v); download(v.name, b64ToBytes(v.bytesB64), "application/vnd.openxmlformats-officedocument.wordprocessingml.document"); };
+async function inAppPdf(bytes, name) {
+  if (!window.CareerPDF || !window.jspdf) throw new Error("PDF engine not loaded");
+  const r = await CareerPDF.docxToPdf(JSZip, bytes, DOMParser, window.jspdf.jsPDF, window.CAREEROS_PDF_FONTS);
+  await download(name, new Blob([r.bytes], { type: "application/pdf" }));
+  toast("PDF created in the app: " + r.pages + " page(s)" + (r.warnings.length ? ". " + r.warnings[0] : ""), 5000);
+  return r;
+}
+ACT.masterPdf = async () => { await inAppPdf(b64ToBytes(S.master.docxB64), (S.master.name || "Master_CV.docx").replace(/\.docx$/i, ".pdf")); };
+ACT.viewChanges = (d) => {
+  const v = S.cvVersions.find((x) => x.id === d.v);
+  modal(`<h2>Original vs tailored: ${esc(v.name)}</h2><p class="small muted">${v.changes.length} change(s) · keyword coverage ${v.coverageBefore}% → ${v.coverageAfter}% · ${esc(v.integrity.summary)}</p>
+    <div class="tablewrap" style="max-height:60vh"><table class="cmp"><thead><tr><th>Section</th><th>Original wording</th><th>New wording</th><th>Reason and evidence</th><th class="num">Keyword impact</th></tr></thead><tbody>${v.changes.map((c) => `<tr><td class="small">${esc(c.type)}<div class="tiny muted">${esc(c.section || "")}</div></td><td class="orig">${esc(c.original.replace(/^•\t/, "• "))}</td><td>${c.op === "remove" ? "<del>(removed)</del>" : wordDiff(c.original.replace(/^•\t/, "• "), c.proposed.replace(/^•\t/, "• "))}</td><td class="tiny">${esc(c.reason || "")}<div class="muted">${esc(c.evidence || "")}</div></td><td class="num">${c.coverageImpact != null ? (c.coverageImpact > 0 ? "+" : "") + c.coverageImpact : "-"}</td></tr>`).join("")}</tbody></table></div>
+    <div class="row mt"><button class="btn" data-act="closeModal">Close</button></div>`);
+};
 ACT.pdfVersion = async (d) => {
   const v = S.cvVersions.find((x) => x.id === d.v);
+  try { await inAppPdf(b64ToBytes(v.bytesB64), v.name.replace(/\.docx$/, ".pdf")); return; } catch (e) { console.warn("in-app PDF failed, trying companion", e); }
   try {
     const r = await fetch(S.settings.companionUrl + "/docx2pdf", { method: "POST", body: b64ToBytes(v.bytesB64), headers: { "Content-Type": "application/octet-stream" } });
     if (!r.ok) throw new Error((await r.json()).error || "conversion failed");

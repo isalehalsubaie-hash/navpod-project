@@ -8,40 +8,52 @@ function tableView(rows, heads) { return `<details><summary class="small">Table 
 route("dashboard", () => {
   const active = S.jobs.filter((j) => !isExpired(j));
   const lab = (l) => active.filter((j) => C(j).el.label === l).length;
+  const verifiedOpen = active.filter((j) => j.status === "Open").length;
   const high = active.filter((j) => C(j).m.total >= 70 && ["GREEN", "YELLOW"].includes(C(j).el.label));
   const prepared = S.packages.length;
   const submitted = S.applications.filter((a) => SUBMITTED.has(a.status)).length;
   const interviews = S.applications.filter((a) => a.status === "Interview").length;
-  const upcoming = [...S.jobs.filter((j) => j.deadline && daysUntil(j.deadline) >= 0).map((j) => ({ d: j.deadline, t: "Deadline: " + j.title + " · " + j.employer, id: j.jobId })), ...S.applications.filter((a) => a.followUp && a.followUp >= TODAY()).map((a) => ({ d: a.followUp, t: "Follow up: " + (jobById(a.jobId) || {}).title, id: a.jobId }))].sort((a, b) => a.d.localeCompare(b.d));
-  const top5 = active.filter((j) => ["GREEN", "YELLOW"].includes(C(j).el.label)).sort((a, b) => C(b).m.total - C(a).m.total).slice(0, 5);
-  const recent = active.slice().sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 6);
-  const trackRows = Object.keys(TRACKS).map((t) => { const js = active.filter((j) => (j.tracks || []).includes(t)); const ok = js.filter((j) => ["GREEN", "YELLOW"].includes(C(j).el.label)); return [trackName(t), ok.length, js.length]; }).sort((a, b) => b[1] - a[1]);
-  const urgent = active.filter((j) => j.deadline && daysUntil(j.deadline) >= 0 && daysUntil(j.deadline) <= 7);
-  const flags = S.profile.integrityFlags.filter((f) => f.severity === "high");
+  const upcomingDl = active.filter((j) => j.deadline && daysUntil(j.deadline) >= 0);
+  const moves = nextMoves();
+  const reach = active.filter((j) => ["GREEN", "YELLOW"].includes(C(j).el.label));
+  const covs = reach.map((j) => C(j).cov).filter(Boolean).map((c) => c.keywordCoverage);
+  const avgCov = covs.length ? Math.round(covs.reduce((a, b) => a + b, 0) / covs.length) : null;
+  const avgEv = reach.length ? Math.round(reach.map((j) => C(j).cov ? C(j).cov.evidenceCoverage : 0).reduce((a, b) => a + b, 0) / reach.length) : null;
+  const attention = S.applications.map((a) => ({ a, j: jobById(a.jobId) })).filter((x) => x.j && ((x.a.followUp && x.a.followUp <= TODAY() && !["Rejected", "Accepted", "Withdrawn"].includes(x.a.status)) || x.a.status === "Interview" || x.a.status === "Follow-up required" || (x.a.status === "Applied" && x.a.appliedDate && daysUntil(x.a.appliedDate) < -21)));
+  const newest = active.slice().sort((a, b) => (b.firstSeen || b.published || "").localeCompare(a.firstSeen || a.published || "")).slice(0, 6);
+  const closing = active.filter((j) => j.deadline && daysUntil(j.deadline) >= 0 && daysUntil(j.deadline) <= 14).sort((a, b) => a.deadline.localeCompare(b.deadline));
+  const topHigh = reach.slice().sort((a, b) => (0.55 * C(b).m.total + 0.45 * C(b).v.total) - (0.55 * C(a).m.total + 0.45 * C(a).v.total)).slice(0, 5);
+  const dm = devMapData();
+  const trackRows = Object.keys(TRACKS).map((t) => { const js = active.filter((j) => (j.tracks || []).includes(t)); return [trackName(t), js.filter((j) => ["GREEN", "YELLOW"].includes(C(j).el.label)).length, js.length + " active in total"]; }).sort((a, b) => b[1] - a[1]);
   const tile = (l, v, d, href) => `<a class="tile" href="${href}"><div class="l">${l}</div><div class="v">${v}</div>${d ? `<div class="d">${d}</div>` : ""}</a>`;
+  const jl = (j, extra) => `<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line);flex-wrap:nowrap"><div style="flex:1;min-width:0"><a href="#/job/${j.jobId}"><b class="small">${esc(j.title)}</b></a> ${isNew(j) ? '<span class="badge-new">NEW</span>' : ""}<div class="tiny muted">${esc(j.employer)} · ${esc(j.location)}${extra ? " · " + extra : ""}</div></div>${elPill(C(j).el.label)}<span class="score">${C(j).m.total}</span></div>`;
+  const devDone = Object.values(S.devDone || {}).filter((x) => /^Done/.test(x)).length, devLearning = Object.values(S.devDone || {}).filter((x) => x === "Learning").length;
   return {
-    title: "Dashboard", sub: "Today " + fmtDate(TODAY()) + " · research last run " + fmtDate(S.researchDate),
-    actions: `<a class="btn" href="#/discover">Discover</a><a class="btn primary" href="#/analysis">+ Analyse a job</a>`,
-    html: `${urgent.length ? `<div class="flag high mb"><b>Closing within 7 days:</b> ${urgent.map((j) => `<a href="#/job/${j.jobId}">${esc(j.title)} · ${esc(j.employer)}</a> (${fmtDate(j.deadline)})`).join("; ")}</div>` : ""}
+    title: "Dashboard", sub: "Today " + fmtDate(TODAY()) + " · research verified " + fmtDate(S.researchDate),
+    actions: `<a class="btn" href="#/ai">Ask CareerOS AI</a><a class="btn primary" href="#/discover">Find opportunities</a>`,
+    html: `${closing.filter((j) => daysUntil(j.deadline) <= 7).length ? `<div class="flag high mb"><b>Closing within 7 days:</b> ${closing.filter((j) => daysUntil(j.deadline) <= 7).map((j) => `<a href="#/job/${j.jobId}">${esc(j.title)} · ${esc(j.employer)}</a> (${fmtDate(j.deadline)})`).join("; ")}</div>` : ""}
+    <div class="grid mb"><div class="card span2"><h2>✦ My next best moves <span class="tag tiny muted">ranked from deadlines, eligibility, match, career value and effort</span></h2>
+        ${moves.length ? `<div class="moves">${moves.map((m, i) => `<div class="move"><span class="n">${i + 1}</span><div style="min-width:0"><b>${esc(m.title)}</b><div class="why">${esc(m.why)}</div><div class="tm">About ${esc(m.time)}</div></div><a class="btn sm primary" href="#/${m.action === "job" ? "job/" + m.jobId : m.action === "optimize" ? "optimize/" + m.jobId : m.action === "builder" ? "builder/" + m.jobId : m.action === "interview" ? "interview/" + m.jobId : m.action}">Go</a></div>`).join("")}</div>` : emptyState("Nothing urgent", "Explore Discover for new roles.")}</div></div>
+    <div class="eyebrow">Career overview</div>
     <div class="kpis">
-      ${tile("Total opportunities found", S.jobs.length + S.excluded.length, S.excluded.length + " expired or excluded", "#/discover")}
-      ${tile("Open opportunities", active.length, "not closed or past deadline", "#/discover")}
-      ${tile("Green eligibility", lab("GREEN"), "can apply", "#/discover")}
-      ${tile("Yellow eligibility", lab("YELLOW"), "likely, confirm a detail", "#/discover")}
+      ${tile("Opportunities discovered", S.jobs.length + S.excluded.length, S.excluded.length + " expired or excluded", "#/discover")}
+      ${tile("Verified open", verifiedOpen, (active.length - verifiedOpen) + " unverified or unknown", "#/discover")}
+      ${tile("Green eligibility", lab("GREEN"), lab("YELLOW") + " more Yellow", "#/discover")}
       ${tile("High match (70+)", high.length, "Green or Yellow only", "#/discover")}
       ${tile("Applications prepared", prepared, S.cvVersions.length + " tailored CVs", "#/builder")}
-      ${tile("Applications submitted", submitted, "confirmed by you", "#/tracker")}
-      ${tile("Interviews", interviews, "", "#/tracker")}
-      ${tile("Upcoming deadlines", upcoming.filter((u) => u.t.startsWith("Deadline")).length, "", "#/tracker")}
+      ${tile("Submitted", submitted, "confirmed by you or LinkedIn", "#/tracker")}
+      ${tile("Interviews", interviews, "", "#/interview")}
+      ${tile("Upcoming deadlines", upcomingDl.length, "most adverts state none", "#/tracker")}
     </div>
     <div class="grid g2">
-      <div class="card"><h2>Top five opportunities to act on</h2>${top5.map((j, i) => `<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line);flex-wrap:nowrap"><b class="muted">${i + 1}</b><div style="flex:1;min-width:0"><a href="#/job/${j.jobId}"><b>${esc(j.title)}</b></a><div class="tiny muted">${esc(j.employer)} · ${esc(j.location)}</div></div>${elPill(C(j).el.label)}<span class="score">${C(j).m.total}</span></div>`).join("")}<p class="tiny muted mt">Ranked by match among Green and Yellow. Eligibility and match are separate measures; neither is a hiring probability.</p></div>
-      <div class="card"><h2>Upcoming deadlines and follow-ups</h2>${upcoming.slice(0, 8).map((u) => `<div class="small" style="padding:4px 0"><b>${fmtDate(u.d)}</b> <span class="muted">(${daysUntil(u.d)} d)</span> · <a href="#/job/${u.id}">${esc(u.t)}</a></div>`).join("") || '<p class="small muted">No dated items. Most adverts do not publish a deadline.</p>'}</div>
-      <div class="card"><h2>Career-track view (Green + Yellow / all active)</h2>${barList(trackRows.map((r) => [r[0], r[1], r[2] + " active in total"]))}${tableView(trackRows, ["Track", "Green+Yellow", "All active"])}
-        <p class="small mt"><b>Recommendation:</b> ${esc(trackAdvice(trackRows))}</p></div>
-      <div class="card"><h2>Profile integrity alerts</h2>${flags.map((f) => `<div class="flag high"><b>${esc(f.title)}</b><br><span class="small">${esc(f.detail)}</span></div>`).join("")}<a class="btn sm mt" href="#/profile">Review profile</a></div>
-      <div class="card"><h2>Recently published</h2>${recent.map((j) => `<div class="small" style="padding:4px 0"><a href="#/job/${j.jobId}">${esc(j.title)}</a> · ${esc(j.employer)} <span class="muted">${fmtDate(j.published)}</span> ${elPill(C(j).el.label)}</div>`).join("")}</div>
-      <div class="card"><h2>Recent CV optimisations and activity</h2>${S.cvVersions.slice(-3).reverse().map((v) => `<div class="small"><b>${esc(v.name)}</b> · coverage ${v.coverageBefore}% → ${v.coverageAfter}%</div>`).join("")}${S.activity.slice(0, 8).map((a) => `<div class="small muted">${fmtDate(a.date)} · ${esc(a.text)}</div>`).join("")}</div>
+      <div class="card"><h2>Best opportunities for you</h2>${topHigh.map((j) => jl(j, "value " + C(j).v.total)).join("") || emptyState("No reachable opportunities", "Check your profile settings.")}<p class="tiny muted mt">Green and Yellow only, ranked by match and career value. Not hiring probabilities.</p></div>
+      <div class="card"><h2>Applications needing attention</h2>${attention.length ? attention.slice(0, 8).map((x) => `<div class="row between" style="padding:6px 0;border-bottom:1px solid var(--line);flex-wrap:nowrap"><div style="min-width:0"><a href="#/job/${x.j.jobId}"><b class="small">${esc(x.j.title)}</b></a><div class="tiny muted">${esc(x.j.employer)} · ${esc(x.a.status)}${x.a.followUp ? " · follow-up " + fmtDate(x.a.followUp) : ""}</div></div><a class="btn sm" href="#/tracker">Update</a></div>`).join("") : emptyState("Nothing needs attention", S.applications.length ? "No overdue follow-ups or interviews." : "Track applications from Discover" + (HOOKS.mcp ? ', or <a href="#/gmail">import them from Gmail</a>.' : "."))}</div>
+      <div class="card"><h2>How competitive is your CV?</h2>${avgCov != null ? `<div class="row" style="gap:24px"><div><div class="hero">${avgCov}%</div><div class="tiny muted">average keyword coverage of your master CV on ${reach.length} reachable adverts</div></div><div><div class="hero" style="font-size:30px">${avgEv}%</div><div class="tiny muted">evidence coverage: what your profile could support truthfully</div></div></div>
+        <p class="small mt">The gap between the two is what tailoring can add without inventing anything. ${S.master.approved ? "" : '<a href="#/cv">Approve your master CV first.</a>'}</p>
+        ${(() => { const ats = S.master.model ? E.atsGreenhouse(S.master.model) : null; return ats ? `<p class="tiny">ATS risk check (Greenhouse guidance): ${ats.checks.filter((c) => c.result === "pass").length} of ${ats.checks.length} pass.</p>` : ""; })()}` : emptyState("No master CV yet", "", '<a class="btn" href="#/cv">Open CV Studio</a>')}</div>
+      <div class="card"><h2>What you are missing</h2>${dm.list.slice(0, 6).map((x) => `<div class="row between" style="padding:5px 0;border-bottom:1px solid var(--line);flex-wrap:nowrap"><span class="small"><b>${esc(x.term)}</b> <span class="tiny muted">${x.tier}</span></span><span class="tiny muted">${x.n} adverts · ${esc(x.cost)}</span></div>`).join("")}<div class="row mt"><a class="btn sm" href="#/devmap">Development map</a><span class="tiny muted">${devDone} done, ${devLearning} in progress</span></div></div>
+      <div class="card"><h2>Opportunity intelligence</h2><h3>Newest</h3>${newest.slice(0, 4).map((j) => jl(j, j.published ? fmtDate(j.published) : "")).join("")}${closing.length ? `<h3>Closing soon</h3>${closing.slice(0, 3).map((j) => jl(j, "closes " + fmtDate(j.deadline))).join("")}` : ""}<p class="tiny muted mt">Re-opened roles are only shown when a re-check confirms them; none recorded.</p></div>
+      <div class="card"><h2>Career tracks (Green + Yellow)</h2>${barList(trackRows.map((r) => [r[0], r[1], r[2]]))}${tableView(trackRows, ["Track", "Green+Yellow", "All active"])}<p class="small mt">${esc(trackAdvice(trackRows))}</p></div>
     </div>`,
   };
 });
@@ -158,7 +170,7 @@ route("watchlist", () => {
     actions: `<button class="btn primary" data-act="addCompany">+ Add company</button>`,
     html: `<div class="row mb">${Object.entries(T).map(([k, v]) => `<span class="pill"><b>${k}</b> ${v}</span>`).join("")}</div>
     <div class="tablewrap" style="max-height:none"><table><thead><tr><th>Company</th><th>Type</th><th>Industry / location</th><th>Tracks</th><th>Programs</th><th>Careers site</th><th>Notes / your reason to join</th></tr></thead><tbody>
-    ${comps.map(({ c, open }, n) => `<tr><td><b class="small">${esc(c.name)}</b><div class="tiny muted">Checked ${fmtDate(c.lastChecked)}</div></td>
+    ${comps.map(({ c, open }, n) => `<tr><td><a href="#/company/${encodeURIComponent(c.name)}"><b class="small">${c.followed ? "★ " : ""}${esc(c.name)}</b></a><div class="tiny muted">Checked ${fmtDate(c.userChecked || c.lastChecked)}${c.userChecked ? " (you)" : ""}</div></td>
       <td><select data-chg="compType" data-n="${n}" class="small">${Object.keys(T).map((k) => `<option value="${k}" ${(open.length ? "A" : c.opportunityType) === k ? "selected" : ""} ${k === "A" && !open.length ? "disabled" : ""}>${k}: ${T[k]}</option>`).join("")}</select>${open.length ? `<div class="tiny"><a href="#/discover" data-act="filterCo" data-co="${esc(open[0].employer)}">${open.length} verified vacanc${open.length > 1 ? "ies" : "y"}</a></div>` : '<div class="tiny muted">No verified vacancy</div>'}</td>
       <td class="small">${esc(c.industry)}<div class="tiny muted">${esc(c.location)}</div></td><td class="tiny">${(c.tracks || []).map(trackName).join(", ")}</td>
       <td class="tiny">${esc([c.internshipPrograms, c.graduatePrograms, c.talentPool].filter(Boolean).join(" · "))}</td>
@@ -201,6 +213,7 @@ route("settings", () => ({
   title: "Settings", sub: "Privacy, backups, integrations",
   html: `<div class="grid g2"><div class="card"><h2>Privacy</h2><p class="small">All data (profile, CVs, jobs, applications) is stored in this browser's IndexedDB on this device. CareerOS makes no network requests with your data. The only optional network use is the local companion you run yourself, and live search only sends the keywords you type.</p>
       <p class="small">Last saved: ${esc(S._savedAt ? new Date(S._savedAt).toLocaleString() : "this session")}</p></div>
+    <div class="card"><h2>Appearance</h2><label class="f">Theme<select data-chg="setTheme">${["auto", "light", "dark"].map((t) => `<option value="${t}" ${(S.settings.theme || "auto") === t ? "selected" : ""}>${{ auto: "Match my device", light: "Light", dark: "Dark" }[t]}</option>`).join("")}</select></label></div>
     <div class="card"><h2>CV format</h2><label class="row"><input type="checkbox" ${S.settings.formatLock ? "checked" : ""} data-chg="formatLock"> <b>LOCK ORIGINAL CV FORMAT: ${S.settings.formatLock ? "ON" : "OFF"}</b></label><p class="small muted">See My Master CV for details.</p></div>
     <div class="card"><h2>Backup and restore</h2><div class="row"><button class="btn primary" data-act="backup">Export full backup (JSON)</button><label class="btn">Restore from backup<input type="file" accept=".json" class="hide" data-chg="restore"></label><button class="btn" data-act="exportProfile">Export career profile (JSON)</button><button class="btn" data-act="exportJobs">Export opportunities (CSV)</button></div><p class="tiny muted mt">A backup includes your CV files, tailored versions and tracker. Keep it private.</p></div>
     <div class="card"><h2>Live search companion (optional)</h2><label class="f">Companion URL<input type="url" value="${esc(S.settings.companionUrl)}" data-chg="setCompanion"></label><div class="row mt"><button class="btn" data-act="testCompanion">Test connection</button><span id="compStatus" class="small"></span></div>
@@ -208,6 +221,8 @@ route("settings", () => ({
     <div class="card"><h2>Reset research data</h2><p class="small">Reload the jobs, companies and market facts from the research snapshot (${fmtDate(SEED.researchDate)}). Your profile, CVs and tracker are kept.</p><button class="btn" data-act="reseed">Reload research snapshot</button></div>
     <div class="card"><h2>Delete all local data</h2><p class="small">Removes everything CareerOS stored in this browser. Export a backup first if you want to keep anything.</p><button class="btn danger" data-act="wipe">Delete all my data</button></div></div>`,
 }));
+ACT.setTheme = (d, t) => { S.settings.theme = t.value; save(); applyTheme(); };
+ACT.theme = () => { const o = ["auto", "light", "dark"]; S.settings.theme = o[(o.indexOf(S.settings.theme || "auto") + 1) % 3]; save(); applyTheme(); toast("Theme: " + S.settings.theme); };
 ACT.setCompanion = (d, t) => { S.settings.companionUrl = t.value.replace(/\/$/, ""); save(); };
 ACT.testCompanion = async () => { const el = document.getElementById("compStatus"); el.textContent = "Testing..."; try { const r = await fetch(S.settings.companionUrl + "/health"); const j = await r.json(); el.innerHTML = `<b class="ok">Connected.</b> Search: ${esc(j.search || "not configured")} · PDF export: ${j.pdf ? "available" : "LibreOffice not found"}`; } catch (e) { el.innerHTML = `<b class="bad">Not reachable.</b> Start it with python3 tools/careeros_server.py`; } };
 ACT.backup = () => download("CareerOS_Backup_" + TODAY() + ".json", JSON.stringify(S), "application/json");
@@ -225,6 +240,8 @@ ACT.wipe = async () => { if (!await ask("Delete ALL CareerOS data stored in this
 (async function boot() {
   try {
     await loadState();
+    applyTheme();
+    const sn = document.getElementById("storeNote"); if (sn) sn.textContent = HOOKS.save ? "Saved privately to your Claude account." : "Saved in this browser only.";
     document.getElementById("loading").remove();
     render();
   } catch (e) {

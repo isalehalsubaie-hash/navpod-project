@@ -2,23 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CareerOS · Personal Career Intelligence Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1626">
+<title>CareerOS 2.0 · Personal Career Intelligence Platform</title>
 <meta name="description" content="CareerOS: job discovery, eligibility, ATS analysis, CV tailoring and application tracking. Local-first.">
 <style id="css">/*STYLES*/</style>
 </head>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><b>CareerOS</b><span>Your Personal Career Intelligence Platform</span></div>
+    <div class="brand"><div class="logo">C2</div><div><b>CareerOS 2.0</b><span>Your Career. Your Intelligence. Your Next Opportunity.</span></div></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-foot">Local-first. Your data stays in this browser.<br>Build /*BUILD*/</div>
+    <div class="side-foot"><div id="storeNote">Private to you.</div><div class="row mt" style="gap:6px"><button data-act="theme">Theme</button><span>Build /*BUILD*/</span></div></div>
   </aside>
   <main class="main">
-    <div class="top"><button class="burger" data-act="burger" aria-label="Menu">☰</button><div><h1 id="title">CareerOS</h1><div class="sub" id="subtitle"></div></div><div class="spacer"></div><div class="row" id="topActions"></div></div>
+    <div class="top"><button class="burger" data-act="burger" aria-label="Menu">☰</button><div class="titles"><h1 id="title">CareerOS</h1><div class="sub" id="subtitle"></div></div><div class="acts" id="topActions"></div><button class="btn sm more hide" id="moreBtn" data-act="more" aria-label="Actions">Actions ▾</button></div>
     <div class="content" id="content"><div id="loading" class="empty">Loading CareerOS...</div></div>
   </main>
 </div>
+<nav class="tabbar" id="tabbar" aria-label="Primary"></nav>
 <!-- JSZip (MIT or GPLv3) and PDF.js (Apache 2.0), bundled so the app works offline -->
 <script>/*JSZIP*/</script>
 <script>/*PDFJS*/</script>
@@ -27,6 +29,11 @@
 <script>window.CAREEROS_FONT_WIDTHS = /*FONTW*/;</script>
 <script>/*TAXONOMY*/</script>
 <script>/*ENGINE*/</script>
+<script>/*ENGINE2*/</script>
+<!-- jsPDF (MIT) and Source Sans Pro subset (SIL Open Font License 1.1) for in-app PDF export -->
+<script>/*JSPDF*/</script>
+<script>window.CAREEROS_PDF_FONTS = /*PDFFONTS*/;</script>
+<script>/*PDFRENDER*/</script>
 <script>/*APP*/</script>
 </body>
 </html>

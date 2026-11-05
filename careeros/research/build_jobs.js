@@ -32,7 +32,11 @@ for(const m of manual.active){m.origin='research_session';jobs.push(m);}
 for(const m of manual.historical){excluded.push({...m,category:m.category||'Expired'});}
 // assign CareerOS ids
 jobs.sort((a,b)=>(b._match||0)-(a._match||0));
-jobs.forEach((j,i)=>{j.jobId='CO-'+String(i+1).padStart(4,'0');});
+// keep previously published IDs stable; new jobs get the next numbers
+let prev={};try{for(const j of JSON.parse(fs.readFileSync('../data/jobs.json')))prev[j.id]=j.jobId;}catch(e){}
+let next=Math.max(0,...Object.values(prev).map(x=>parseInt(String(x).slice(3),10)||0))+1;
+const pass1=new Set(Object.keys(prev));
+jobs.forEach(j=>{ if(prev[j.id]) j.jobId=prev[j.id]; else { j.jobId='CO-'+String(next++).padStart(4,'0'); j.researchPass=2; } j.firstSeen=j.firstSeen||'2026-11-05'; });
 fs.writeFileSync('../data/jobs.json',JSON.stringify(jobs.map(j=>{const c={...j};delete c._eligibility;delete c._match;return c;}),null,1));
 fs.writeFileSync('../data/excluded.json',JSON.stringify(excluded,null,1));
 const c={};jobs.forEach(j=>c[j._eligibility]=(c[j._eligibility]||0)+1);

@@ -3,7 +3,7 @@ route("builder", (id) => {
   if (!id) {
     const withV = [...new Set(S.cvVersions.map((v) => v.jobId))].map(jobById).filter(Boolean);
     const pk = S.packages.slice().reverse();
-    return { title: "Application Builder", sub: "Generate complete, editable application packages",
+    return { title: "Application Command Center", sub: "Complete, editable application packages",
       html: `<div class="grid g2"><div class="card"><h2>Jobs with a tailored CV</h2>${withV.length ? `<table><tbody>${withV.map((j) => `<tr><td><a href="#/builder/${j.jobId}">${esc(j.title)}</a><div class="tiny muted">${esc(j.employer)}</div></td><td>${elPill(C(j).el.label)}</td></tr>`).join("")}</tbody></table>` : `<p class="small muted">None yet. Start in <a href="#/optimize">CV Optimizer</a>. You can also build a package from any job page.</p>`}</div>
       <div class="card"><h2>Generated packages</h2>${pk.length ? `<table><tbody>${pk.map((p) => { const j = jobById(p.jobId); return `<tr><td><a href="#/builder/${p.jobId}">${esc(j ? j.title : p.jobId)}</a><div class="tiny muted">${esc(j ? j.employer : "")} · ${fmtDate(p.created)}</div></td></tr>`; }).join("")}</tbody></table>` : `<p class="small muted">None yet.</p>`}</div></div>` };
   }
@@ -15,12 +15,18 @@ route("builder", (id) => {
   html += `<div class="card mb"><div class="row between"><div><h2>Package for ${esc(j.title)} · ${esc(j.employer)}</h2><p class="small muted">Uses only your verified career database. Fields that need you are marked <b>YOUR INPUT REQUIRED</b>. CareerOS never submits anything for you.</p></div>
     <button class="btn primary big" data-act="genPkg" data-id="${id}">${p ? "REGENERATE" : "GENERATE"} COMPLETE APPLICATION PACKAGE</button></div>
     ${versions.length ? `<p class="small">Tailored CV linked: <b>${esc(versions[versions.length - 1].name)}</b></p>` : `<div class="flag">No tailored CV yet for this job. The package will reference your master CV. <a href="#/optimize/${id}">Tailor the CV first</a> for best results.</div>`}</div>`;
+  const rd = E.readiness(j, c.a, { cvVersions: S.cvVersions, packages: S.packages, profile: S.profile });
+  html += `<div class="card mb"><div class="row between"><h2>Application readiness: ${rd.score}%</h2><a class="btn sm" href="${esc(j.applyUrl || j.source)}" target="_blank" rel="noopener">Open application page ↗</a></div><div class="meter"><i style="width:${rd.score}%"></i></div>
+    <div class="grid g2 mt">${rd.items.map((i) => `<div class="row" style="flex-wrap:nowrap"><span>${i.done ? '<b class="ok">✓</b>' : i.needed ? '<b class="bad">○</b>' : '<span class="muted">○</span>'}</span><span class="small">${esc(i.name)}<div class="tiny muted">${esc(i.note || "")}</div></span></div>`).join("")}</div>
+    ${rd.missing.length ? `<p class="small mt"><b>Missing:</b> ${rd.missing.map(esc).join(", ")}</p>` : ""}<p class="tiny muted">${esc(rd.note)}</p></div>`;
   if (p) {
+    p.approved = p.approved || {};
+    const apr = (k) => `<button class="btn sm ${p.approved[k] ? "primary" : ""}" data-act="approve" data-id="${id}" data-k="${k}">${p.approved[k] ? "✓ Approved" : "Approve"}</button>`;
     const ta = (k, val, h) => `<textarea data-inp="pkgEdit" data-id="${id}" data-k="${k}" style="min-height:${h || 160}px">${esc(val)}</textarea>`;
-    html += `<div class="tabs">${[["cover", "Cover letter"], ["msg", "Recruiter messages"], ["form", "Application form answers"], ["strategy", "Strategy"], ["interview", "Interview preparation"], ["check", "Apply checklist"]].map(([k, l]) => `<a class="${BT.tab === k ? "on" : ""}" data-act="btab" data-t="${k}">${l}</a>`).join("")}</div>`;
-    if (BT.tab === "cover") html += `<div class="card"><div class="row between"><h2>Cover letter (editable)</h2><div class="row"><button class="btn sm" data-act="dlCover" data-id="${id}">Download DOCX</button><button class="btn sm" data-act="printDoc" data-id="${id}" data-k="coverLetter">Print / save as PDF</button></div></div>${ta("coverLetter", p.coverLetter, 520)}<p class="tiny muted">Edits save automatically. Replace the bracketed sentence with a real reason; CareerOS will not invent one.</p></div>`;
-    if (BT.tab === "msg") html += `<div class="grid g2">${[["recruiterIntro", "Recruiter introduction"], ["followUp", "Application follow-up"], ["internshipInquiry", "Internship inquiry"], ["graduateInquiry", "Graduate opportunity inquiry"], ["referralRequest", "Referral request"]].map(([k, l]) => `<div class="card"><h2>${l}</h2>${ta("messages." + k, p.messages[k], 170)}<button class="btn sm mt" data-act="copy" data-id="${id}" data-k="messages.${k}">Copy</button></div>`).join("")}<div class="card"><p class="small">${esc(p.messages.note)}</p></div></div>`;
-    if (BT.tab === "form") html += `<div class="card"><h2>Suggested answers for common questions</h2>${p.form.map((f, i) => `<h3>${esc(f.q)} ${f.input ? '<span class="el YELLOW">YOUR INPUT REQUIRED</span>' : ""}</h3>${ta("form." + i, f.a, 90)}`).join("")}</div>`;
+    html += `<div class="tabs">${[["cover", "Cover letter"], ["msg", "Email and messages"], ["form", "Application form answers"], ["strategy", "Strategy"], ["interview", "Interview preparation"], ["check", "Apply checklist"]].map(([k, l]) => `<a class="${BT.tab === k ? "on" : ""}" data-act="btab" data-t="${k}">${l}</a>`).join("")}</div>`;
+    if (BT.tab === "cover") html += `<div class="card"><div class="row between"><h2>Cover letter (editable)</h2><div class="row">${apr("coverLetter")}<button class="btn sm" data-act="dlCover" data-id="${id}">Download DOCX</button><button class="btn sm" data-act="printDoc" data-id="${id}" data-k="coverLetter">Print / save as PDF</button></div></div>${ta("coverLetter", p.coverLetter, 520)}<p class="tiny muted">Edits save automatically. Replace the bracketed sentence with a real reason; CareerOS will not invent one.</p></div>`;
+    if (BT.tab === "msg") html += `<div class="grid g2">${[["applicationEmail", "Application email"], ["recruiterIntro", "Recruiter LinkedIn message"], ["followUp", "Application follow-up"], ["internshipInquiry", "Internship inquiry"], ["graduateInquiry", "Graduate opportunity inquiry"], ["referralRequest", "Referral request"]].map(([k, l]) => `<div class="card"><h2>${l}</h2>${ta("messages." + k, p.messages[k], 170)}<button class="btn sm mt" data-act="copy" data-id="${id}" data-k="messages.${k}">Copy</button></div>`).join("")}<div class="card"><p class="small">${esc(p.messages.note)}</p><div class="row mt">${apr("messages")}</div></div></div>`;
+    if (BT.tab === "form") html += `<div class="card"><div class="row between"><h2>Suggested answers for common questions</h2>${apr("form")}</div>${p.form.map((f, i) => `<h3>${esc(f.q)} ${f.input ? '<span class="el YELLOW">YOUR INPUT REQUIRED</span>' : ""}</h3>${ta("form." + i, f.a, 90)}`).join("")}</div>`;
     if (BT.tab === "strategy") { const s = p.strategy; html += `<div class="grid g2"><div class="card"><h2>Approach</h2><p>${esc(s.approach)}</p><h3>Three strongest selling points</h3><ol class="small">${s.sellingPoints.map((x) => `<li>${esc(x)}</li>`).join("")}</ol><h3>Requirements to emphasise</h3>${s.emphasize.map((x) => `<span class="kw supported">${esc(x)}</span>`).join("") || "-"}<h3>Most relevant CV sections</h3><p class="small">${s.relevantSections.join(", ")}</p></div>
       <div class="card"><h2>Potential weaknesses</h2><ul class="small">${s.weaknesses.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><h3>Talking points</h3><ul class="small">${s.talkingPoints.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><h3>Prepare before applying</h3><ul class="small">${s.prepare.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div></div>`; }
     if (BT.tab === "interview") { const iv = p.interview; html += `<div class="card"><div class="row between"><h2>Interview preparation</h2><button class="btn sm" data-act="dlInterview" data-id="${id}">Download DOCX</button></div><p class="tiny muted">${esc(iv.note)}</p>
@@ -31,10 +37,11 @@ route("builder", (id) => {
       <div class="row mt"><a class="btn" href="${esc(j.applyUrl || j.source)}" target="_blank" rel="noopener">Open official application ↗</a><button class="btn primary" data-act="markApplied" data-id="${id}">I have submitted this application</button></div><p class="tiny muted">Only click after you have actually submitted. CareerOS never submits on your behalf.</p></div>`;
     html += `<div class="card mt"><div class="row between"><div><h2>Download everything</h2><p class="small muted">ZIP with tailored CV (DOCX), cover letter (DOCX), interview prep (DOCX), messages, form answers, strategy and checklist (Markdown).</p></div><button class="btn primary" data-act="dlPkg" data-id="${id}">Download application package (.zip)</button></div></div>`;
   }
-  return { title: "Application Builder", sub: j.title + " · " + j.employer, actions: `<a class="btn" href="#/optimize/${id}">← CV Optimizer</a><a class="btn" href="#/tracker">Tracker</a>`, html };
+  return { title: "Application Command Center", sub: j.title + " · " + j.employer, actions: `<a class="btn" href="#/optimize/${id}">← CV Optimizer</a><a class="btn" href="#/tracker">Tracker</a>`, html };
 });
 const BT = { tab: "cover" };
 ACT.btab = (d) => { BT.tab = d.t; rerender(); };
+ACT.approve = (d) => { const p = pkgFor(d.id); p.approved = p.approved || {}; p.approved[d.k] = !p.approved[d.k]; save(); rerender(); };
 ACT.genPkg = (d) => {
   const j = jobById(d.id), c = C(j);
   const versions = S.cvVersions.filter((v) => v.jobId === d.id);
@@ -57,6 +64,8 @@ ACT.dlInterview = async (d) => { const j = jobById(d.id); download("Interview_Pr
 ACT.printDoc = (d) => { if (HOOKS.noPrint) { toast("Printing is not available in this view. Use Download DOCX or Copy.", 5000); return; } const p = pkgFor(d.id); const w = window.open("", "_blank"); w.document.write(`<html><head><title>Document</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:12pt;max-width:720px;margin:40px auto;white-space:pre-wrap;line-height:1.45}</style></head><body>${esc(getPath(p, d.k))}<script>setTimeout(()=>print(),300)<\/script></body></html>`); w.document.close(); };
 ACT.dlPkg = async (d) => {
   const j = jobById(d.id), p = pkgFor(d.id), zip = new JSZip();
+  const pend = ["coverLetter", "messages", "form"].filter((k) => !(p.approved || {})[k]);
+  if (pend.length && !(await ask("Not yet approved: " + pend.map((k) => ({ coverLetter: "cover letter", messages: "email and messages", form: "form answers" }[k])).join(", ") + ". Export anyway?"))) return;
   const base = j.employer.replace(/\W+/g, "_") + "_" + E.cleanTitle(j.title).replace(/\W+/g, "_");
   const v = S.cvVersions.find((x) => x.id === p.cvVersionId);
   if (v) zip.file(v.name, b64ToBytes(v.bytesB64)); else zip.file("MASTER_CV_not_tailored.docx", b64ToBytes(S.master.docxB64));
@@ -79,6 +88,7 @@ ACT.markApplied = async (d) => {
 
 // ---------------------------------------------------------------- Tracker
 const TR = { view: "table", month: null, status: "" };
+const CHANNELS = ["LinkedIn Easy Apply", "Employer career portal", "Email to recruiter", "Referral", "Job board (Bayt, Indeed, GulfTalent)", "Program portal (Misk, HRDF, Jadarat)", "Career fair", "Other"];
 route("tracker", () => {
   const apps = S.applications.filter((a) => !TR.status || a.status === TR.status);
   const now = TODAY();
@@ -86,11 +96,12 @@ route("tracker", () => {
   const upcoming = S.applications.map((a) => ({ a, j: jobById(a.jobId) })).filter((x) => x.j && x.a.deadline && x.a.deadline >= now).sort((x, y) => x.a.deadline.localeCompare(y.a.deadline));
   let body;
   if (TR.view === "calendar") body = calendar();
-  else body = apps.length ? `<div class="tablewrap" style="max-height:none"><table><thead><tr><th>Position</th><th>Eligibility</th><th class="num">Match</th><th class="num">Keyword cov.</th><th>Status</th><th>Applied</th><th>Deadline</th><th>Follow-up</th><th>Contact</th><th>CV / package</th><th>Notes</th><th></th></tr></thead><tbody>
-    ${apps.map((a) => { const j = jobById(a.jobId); if (!j) return ""; const c = C(j); const v = S.cvVersions.find((x) => x.id === a.cvVersionId); const pk = S.packages.find((x) => x.id === a.packageId);
+  else body = apps.length ? `<div class="tablewrap" style="max-height:none"><table><thead><tr><th>Position</th><th>Eligibility</th><th class="num">Match</th><th class="num">Keyword cov.</th><th>Status</th><th>Channel</th><th>Applied</th><th>Deadline</th><th>Follow-up</th><th>Contact</th><th>CV / package</th><th>Notes</th><th></th></tr></thead><tbody>
+    ${apps.map((a) => { const j = jobById(a.jobId) || (a.snapshot ? Object.assign({ jobId: a.jobId, location: '', source: '', tracks: [] }, a.snapshot) : null); if (!j) return ""; const c = jobById(a.jobId) ? C(j) : { el: { label: 'YELLOW' }, m: { total: '-' }, cov: null }; const v = S.cvVersions.find((x) => x.id === a.cvVersionId); const pk = S.packages.find((x) => x.id === a.packageId);
       return `<tr><td><a href="#/job/${j.jobId}"><b>${esc(j.title)}</b></a><div class="tiny muted">${esc(j.employer)} · ${esc(j.location)}</div><div class="tiny"><a href="${esc(j.applyUrl || j.source)}" target="_blank">Advert ↗</a></div></td>
       <td>${elPill(c.el.label)}</td><td class="num">${c.m.total}</td><td class="num">${v ? v.coverageAfter : c.cov ? c.cov.keywordCoverage : "-"}%</td>
       <td><select data-chg="appSet" data-id="${a.id}" data-k="status">${STATUSES.map((s) => `<option ${s === a.status ? "selected" : ""}>${s}</option>`).join("")}</select></td>
+      <td><select data-chg="appSet" data-id="${a.id}" data-k="channel"><option value="">Not recorded</option>${CHANNELS.map((c) => `<option ${a.channel === c ? "selected" : ""}>${c}</option>`).join("")}</select></td>
       <td><input type="date" value="${esc(a.appliedDate)}" data-chg="appSet" data-id="${a.id}" data-k="appliedDate" style="width:132px"></td>
       <td><input type="date" value="${esc(a.deadline)}" data-chg="appSet" data-id="${a.id}" data-k="deadline" style="width:132px"></td>
       <td><input type="date" value="${esc(a.followUp)}" data-chg="appSet" data-id="${a.id}" data-k="followUp" style="width:132px">${a.followUp && a.followUp < now ? '<div class="tiny bad">Overdue</div>' : ""}</td>

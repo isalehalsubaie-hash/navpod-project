@@ -401,5 +401,19 @@
   "tracks": [
    "HSE"
   ]
+ },
+ "LI-4476642977": {
+  "exclude": "ServiceNow software implementation role (IT), not one of your tracks"
+ },
+ "LI-4481564675": {
+  "manualFlags": [
+   {
+    "level": 2,
+    "msg": "QA/QC role for the architecture discipline; an architecture background is likely expected."
+   }
+  ]
+ },
+ "LI-4479939512": {
+  "notes": "Hotel engineering and facilities role (Diriyah). Facilities maintenance, relevant to maintenance and MEP experience."
  }
 }

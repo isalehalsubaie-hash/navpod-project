@@ -1,8 +1,32 @@
-# CareerOS
+# CareerOS 2.0
 
-**Your Personal Career Intelligence Platform.** One local application for discovering jobs, checking eligibility, analysing adverts, tailoring your CV without breaking its format, building application packages and tracking every application.
+**Your Career. Your Intelligence. Your Next Opportunity.** One local application for discovering jobs, checking eligibility, analysing adverts, tailoring your CV without breaking its format, building application packages and tracking every application.
 
-Built for Saleh Abdullah Alsubaie, research snapshot of **5 November 2026**.
+Built for Saleh Abdullah Alsubaie, research snapshot of **5 November 2026** (two research passes, 278 relevant opportunities).
+
+## Open it
+
+- **iPhone or any device (recommended):** your private claude.ai link, https://claude.ai/artifact/2hWAMmeWZi34Y2adpVfvww . Data saves to your private storage on your Claude account. CareerOS AI, Gmail import and in-app PDF export work here.
+- **Offline file:** double-click `CareerOS.html`. Data stays in that browser. AI and Gmail import are not available in the file; everything else is.
+
+## What is new in 2.0
+
+| Area | What you get |
+|---|---|
+| Design | New design system, light and dark themes (Settings or the Theme button), grouped sidebar on desktop, bottom tab bar and an Actions menu on iPhone, tables that turn into cards on small screens |
+| Dashboard | **My next best moves** (deadlines, follow-ups, interviews, profile fixes that unlock jobs, best applications, with time estimates), best opportunities, applications needing attention, CV competitiveness, gaps, newest and closing-soon jobs |
+| CareerOS AI | Chat with Claude about your own data. It uses read-only tools (search jobs, job analysis, profile, tracker, next moves, skill gaps, comparisons, companies), cites job and evidence IDs, and cannot browse the web. Offline file: built-in rule-based answers, clearly labelled |
+| Scoring | Three independent assessments per job: **Eligibility**, **Candidate match** and **Career value** (relevance, learning, structured development, employer scale without ratings, project exposure, mobility), each explained |
+| Compare | Tap ⇄ on up to six jobs; side-by-side comparison and a reasoned priority recommendation |
+| CV Studio | Five career-track CV versions (Mechanical, UAV and Aerospace, Safety and Inspection, Project Engineering, Business and Technical Development), **in-app PDF export** (embedded Source Sans Pro, works on iPhone), original vs tailored change review with reasons, evidence and keyword impact, Greenhouse-based ATS risk check |
+| Command Center | Application email, LinkedIn message, follow-up, inquiries, form answers, readiness score with missing items, per-document approval before export |
+| Companies | Company pages with verified vacancies, programs, skills they ask for, your applications, follow and "checked today" |
+| Interviews | Briefing from the advert and your evidence: fundamentals per track, advert-based, behavioural and CV questions, STAR outlines, questions to ask, DOCX, optional AI deepening |
+| Development map | Gaps ranked by frequency, relevance, cost and how often mandatory, split into Essential / Competitive advantage / Optional, with free and low-cost resources and a three-stage roadmap |
+| Analytics | Submitted, responses, interviews, offers, rates, and breakdowns by track, channel, CV version, location, employer and month, with small-sample warnings |
+| Gmail import | Reads your LinkedIn job-alert emails and "your application was sent" confirmations through your Gmail connector (search and read only). Imports past applications as Applied with the email date, and alert jobs as unverified |
+| Discovery | City chips (Riyadh, Jeddah, Dammam, Khobar, Dhahran, Jubail, Yanbu, NEOM, GCC, Remote), career-value sort, collapsible filters on mobile, NEW badge for adverts published in the last 2 days or newly imported |
+
 
 ## What is in this folder
 
@@ -15,6 +39,8 @@ Built for Saleh Abdullah Alsubaie, research snapshot of **5 November 2026**.
 | `Job_Search_Executive_Summary.md` | Priorities, best opportunities per category, gaps, findings |
 | `Search_Methodology.md` | Platforms, companies, keywords, verification method, limitations |
 | `QA_Report.md` | Test results and the defects found and fixed during testing |
+| `AUDIT.md` | Audit of 1.0 that drove the 2.0 upgrade |
+| `CareerOS_web.html` | The build published to your private claude.ai page |
 | `master_cv/Saleh_Alsubaie_CV_MASTER.docx` | Editable master CV reconstructed from your PDF (see below) |
 | `tools/careeros_server.py` | Optional local companion: live search via your own API key, advert re-checks, exact DOCX to PDF |
 | `src/`, `data/`, `vendor/`, `build/`, `research/`, `tests/` | Source, data, bundled libraries, build scripts, research scripts and automated tests |
@@ -111,10 +137,14 @@ cd careeros/build && npm install                      # jszip, @xmldom/xmldom, p
 cd .. && python3 build/build.py                       # rebuild CareerOS.html
 node build/export_data.js && python3 build/make_xlsx.py   # rebuild exports
 node tests/e2e.js                                     # 48 end-to-end checks in headless Chromium
+node tests/e2e2.js                                    # 30 CareerOS 2.0 checks on the hosted build (simulated AI, Gmail, storage)
+node tests/web_e2e.js                                 # 14 hosted-page checks (blocked dialogs, private storage, reload)
+node tests/test_engine2.js                            # engine 2.0 unit tests
+node tests/test_pdf.js <outdir> <file.docx>           # in-app PDF renderer
 node tests/test_tailoring_pages.js                    # renders tailored CVs with LibreOffice and checks page count and integrity
 node tests/test_docx.js                               # DOCX read/edit unit check
 ```
 
 Research scripts in `research/` reproduce the job collection (`li_collect.py`, `li_detail.py`), curation (`curate.js`, `overrides.json`, `manual_records.json`) and database build (`build_jobs.js`).
 
-Third-party code bundled in the HTML: JSZip (MIT or GPLv3) and PDF.js (Apache 2.0).
+Third-party code bundled in the HTML: JSZip (MIT or GPLv3), PDF.js (Apache 2.0), jsPDF (MIT) and a Latin subset of Source Sans Pro (SIL Open Font License 1.1).

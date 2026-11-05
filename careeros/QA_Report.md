@@ -34,3 +34,29 @@ Run on the final build, 5 November 2026. All commands are in `README.md` (Rebuil
 - Word may wrap a line slightly differently from LibreOffice; always check the page count of the final PDF.
 - Live search requires your own API key (Google Programmable Search or JSearch) and the local companion.
 - LinkedIn's public view hides the employer's external apply link; use the advert's Apply button.
+
+# CareerOS 2.0 test results (5 November 2026)
+
+| Suite | Result |
+|---|---|
+| `tests/e2e2.js`: 2.0 features on the hosted build with simulated AI, Gmail, private storage and downloads | **30 / 30** |
+| `tests/e2e.js`: original 1.0 workflow (regression) | **48 / 48** |
+| `tests/web_e2e.js`: hosted-page behaviour (blocked dialogs, private storage, reload) | **14 / 14** |
+| `tests/test_data.js`: research data and profile integrity (278 jobs) | **24 / 24** |
+| `tests/test_engine2.js`: career value, compare, next moves, track CVs, development map, analytics, email parsers | **13 / 13** |
+| `tests/smoke.js`: 23 screens, console errors | **0 errors** |
+| iPhone 13 layout audit, 20 screens | **No horizontal overflow** |
+| In-app PDF (`tests/test_pdf.js`) | Master CV renders to 1 page with embedded fonts and live links; visually matches LibreOffice |
+
+Covered in 2.0: next best moves, compare and recommendation, career value factors, readiness, track CV build and verification (not added to tracker), CV Studio listing, Greenhouse ATS checks, in-app PDF download, change review, application email, approvals, interview briefing plus AI notes through tools, AI chat answer with real job IDs from a tool call, development map tiers and progress, Gmail scan and import (application as Applied with the email date, alert job as unverified), analytics, company "checked today", dark theme, persistence of imported applications, briefings and comparisons after reload.
+
+## Defects found and fixed during 2.0 work
+1. Three screens overflowed sideways on iPhone (header-less key/value tables, long URLs, long AI prompt chips).
+2. The NEW badge marked every job; it now marks adverts published in the last 2 days or jobs imported in the last 2 days.
+3. Near-duplicate re-posts (Honeywell "Saudi National Only" vs "Saudi Nationals Only") were both kept; deduplication now compares the first 42 characters of the title, the employer and the location.
+4. Broken employer names from LinkedIn markup in 10 new listings were re-fetched.
+5. A ServiceNow IT role and other off-track roles from the wider sweep were excluded with reasons.
+6. The AI response sanitiser contained a literal em dash; replaced with an escape code.
+
+## What was not tested against the real host
+The AI (`sample`), Gmail connector (`mcp`), private storage (`db`) and downloads were exercised against simulations of the documented interfaces. On the real claude.ai page the first AI or Gmail use asks for your consent. If anything behaves differently there, it is reported in the page as an error message and falls back to the built-in features.

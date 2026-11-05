@@ -101,7 +101,7 @@ const results = []; const ok = (name, cond, info) => { results.push({ name, pass
   const m = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   await m.goto(url + '#/discover'); await m.waitForSelector('.job'); await m.screenshot({ path: path.join(OUT, 'mobile_discover.png') });
   const ow = await m.evaluate(() => document.documentElement.scrollWidth); ok('Mobile: no horizontal overflow on Discover', ow <= 395, 'scrollWidth ' + ow);
-  await m.click('.burger'); await m.waitForTimeout(300); ok('Mobile menu opens', await m.$eval('.side', (e) => e.classList.contains('open')));
+  await m.click('#tabbar [data-act="burger"]'); await m.waitForTimeout(300); ok('Mobile menu opens', await m.$eval('.side', (e) => e.classList.contains('open')));
   await m.goto(url + '#/dashboard'); await m.waitForTimeout(800); await m.screenshot({ path: path.join(OUT, 'mobile_dashboard.png') });
   ok('No page errors', errs.length === 0, errs.slice(0, 5).join(' | '));
   fs.writeFileSync(path.join(OUT, 'e2e_results.json'), JSON.stringify(results, null, 1));

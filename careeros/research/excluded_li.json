@@ -205,6 +205,13 @@
   "reason": "Duplicate of LI-4478908521"
  },
  {
+  "id": "LI-4478614916",
+  "title": "Project Coordinator",
+  "employer": "700apps",
+  "reason": "Low relevance (match 38)",
+  "source": "https://www.linkedin.com/jobs/view/4478614916/"
+ },
+ {
   "id": "LI-4476803068",
   "title": "HSE Officer - Saudi National",
   "employer": "Vanderlande",
@@ -215,7 +222,7 @@
   "id": "LI-4485379160",
   "title": "Field Engineer",
   "employer": "SAIC",
-  "reason": "Low relevance (match 38)",
+  "reason": "Low relevance (match 37)",
   "source": "https://www.linkedin.com/jobs/view/4485379160/"
  },
  {
@@ -265,12 +272,6 @@
   "source": "https://www.linkedin.com/jobs/view/4486143144/"
  },
  {
-  "id": "LI-4485469860",
-  "title": "Testing and Commissioning Engineer - Siemens Energy Saudi Arabia",
-  "employer": "Siemens Energy",
-  "reason": "Duplicate of LI-4485472836"
- },
- {
   "id": "LI-4478327541",
   "title": "Land / Topographic Surveyor (Geomatics)",
   "employer": "International Engineering Consultancy",
@@ -302,7 +303,7 @@
   "id": "LI-4478596325",
   "title": "Condition Monitoring Engineer - MCSA, Vibration & Motion Amplification",
   "employer": "IRISS, Inc.",
-  "reason": "Low relevance (match 37)",
+  "reason": "Low relevance (match 36)",
   "source": "https://www.linkedin.com/jobs/view/4478596325/"
  },
  {
@@ -345,12 +346,6 @@
   "employer": "Parsons Corporation",
   "reason": "Not relevant to the ten career tracks",
   "source": "https://www.linkedin.com/jobs/view/4480537233/"
- },
- {
-  "id": "LI-4468542317",
-  "title": "Mechanical Engineer",
-  "employer": "Confidential Careers",
-  "reason": "Duplicate of LI-4474855453"
  },
  {
   "id": "LI-4485956046",
@@ -428,12 +423,6 @@
   "employer": "Lendo | ليندو",
   "reason": "Not relevant to the ten career tracks",
   "source": "https://www.linkedin.com/jobs/view/4484670024/"
- },
- {
-  "id": "LI-4479983561",
-  "title": "Future Energy | Graduates Internship Program [Engineering] - KSA 2026/27",
-  "employer": "Siemens Energy",
-  "reason": "Duplicate of LI-4479996065"
  },
  {
   "id": "LI-4478766159",
@@ -584,5 +573,286 @@
   "title": "Co-op intern",
   "employer": "Apex Group Ltd",
   "reason": "Duplicate of LI-4455876914"
+ },
+ {
+  "id": "LI-4449523156",
+  "title": "Engineering Apprentice for System Engineering",
+  "employer": "Airbus",
+  "reason": "Duplicate of LI-4465939394"
+ },
+ {
+  "id": "LI-4472943242",
+  "title": "Cost Control Engineer",
+  "employer": "Outdoor Factory MEA",
+  "reason": "Low relevance (match 38)",
+  "source": "https://www.linkedin.com/jobs/view/4472943242/"
+ },
+ {
+  "id": "LI-4482296529",
+  "title": "FMMA Electrical Engineer,",
+  "employer": "Dussmann-Ajlan & Bros",
+  "reason": "Low relevance (match 39)",
+  "source": "https://www.linkedin.com/jobs/view/4482296529/"
+ },
+ {
+  "id": "LI-4471744353",
+  "title": "Transformation Success Engineer (TSE)",
+  "employer": "Palo Alto Networks",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4471744353/"
+ },
+ {
+  "id": "LI-4484100791",
+  "title": "Automation Engineer/ PLC-SCADA - Siemens Energy, Dammam KSA",
+  "employer": "Siemens Energy",
+  "reason": "Low relevance (match 31)",
+  "source": "https://www.linkedin.com/jobs/view/4484100791/"
+ },
+ {
+  "id": "LI-4475009034",
+  "title": "Business Leader - Process & Automation Solutions - Saudi National Only",
+  "employer": "Honeywell Technologies",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4475009034/"
+ },
+ {
+  "id": "LI-4477259423",
+  "title": "Service Representative I , Digital ( Substation Automation )",
+  "employer": "Schneider Electric",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4477259423/"
+ },
+ {
+  "id": "LI-4481749424",
+  "title": "Application/Sys Sales Engineer I - Fresh Graduate - Saudi National Only",
+  "employer": "Honeywell Technologies",
+  "reason": "Duplicate of LI-4481747657"
+ },
+ {
+  "id": "LI-4485948433",
+  "title": "Service Engineer",
+  "employer": "Yokogawa",
+  "reason": "Low relevance (match 37)",
+  "source": "https://www.linkedin.com/jobs/view/4485948433/"
+ },
+ {
+  "id": "LI-4478676714",
+  "title": "Engineer - Production IC",
+  "employer": "Chevron Phillips Chemical Company",
+  "reason": "Low relevance (match 31)",
+  "source": "https://www.linkedin.com/jobs/view/4478676714/"
+ },
+ {
+  "id": "LI-4478687286",
+  "title": "Engineer - Production",
+  "employer": "Chevron Phillips Chemical Company",
+  "reason": "Low relevance (match 31)",
+  "source": "https://www.linkedin.com/jobs/view/4478687286/"
+ },
+ {
+  "id": "LI-4481543620",
+  "title": "Production Engineer - Polyethylene Operations",
+  "employer": "S-Chem",
+  "reason": "Low relevance (match 32)",
+  "source": "https://www.linkedin.com/jobs/view/4481543620/"
+ },
+ {
+  "id": "LI-4481536676",
+  "title": "Production Engineer - Utilities",
+  "employer": "S-Chem",
+  "reason": "Low relevance (match 31)",
+  "source": "https://www.linkedin.com/jobs/view/4481536676/"
+ },
+ {
+  "id": "LI-4477657350",
+  "title": "Founding Engineer",
+  "employer": "Jars Global",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4477657350/"
+ },
+ {
+  "id": "LI-4480001121",
+  "title": "Research & Development (Nuts)",
+  "employer": "Confidentiel",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4480001121/"
+ },
+ {
+  "id": "LI-4480477048",
+  "title": "Agriculture Engineer - Dates, Fruits & Vegetables",
+  "employer": "Qureos",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4480477048/"
+ },
+ {
+  "id": "LI-4481741825",
+  "title": "Application/Sys Sales Engineer I - Fresh Graduate - Saudi National Only",
+  "employer": "Honeywell Technologies",
+  "reason": "Duplicate of LI-4481747657"
+ },
+ {
+  "id": "LI-4476441605",
+  "title": "Site Reliability Engineer & Observability",
+  "employer": "Acuative Middle East",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4476441605/"
+ },
+ {
+  "id": "LI-4475444318",
+  "title": "Facility Maintenance Engineer",
+  "employer": "Red Sea Gateway Terminal",
+  "reason": "Low relevance (match 36)",
+  "source": "https://www.linkedin.com/jobs/view/4475444318/"
+ },
+ {
+  "id": "LI-4483997048",
+  "title": "Data Center ELV Engineer",
+  "employer": "Mohammed Mansour Al-Rumaih (MMR KSA)",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4483997048/"
+ },
+ {
+  "id": "LI-4486131706",
+  "title": "ELV Engineer",
+  "employer": "ECEC East Consulting Engineering Company",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4486131706/"
+ },
+ {
+  "id": "LI-4479541410",
+  "title": "ICT/ELV Inspector - (Airport Exp)",
+  "employer": "Egis",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4479541410/"
+ },
+ {
+  "id": "LI-4467045938",
+  "title": "Inspector (Architectural)",
+  "employer": "Egis",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4467045938/"
+ },
+ {
+  "id": "LI-4487718696",
+  "title": "QAQC Engineer (Substations / OHTL)",
+  "employer": "Trading and Development Partnership",
+  "reason": "Low relevance (match 39)",
+  "source": "https://www.linkedin.com/jobs/view/4487718696/"
+ },
+ {
+  "id": "LI-4487290462",
+  "title": "Site ELV Inspector",
+  "employer": "AtkinsRéalis",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4487290462/"
+ },
+ {
+  "id": "LI-4482235912",
+  "title": "Dimensional Engineers",
+  "employer": "TRIGO",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4482235912/"
+ },
+ {
+  "id": "LI-4456731935",
+  "title": "Calibration Technician - Jeddah",
+  "employer": "MBRF",
+  "reason": "Low relevance (match 37)",
+  "source": "https://www.linkedin.com/jobs/view/4456731935/"
+ },
+ {
+  "id": "LI-4476642996",
+  "title": "SCADA Automation Technician",
+  "employer": "Confidential",
+  "reason": "Low relevance (match 30)",
+  "source": "https://www.linkedin.com/jobs/view/4476642996/"
+ },
+ {
+  "id": "LI-4485415198",
+  "title": "Engineer, Procurement Architectural",
+  "employer": "AL-AYUNI Investment and Contracting Company",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4485415198/"
+ },
+ {
+  "id": "LI-4478228378",
+  "title": "Proposal Engineer",
+  "employer": "Confidentiel",
+  "reason": "Low relevance (match 39)",
+  "source": "https://www.linkedin.com/jobs/view/4478228378/"
+ },
+ {
+  "id": "LI-4433791822",
+  "title": "Pre-Sales Engineer",
+  "employer": "Mindware",
+  "reason": "Duplicate of LI-4478908521"
+ },
+ {
+  "id": "LI-4487245047",
+  "title": "IT Trainee",
+  "employer": "SMART Technology Solutions",
+  "reason": "Low relevance (match 39)",
+  "source": "https://www.linkedin.com/jobs/view/4487245047/"
+ },
+ {
+  "id": "LI-4480453378",
+  "title": "Graduate Development Program (GDP) – Anti-Money Laundering",
+  "employer": "tiqmo",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4480453378/"
+ },
+ {
+  "id": "LI-4468538323",
+  "title": "Mechanical Engineer",
+  "employer": "Confidential Careers",
+  "reason": "Duplicate of LI-4474855453"
+ },
+ {
+  "id": "LI-4478322628",
+  "title": "Civil Engineer",
+  "employer": "International Engineering Consultancy",
+  "reason": "Low relevance (match 34)",
+  "source": "https://www.linkedin.com/jobs/view/4478322628/"
+ },
+ {
+  "id": "LI-4487274012",
+  "title": "Field Service Engineer (Medical Devices)",
+  "employer": "Advanced Sterilization Products",
+  "reason": "Not relevant to the ten career tracks",
+  "source": "https://www.linkedin.com/jobs/view/4487274012/"
+ },
+ {
+  "id": "LI-4486805727",
+  "title": "Health Safety Environment Engineer",
+  "employer": "Al-Enjaz Company",
+  "reason": "Low relevance (match 39)",
+  "source": "https://www.linkedin.com/jobs/view/4486805727/"
+ },
+ {
+  "id": "LI-4485070328",
+  "title": "Environment, Health, Safety & Security (EHSS) Engineer",
+  "employer": "Klybeck Life Sciences MENA",
+  "reason": "Low relevance (match 39)",
+  "source": "https://www.linkedin.com/jobs/view/4485070328/"
+ },
+ {
+  "id": "LI-4465067604",
+  "title": "Process Safety Engineer",
+  "employer": "Tuwaiq Casting & Forging Company",
+  "reason": "Low relevance (match 39)",
+  "source": "https://www.linkedin.com/jobs/view/4465067604/"
+ },
+ {
+  "id": "LI-4487532724",
+  "title": "HSE Engineer",
+  "employer": "Acwa China",
+  "reason": "Low relevance (match 37)",
+  "source": "https://www.linkedin.com/jobs/view/4487532724/"
+ },
+ {
+  "id": "LI-4485307858",
+  "title": "Quality Engineer",
+  "employer": "ELSEWEDY ELECTRIC",
+  "reason": "Listing page could not be read"
  }
 ]

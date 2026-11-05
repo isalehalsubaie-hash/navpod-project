@@ -65,3 +65,16 @@ Inspected: `portfolio/Saleh_Alsubaie_CV.pdf` (17 Oct 2026, identical copies unde
 - Aggregator copies were never used to mark a job "open" on their own. The Alfaisal Research Engineer record is kept with status **Unknown** because the employer page timed out.
 - Market observations are counts over this database's adverts (a sample), not labour-market statistics. Regulatory facts come from law-firm alerts and official pages with dates; the primary MHRSD text for the 2026 engineering Saudization change was not retrieved.
 - Em dashes in advert text were normalised to hyphens; all other advert text is stored verbatim.
+
+## 8. Research pass 2 (same day, 5 November 2026)
+
+To find roles that do not say "Mechanical Engineer", a second sweep used: project controls, cost engineer, asset management engineer, digital transformation engineer, industrial digitalization, IoT engineer, automation engineer graduate, instrumentation engineer, process engineer, mechatronics engineer, product engineer, R&D engineer, research assistant engineering, engineering consultant graduate, technical consultant, technical operations, operations engineer, facility / facilities management engineer, HVAC commissioning, energy efficiency engineer, sustainability engineer, geospatial, surveying engineer, GIS engineer, drone inspection, aerial survey, integrity engineer, corrosion engineer, metrology, calibration engineer, supply chain engineer, procurement engineer, tender engineer, estimation engineer, graduate trainee program, management trainee, and Arabic: برنامج تطوير الخريجين، مهندس حديث التخرج، مهندس مشاريع، مهندس صيانة، مهندس سلامة، مهندس جودة.
+
+Result: 406 new listing cards, 141 detail pages read, and about 100 new relevant opportunities after curation (database now 278 active records plus 161 excluded or expired). Existing job IDs were kept stable.
+
+## 9. ATS documentation
+- Official: Greenhouse, "Unsuccessful resume parse" (https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse). Its nine causes are implemented as checks in CV Studio, plus its 2.5 MB parse limit.
+- Workday, Lever and iCIMS: no official public parsing page could be retrieved. Third-party guides were read but are not used as sources of rules.
+
+## 10. Gmail
+Your Gmail receives LinkedIn and Indeed job alerts (about 200 in 30 days) and LinkedIn application confirmations (61 in 120 days). CareerOS 2.0 can import LinkedIn alerts and confirmations into your private storage. Your application history was **not** added to the research data or the repository.

@@ -1,6 +1,6 @@
 /* CareerOS core: state, persistence, routing, helpers. */
 "use strict";
-const E = window.CareerEngine;
+const E = window.CareerEngine2 || window.CareerEngine;
 const TRACKS = E.TRACKS;
 const SEED = window.CAREEROS_SEED;
 const TODAY = () => new Date().toISOString().slice(0, 10);
@@ -123,11 +123,12 @@ function C(job) {
   const el = E.evaluateEligibility(job, S.profile, a, TODAY());
   const m = E.scoreMatch(job, S.profile, a, { evidenceIndex: evidenceIndex() });
   const cov = S.master.model ? E.cvCoverage(a, S.master.model.text, S.profile, { evidenceIndex: evidenceIndex() }) : null;
-  c = { a, el, m, cov };
+  const v = E.careerValue ? E.careerValue(job, a, S.profile) : { total: 0, factors: [] };
+  c = { a, el, m, cov, v };
   cache.set(job.jobId, c);
   return c;
 }
-const jobById = (id) => S.jobs.find((j) => j.jobId === id);
+let jobById = (id) => S.jobs.find((j) => j.jobId === id);
 const appFor = (jobId) => S.applications.find((a) => a.jobId === jobId);
 const isExpired = (j) => j.status === "Closed" || (j.deadline && daysUntil(j.deadline) < 0);
 function profileChanged() { S.profileRev++; invalidate(); save(); }
@@ -141,14 +142,36 @@ let CUR_HASH = "#/dashboard";
 function go(hash) { if (HOOKS.internalRouting) { CUR_HASH = hash; render(); return; } if (location.hash === hash) render(); else location.hash = hash; }
 function parseHash() { const h = ((HOOKS.internalRouting ? CUR_HASH : location.hash) || "#/dashboard").slice(2).split("/"); return { name: h[0] || "dashboard", arg: decodeURIComponent(h.slice(1).join("/") || "") }; }
 const NAV = [
-  ["dashboard", "Dashboard", "◧"], ["discover", "Discover Opportunities", "⌕"], ["analysis", "Job Analysis", "≣"], ["profile", "My Career Profile", "☺"],
-  ["cv", "My Master CV", "▤"], ["optimize", "CV Optimizer", "✎"], ["builder", "Application Builder", "⚙"], ["tracker", "Application Tracker", "☑"],
-  ["market", "Saudi Market Intelligence", "▦"], ["watchlist", "Company Watchlist", "★"], ["keywords", "Keyword Intelligence", "#"], ["settings", "Settings", "⚒"],
+  ["Overview"], ["dashboard", "Dashboard", "◧"], ["ai", "CareerOS AI", "✦"],
+  ["Opportunities"], ["discover", "Discover", "⌕"], ["compare", "Compare", "⇄"], ["analysis", "Job Analysis", "≣"], ["watchlist", "Companies", "★"],
+  ["Applications"], ["cv", "CV Studio", "▤"], ["optimize", "CV Optimizer", "✎"], ["builder", "Command Center", "⚙"], ["tracker", "Tracker", "☑"], ["interview", "Interview Prep", "◎"],
+  ["Growth"], ["profile", "Career Profile", "☺"], ["devmap", "Development Map", "↗"], ["analytics", "Analytics", "▥"], ["market", "Market Intelligence", "▦"], ["keywords", "Keywords", "#"],
+  ["System"], ["settings", "Settings", "⚒"],
 ];
+const ALIAS = { job: "discover", company: "watchlist" };
+const TABS = [["dashboard", "Home", "◧"], ["discover", "Discover", "⌕"], ["ai", "AI", "✦"], ["tracker", "Tracker", "☑"]];
 function renderNav(active) {
-  const counts = { discover: S.jobs.filter((j) => !isExpired(j) && ["GREEN", "YELLOW"].includes(C(j).el.label)).length, tracker: S.applications.length };
-  document.getElementById("nav").innerHTML = NAV.map(([k, label, ico]) =>
-    `<a href="#/${k}" class="${active === k || (active === "job" && k === "discover") ? "on" : ""}"><span class="ico">${ico}</span>${label}${counts[k] ? `<span class="count">${counts[k]}</span>` : ""}</a>`).join("");
+  const counts = { discover: S.jobs.filter((j) => !isExpired(j) && ["GREEN", "YELLOW"].includes(C(j).el.label)).length, tracker: S.applications.length, compare: (S.compareIds || []).length };
+  const a = ALIAS[active] || active;
+  document.getElementById("nav").innerHTML = NAV.map((n) => n.length === 1 ? `<div class="sec">${n[0]}</div>` :
+    `<a href="#/${n[0]}" class="${a === n[0] ? "on" : ""}"><span class="ico">${n[2]}</span>${n[1]}${counts[n[0]] ? `<span class="count">${counts[n[0]]}</span>` : ""}</a>`).join("");
+  const tb = document.getElementById("tabbar");
+  if (tb) tb.innerHTML = TABS.map(([k, l, i]) => `<a href="#/${k}" class="${a === k ? "on" : ""}"><span class="i">${i}</span>${l}</a>`).join("") + `<a href="#" data-act="burger"><span class="i">☰</span>More</a>`;
+}
+function applyTheme() {
+  const t = (S && S.settings.theme) || "auto";
+  const dark = t === "dark" || (t === "auto" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+}
+if (window.matchMedia) try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => applyTheme()); } catch (e) {}
+/** Mobile: every data table becomes a list of cards; label each cell with its column header. */
+function labelTables(root) {
+  root.querySelectorAll("table").forEach((t) => {
+    const heads = [...t.querySelectorAll("thead th")].map((th) => th.textContent.trim());
+    if (!heads.length) return;
+    t.classList.add("rt");
+    t.querySelectorAll("tbody tr").forEach((tr) => [...tr.children].forEach((td, i) => { if (heads[i] && !td.hasAttribute("data-label")) td.setAttribute("data-label", heads[i]); }));
+  });
 }
 async function render() {
   if (!out_keepScroll) closeModal();
@@ -162,7 +185,9 @@ async function render() {
     document.getElementById("title").textContent = out.title;
     document.getElementById("subtitle").textContent = out.sub || "";
     document.getElementById("topActions").innerHTML = out.actions || "";
+    document.getElementById("moreBtn").classList.toggle("hide", !out.actions);
     main.innerHTML = out.html;
+    labelTables(main);
     if (out.after) out.after();
   } catch (e) {
     console.error(e);
@@ -194,6 +219,15 @@ document.addEventListener("input", (e) => {
   const fn = ACT[t.dataset.inp];
   if (fn) fn(t.dataset, t, e);
 });
-ACT.burger = () => document.querySelector(".side").classList.toggle("open");
+ACT.burger = () => { closeMenu(); document.querySelector(".side").classList.toggle("open"); };
+function closeMenu() { const m = document.getElementById("actmenu"); if (m) m.remove(); }
+ACT.more = () => {
+  if (document.getElementById("actmenu")) return closeMenu();
+  const m = document.createElement("div"); m.className = "menu"; m.id = "actmenu";
+  m.innerHTML = document.getElementById("topActions").innerHTML;
+  document.querySelector(".top").appendChild(m);
+};
+document.addEventListener("click", (e) => { if (!e.target.closest("#actmenu") && !e.target.closest("#moreBtn")) closeMenu(); else if (e.target.closest("#actmenu [data-act],#actmenu a")) setTimeout(closeMenu, 0); }, true);
+document.addEventListener("click", (e) => { const s = document.querySelector(".side.open"); if (s && !e.target.closest(".side") && !e.target.closest('[data-act="burger"]')) s.classList.remove("open"); });
 ACT.closeModal = (d, t) => { closeModal(); const h = t && t.getAttribute && t.getAttribute("href"); if (h && h.startsWith("#/")) go(h); };
 window.addEventListener("hashchange", render);
