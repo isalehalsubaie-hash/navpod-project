@@ -7,6 +7,7 @@ const TODAY = () => new Date().toISOString().slice(0, 10);
 const STATUSES = ["Discovered", "Not reviewed", "Interested", "To apply", "CV prepared", "Applied", "Assessment", "Interview", "Rejected", "Offer received", "Accepted", "Follow-up required", "Withdrawn"];
 const SUBMITTED = new Set(["Applied", "Assessment", "Interview", "Rejected", "Offer received", "Accepted", "Follow-up required"]);
 let S = null;
+const HOOKS = window.CAREEROS_HOOKS || {};
 
 // ---------------------------------------------------------------- helpers
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -18,6 +19,7 @@ const b64ToBytes = (b64) => { const bin = atob(b64); const u = new Uint8Array(bi
 const bytesToB64 = (u8) => { let s = ""; const c = 0x8000; for (let i = 0; i < u8.length; i += c) s += String.fromCharCode.apply(null, u8.subarray(i, i + c)); return btoa(s); };
 function toast(msg, ms) { const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), ms || 2800); }
 function download(name, data, mime) {
+  if (HOOKS.download) return HOOKS.download(name, data instanceof Blob ? data : new Blob([data], { type: mime || "application/octet-stream" }));
   const blob = data instanceof Blob ? data : new Blob([data], { type: mime || "application/octet-stream" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
@@ -35,6 +37,18 @@ function modal(html) {
   const f = bg.querySelector("input,textarea,select"); if (f) f.focus();
 }
 function closeModal() { const m = document.getElementById("modal"); if (m) m.remove(); }
+/** In-page confirmation (browser confirm() is blocked in some viewers). Resolves true or false. */
+function ask(msg) {
+  if (window.CAREEROS_AUTO_CONFIRM) return Promise.resolve(true);
+  return new Promise((res) => {
+    const bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "askmodal"; bg.style.zIndex = 70;
+    bg.innerHTML = `<div class="modal" role="alertdialog" style="max-width:460px"><p>${esc(msg)}</p><div class="row mt"><button class="btn primary" id="ask-ok">Yes, continue</button><button class="btn" id="ask-no">Cancel</button></div></div>`;
+    const done = (v) => { bg.remove(); res(v); };
+    bg.querySelector("#ask-ok").onclick = () => done(true); bg.querySelector("#ask-no").onclick = () => done(false);
+    bg.addEventListener("click", (e) => { if (e.target === bg) done(false); });
+    document.body.appendChild(bg); bg.querySelector("#ask-ok").focus();
+  });
+}
 
 // ---------------------------------------------------------------- persistence (IndexedDB, local only)
 const DB_NAME = "careeros", STORE = "kv";
@@ -51,7 +65,7 @@ async function idbClear() { const db = await idb(); return new Promise((res) => 
 let saveTimer = null;
 function save(now) {
   clearTimeout(saveTimer);
-  const go = () => idbSet("state", S).then(() => { S._savedAt = new Date().toISOString(); }).catch((e) => toast("Could not save: " + e.message));
+  const go = () => Promise.all([idbSet("state", S).catch((e) => { if (!HOOKS.save) toast("Could not save: " + e.message); }), HOOKS.save ? HOOKS.save(S) : null]).then(() => { S._savedAt = new Date().toISOString(); }).catch((e) => toast("Could not save: " + e.message, 5000));
   if (now) return go();
   saveTimer = setTimeout(go, 250);
 }
@@ -82,7 +96,8 @@ function mergeSeed(st) {
 }
 async function loadState() {
   let st = null;
-  try { st = await idbGet("state"); } catch (e) { console.warn(e); }
+  try { st = HOOKS.load ? await HOOKS.load() : null; } catch (e) { console.warn(e); }
+  if (!st) { try { st = await idbGet("state"); } catch (e) { console.warn(e); } }
   S = st ? mergeSeed(st) : freshState();
   if (!S.master.model && S.master.docxB64) await rebuildMasterModel();
   save(true);
@@ -122,8 +137,9 @@ function logActivity(text) { S.activity.unshift({ date: TODAY(), text }); S.acti
 const ROUTES = {};
 const ACT = {};
 function route(name, fn) { ROUTES[name] = fn; }
-function go(hash) { if (location.hash === hash) render(); else location.hash = hash; }
-function parseHash() { const h = (location.hash || "#/dashboard").slice(2).split("/"); return { name: h[0] || "dashboard", arg: decodeURIComponent(h.slice(1).join("/") || "") }; }
+let CUR_HASH = "#/dashboard";
+function go(hash) { if (HOOKS.internalRouting) { CUR_HASH = hash; render(); return; } if (location.hash === hash) render(); else location.hash = hash; }
+function parseHash() { const h = ((HOOKS.internalRouting ? CUR_HASH : location.hash) || "#/dashboard").slice(2).split("/"); return { name: h[0] || "dashboard", arg: decodeURIComponent(h.slice(1).join("/") || "") }; }
 const NAV = [
   ["dashboard", "Dashboard", "◧"], ["discover", "Discover Opportunities", "⌕"], ["analysis", "Job Analysis", "≣"], ["profile", "My Career Profile", "☺"],
   ["cv", "My Master CV", "▤"], ["optimize", "CV Optimizer", "✎"], ["builder", "Application Builder", "⚙"], ["tracker", "Application Tracker", "☑"],
@@ -158,6 +174,8 @@ async function render() {
 let out_keepScroll = false;
 function rerender() { out_keepScroll = true; const y = window.scrollY; render().then(() => window.scrollTo(0, y)); }
 document.addEventListener("click", (e) => {
+  const a = HOOKS.internalRouting && e.target.closest('a[href^="#/"]');
+  if (a && !a.closest("[data-act]")) { e.preventDefault(); go(a.getAttribute("href")); return; }
   const t = e.target.closest("[data-act]");
   if (!t) return;
   e.preventDefault();
@@ -177,5 +195,5 @@ document.addEventListener("input", (e) => {
   if (fn) fn(t.dataset, t, e);
 });
 ACT.burger = () => document.querySelector(".side").classList.toggle("open");
-ACT.closeModal = () => closeModal();
+ACT.closeModal = (d, t) => { closeModal(); const h = t && t.getAttribute && t.getAttribute("href"); if (h && h.startsWith("#/")) go(h); };
 window.addEventListener("hashchange", render);

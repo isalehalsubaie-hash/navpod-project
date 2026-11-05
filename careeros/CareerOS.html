@@ -1525,6 +1525,7 @@ const TODAY = () => new Date().toISOString().slice(0, 10);
 const STATUSES = ["Discovered", "Not reviewed", "Interested", "To apply", "CV prepared", "Applied", "Assessment", "Interview", "Rejected", "Offer received", "Accepted", "Follow-up required", "Withdrawn"];
 const SUBMITTED = new Set(["Applied", "Assessment", "Interview", "Rejected", "Offer received", "Accepted", "Follow-up required"]);
 let S = null;
+const HOOKS = window.CAREEROS_HOOKS || {};
 
 // ---------------------------------------------------------------- helpers
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -1536,6 +1537,7 @@ const b64ToBytes = (b64) => { const bin = atob(b64); const u = new Uint8Array(bi
 const bytesToB64 = (u8) => { let s = ""; const c = 0x8000; for (let i = 0; i < u8.length; i += c) s += String.fromCharCode.apply(null, u8.subarray(i, i + c)); return btoa(s); };
 function toast(msg, ms) { const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), ms || 2800); }
 function download(name, data, mime) {
+  if (HOOKS.download) return HOOKS.download(name, data instanceof Blob ? data : new Blob([data], { type: mime || "application/octet-stream" }));
   const blob = data instanceof Blob ? data : new Blob([data], { type: mime || "application/octet-stream" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
@@ -1553,6 +1555,18 @@ function modal(html) {
   const f = bg.querySelector("input,textarea,select"); if (f) f.focus();
 }
 function closeModal() { const m = document.getElementById("modal"); if (m) m.remove(); }
+/** In-page confirmation (browser confirm() is blocked in some viewers). Resolves true or false. */
+function ask(msg) {
+  if (window.CAREEROS_AUTO_CONFIRM) return Promise.resolve(true);
+  return new Promise((res) => {
+    const bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "askmodal"; bg.style.zIndex = 70;
+    bg.innerHTML = `<div class="modal" role="alertdialog" style="max-width:460px"><p>${esc(msg)}</p><div class="row mt"><button class="btn primary" id="ask-ok">Yes, continue</button><button class="btn" id="ask-no">Cancel</button></div></div>`;
+    const done = (v) => { bg.remove(); res(v); };
+    bg.querySelector("#ask-ok").onclick = () => done(true); bg.querySelector("#ask-no").onclick = () => done(false);
+    bg.addEventListener("click", (e) => { if (e.target === bg) done(false); });
+    document.body.appendChild(bg); bg.querySelector("#ask-ok").focus();
+  });
+}
 
 // ---------------------------------------------------------------- persistence (IndexedDB, local only)
 const DB_NAME = "careeros", STORE = "kv";
@@ -1569,7 +1583,7 @@ async function idbClear() { const db = await idb(); return new Promise((res) => 
 let saveTimer = null;
 function save(now) {
   clearTimeout(saveTimer);
-  const go = () => idbSet("state", S).then(() => { S._savedAt = new Date().toISOString(); }).catch((e) => toast("Could not save: " + e.message));
+  const go = () => Promise.all([idbSet("state", S).catch((e) => { if (!HOOKS.save) toast("Could not save: " + e.message); }), HOOKS.save ? HOOKS.save(S) : null]).then(() => { S._savedAt = new Date().toISOString(); }).catch((e) => toast("Could not save: " + e.message, 5000));
   if (now) return go();
   saveTimer = setTimeout(go, 250);
 }
@@ -1600,7 +1614,8 @@ function mergeSeed(st) {
 }
 async function loadState() {
   let st = null;
-  try { st = await idbGet("state"); } catch (e) { console.warn(e); }
+  try { st = HOOKS.load ? await HOOKS.load() : null; } catch (e) { console.warn(e); }
+  if (!st) { try { st = await idbGet("state"); } catch (e) { console.warn(e); } }
   S = st ? mergeSeed(st) : freshState();
   if (!S.master.model && S.master.docxB64) await rebuildMasterModel();
   save(true);
@@ -1640,8 +1655,9 @@ function logActivity(text) { S.activity.unshift({ date: TODAY(), text }); S.acti
 const ROUTES = {};
 const ACT = {};
 function route(name, fn) { ROUTES[name] = fn; }
-function go(hash) { if (location.hash === hash) render(); else location.hash = hash; }
-function parseHash() { const h = (location.hash || "#/dashboard").slice(2).split("/"); return { name: h[0] || "dashboard", arg: decodeURIComponent(h.slice(1).join("/") || "") }; }
+let CUR_HASH = "#/dashboard";
+function go(hash) { if (HOOKS.internalRouting) { CUR_HASH = hash; render(); return; } if (location.hash === hash) render(); else location.hash = hash; }
+function parseHash() { const h = ((HOOKS.internalRouting ? CUR_HASH : location.hash) || "#/dashboard").slice(2).split("/"); return { name: h[0] || "dashboard", arg: decodeURIComponent(h.slice(1).join("/") || "") }; }
 const NAV = [
   ["dashboard", "Dashboard", "◧"], ["discover", "Discover Opportunities", "⌕"], ["analysis", "Job Analysis", "≣"], ["profile", "My Career Profile", "☺"],
   ["cv", "My Master CV", "▤"], ["optimize", "CV Optimizer", "✎"], ["builder", "Application Builder", "⚙"], ["tracker", "Application Tracker", "☑"],
@@ -1676,6 +1692,8 @@ async function render() {
 let out_keepScroll = false;
 function rerender() { out_keepScroll = true; const y = window.scrollY; render().then(() => window.scrollTo(0, y)); }
 document.addEventListener("click", (e) => {
+  const a = HOOKS.internalRouting && e.target.closest('a[href^="#/"]');
+  if (a && !a.closest("[data-act]")) { e.preventDefault(); go(a.getAttribute("href")); return; }
   const t = e.target.closest("[data-act]");
   if (!t) return;
   e.preventDefault();
@@ -1695,7 +1713,7 @@ document.addEventListener("input", (e) => {
   if (fn) fn(t.dataset, t, e);
 });
 ACT.burger = () => document.querySelector(".side").classList.toggle("open");
-ACT.closeModal = () => closeModal();
+ACT.closeModal = (d, t) => { closeModal(); const h = t && t.getAttribute && t.getAttribute("href"); if (h && h.startsWith("#/")) go(h); };
 window.addEventListener("hashchange", render);
 
 /* Discover Opportunities, Job details, Job Analysis input. */
@@ -2067,7 +2085,7 @@ ACT.uploadCV = async (d, t) => {
   if (/\.docx$/i.test(f.name)) {
     let model;
     try { model = await E.readDocx(JSZip, bytes, DOMParser); } catch (e) { return toast("That DOCX could not be read: " + e.message, 6000); }
-    if (S.master.docxB64 && !confirm("Replace the current master DOCX with " + f.name + "? Existing tailored versions keep their own copies.")) return;
+    if (S.master.docxB64 && !await ask("Replace the current master DOCX with " + f.name + "? Existing tailored versions keep their own copies.")) return;
     Object.assign(S.master, { kind: "docx", name: f.name, source: "Uploaded by you", docxB64: bytesToB64(bytes), uploadedAt: TODAY(), model, approved: true });
     model.freeLines = 0;
     S.optim = {}; invalidate();
@@ -2212,8 +2230,8 @@ ACT.saveSug = (d) => {
 ACT.makeVersion = async (d) => {
   const j = jobById(d.id), o = S.optim[d.id], acc = acceptedChanges(o);
   const ofc = E.overflowEstimate(S.master.model, acc);
-  if (ofc.risk === "high" && !confirm("Estimated to exceed one page (+" + ofc.delta + " lines, about " + ofc.free + " free). Create the copy anyway? You can check the page count after export.")) return;
-  if (!S.settings.formatLock && !confirm("Format lock is OFF. The tailored copy is still produced by editing text only. Continue?")) return;
+  if (ofc.risk === "high" && !await ask("Estimated to exceed one page (+" + ofc.delta + " lines, about " + ofc.free + " free). Create the copy anyway? You can check the page count after export.")) return;
+  if (!S.settings.formatLock && !await ask("Format lock is OFF. The tailored copy is still produced by editing text only. Continue?")) return;
   const masterBytes = b64ToBytes(S.master.docxB64);
   const masterHashBefore = await sha(masterBytes);
   const r = await E.applyChangesToDocx(JSZip, masterBytes, acc, DOMParser, XMLSerializer);
@@ -2254,6 +2272,7 @@ ACT.pdfVersion = async (d) => {
   }
 };
 ACT.printVersion = async (d) => {
+  if (HOOKS.noPrint) return toast("Printing is not available in this view. Download the DOCX and open it in Word or Pages.", 5000);
   const v = S.cvVersions.find((x) => x.id === d.v);
   const m = await E.readDocx(JSZip, b64ToBytes(v.bytesB64), DOMParser);
   const w = window.open("", "_blank");
@@ -2317,7 +2336,7 @@ ACT.chk = (d, t) => { const p = pkgFor(d.id); p.done = p.done || {}; p.done[d.i]
 ACT.dlCover = async (d) => { const j = jobById(d.id); download("Cover_Letter_" + j.employer.replace(/\W+/g, "_") + ".docx", await makeDocx(pkgFor(d.id).coverLetter.split("\n"), { after: 60 })); };
 function interviewParas(p) { const iv = p.interview; const out = [{ text: "Interview preparation", bold: true, size: 14 }, iv.note, ""]; const sec = (h, arr) => { out.push({ text: h, bold: true }); arr.forEach((x) => out.push("- " + x)); out.push(""); }; sec("Company background", iv.company); sec("Role responsibilities", iv.responsibilities); sec("Technical topics", iv.technicalTopics); sec("Questions based on the advert", iv.likelyQuestions); sec("General questions", iv.generalQuestions); sec("Questions to ask", iv.questionsToAsk); iv.evidenceMap.forEach((e) => { out.push({ text: e.item, bold: true }); e.use.forEach((u) => out.push("- " + u)); }); return out; }
 ACT.dlInterview = async (d) => { const j = jobById(d.id); download("Interview_Prep_" + j.employer.replace(/\W+/g, "_") + ".docx", await makeDocx(interviewParas(pkgFor(d.id)))); };
-ACT.printDoc = (d) => { const p = pkgFor(d.id); const w = window.open("", "_blank"); w.document.write(`<html><head><title>Document</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:12pt;max-width:720px;margin:40px auto;white-space:pre-wrap;line-height:1.45}</style></head><body>${esc(getPath(p, d.k))}<script>setTimeout(()=>print(),300)<\/script></body></html>`); w.document.close(); };
+ACT.printDoc = (d) => { if (HOOKS.noPrint) { toast("Printing is not available in this view. Use Download DOCX or Copy.", 5000); return; } const p = pkgFor(d.id); const w = window.open("", "_blank"); w.document.write(`<html><head><title>Document</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:12pt;max-width:720px;margin:40px auto;white-space:pre-wrap;line-height:1.45}</style></head><body>${esc(getPath(p, d.k))}<script>setTimeout(()=>print(),300)<\/script></body></html>`); w.document.close(); };
 ACT.dlPkg = async (d) => {
   const j = jobById(d.id), p = pkgFor(d.id), zip = new JSZip();
   const base = j.employer.replace(/\W+/g, "_") + "_" + E.cleanTitle(j.title).replace(/\W+/g, "_");
@@ -2333,8 +2352,8 @@ ACT.dlPkg = async (d) => {
   zip.file("Apply_Checklist.md", md("Checklist", p.checklist.map((x) => "- [ ] " + x).join("\n") + "\n\nOfficial advert: " + (j.applyUrl || j.source) + "\nJob ID: " + j.jobId));
   download("Application_Package_" + base + ".zip", await zip.generateAsync({ type: "blob" }));
 };
-ACT.markApplied = (d) => {
-  if (!confirm("Confirm: you have submitted this application yourself on the employer's site or portal?")) return;
+ACT.markApplied = async (d) => {
+  if (!await ask("Confirm: you have submitted this application yourself on the employer's site or portal?")) return;
   const a = addToTracker(d.id); a.status = "Applied"; a.appliedDate = TODAY(); a.history.push({ date: TODAY(), status: "Applied" });
   if (!a.followUp) { const f = new Date(); f.setDate(f.getDate() + 10); a.followUp = f.toISOString().slice(0, 10); }
   logActivity("Marked as applied (confirmed by you): " + jobById(d.id).title); save(); toast("Marked as Applied. Follow-up set for " + fmtDate(a.followUp)); go("#/tracker");
@@ -2373,14 +2392,14 @@ route("tracker", () => {
 });
 ACT.trView = (d) => { TR.view = d.v; rerender(); };
 ACT.trStatus = (d) => { TR.status = d.s; rerender(); };
-ACT.appSet = (d, t) => {
+ACT.appSet = async (d, t) => {
   const a = S.applications.find((x) => x.id === d.id);
-  if (d.k === "status" && t.value === "Applied" && !confirm("Mark as Applied only if you have actually submitted the application. Continue?")) { t.value = a.status; return; }
+  if (d.k === "status" && t.value === "Applied" && !await ask("Mark as Applied only if you have actually submitted the application. Continue?")) { t.value = a.status; return; }
   a[d.k] = t.value;
   if (d.k === "status") { a.history.push({ date: TODAY(), status: t.value }); if (t.value === "Applied" && !a.appliedDate) a.appliedDate = TODAY(); logActivity("Status → " + t.value + ": " + (jobById(a.jobId) || {}).title); }
   save(); if (d.k === "status" || d.k === "followUp") rerender();
 };
-ACT.appDel = (d) => { if (!confirm("Remove this job from the tracker? The job stays in the database.")) return; S.applications = S.applications.filter((a) => a.id !== d.id); save(); rerender(); };
+ACT.appDel = async (d) => { if (!await ask("Remove this job from the tracker? The job stays in the database.")) return; S.applications = S.applications.filter((a) => a.id !== d.id); save(); rerender(); };
 ACT.exportTracker = () => {
   const rows = [["Job ID", "Company", "Position", "Location", "Advert", "Eligibility", "Match", "Keyword coverage", "CV version", "Package", "Status", "Applied", "Deadline", "Follow-up", "Contact", "Notes"]];
   S.applications.forEach((a) => { const j = jobById(a.jobId); if (!j) return; const c = C(j); const v = S.cvVersions.find((x) => x.id === a.cvVersionId); rows.push([j.jobId, j.employer, j.title, j.location, j.applyUrl || j.source, c.el.label, c.m.total, v ? v.coverageAfter : c.cov ? c.cov.keywordCoverage : "", v ? v.name : "", a.packageId ? "Yes" : "No", a.status, a.appliedDate, a.deadline, a.followUp, a.contact, a.notes]); });
@@ -2520,7 +2539,7 @@ ACT.saveItem = (d) => {
   logActivity((d.id ? "Updated" : "Added") + " profile item: " + it.title);
   profileChanged(); closeModal(); rerender();
 };
-ACT.delItem = (d) => { if (!confirm("Delete this item from your career profile?")) return; S.profile.items = S.profile.items.filter((i) => i.id !== d.id); profileChanged(); closeModal(); rerender(); };
+ACT.delItem = async (d) => { if (!await ask("Delete this item from your career profile?")) return; S.profile.items = S.profile.items.filter((i) => i.id !== d.id); profileChanged(); closeModal(); rerender(); };
 
 // ---------------------------------------------------------------- Market intelligence
 route("market", () => {
@@ -2618,15 +2637,15 @@ route("settings", () => ({
 ACT.setCompanion = (d, t) => { S.settings.companionUrl = t.value.replace(/\/$/, ""); save(); };
 ACT.testCompanion = async () => { const el = document.getElementById("compStatus"); el.textContent = "Testing..."; try { const r = await fetch(S.settings.companionUrl + "/health"); const j = await r.json(); el.innerHTML = `<b class="ok">Connected.</b> Search: ${esc(j.search || "not configured")} · PDF export: ${j.pdf ? "available" : "LibreOffice not found"}`; } catch (e) { el.innerHTML = `<b class="bad">Not reachable.</b> Start it with python3 tools/careeros_server.py`; } };
 ACT.backup = () => download("CareerOS_Backup_" + TODAY() + ".json", JSON.stringify(S), "application/json");
-ACT.restore = async (d, t) => { const f = t.files[0]; if (!f) return; try { const st = JSON.parse(await f.text()); if (!st.profile || !st.jobs) throw new Error("Not a CareerOS backup"); if (!confirm("Replace all current data with this backup?")) return; S = st; invalidate(); await save(true); toast("Backup restored"); go("#/dashboard"); } catch (e) { toast("Restore failed: " + e.message, 5000); } };
+ACT.restore = async (d, t) => { const f = t.files[0]; if (!f) return; try { const st = JSON.parse(await f.text()); if (!st.profile || !st.jobs) throw new Error("Not a CareerOS backup"); if (!await ask("Replace all current data with this backup?")) return; S = st; invalidate(); await save(true); toast("Backup restored"); go("#/dashboard"); } catch (e) { toast("Restore failed: " + e.message, 5000); } };
 ACT.exportProfile = () => download("CareerOS_Master_Profile.json", JSON.stringify(S.profile, null, 2), "application/json");
 ACT.exportJobs = () => {
   const H = ["Job ID", "Job Title", "Employer", "Location", "Career Track", "Employment Type", "Salary", "Education", "Experience (min years)", "Skills", "Publication Date", "Deadline", "Verification Date", "Job Status", "Eligibility", "Match Score", "Source", "Application URL", "Notes"];
   const rows = S.jobs.map((j) => { const c = C(j); return [j.jobId, j.title, j.employer, j.location, (j.tracks || []).map(trackName).join("; "), j.type, j.salary, describeDegree(c.a.constraints.degree), c.a.constraints.minYears ?? "", c.a.keywords.slice(0, 10).map((k) => k.term).join("; "), j.published, j.deadline, j.verifiedDate, isExpired(j) ? "Closed" : j.status, c.el.label, c.m.total, j.source, j.applyUrl, j.notes || ""]; });
   download("CareerOS_Opportunities_" + TODAY() + ".csv", "﻿" + [H, ...rows].map((r) => r.map((x) => '"' + String(x == null ? "" : x).replace(/"/g, '""') + '"').join(",")).join("\n"), "text/csv");
 };
-ACT.reseed = () => { if (!confirm("Reload research jobs, companies and market facts? Manually imported jobs are kept.")) return; const manual = S.jobs.filter((j) => j.origin !== "research_session"); S.jobs = clone(SEED.jobs).concat(manual); S.companies = clone(SEED.companies); S.excluded = clone(SEED.excluded); S.market = clone(SEED.market); invalidate(); save(); toast("Research snapshot reloaded"); rerender(); };
-ACT.wipe = async () => { if (!confirm("Delete ALL CareerOS data stored in this browser? This cannot be undone.")) return; await idbClear(); S = freshState(); await rebuildMasterModel(); invalidate(); await save(true); toast("All data deleted. Fresh research snapshot loaded."); go("#/dashboard"); };
+ACT.reseed = async () => { if (!await ask("Reload research jobs, companies and market facts? Manually imported jobs are kept.")) return; const manual = S.jobs.filter((j) => j.origin !== "research_session"); S.jobs = clone(SEED.jobs).concat(manual); S.companies = clone(SEED.companies); S.excluded = clone(SEED.excluded); S.market = clone(SEED.market); invalidate(); save(); toast("Research snapshot reloaded"); rerender(); };
+ACT.wipe = async () => { if (!await ask("Delete ALL CareerOS data stored in this browser? This cannot be undone.")) return; await idbClear(); S = freshState(); await rebuildMasterModel(); invalidate(); await save(true); toast("All data deleted. Fresh research snapshot loaded."); go("#/dashboard"); };
 
 // ---------------------------------------------------------------- boot
 (async function boot() {

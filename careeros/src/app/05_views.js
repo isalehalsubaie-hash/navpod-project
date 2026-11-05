@@ -113,7 +113,7 @@ ACT.saveItem = (d) => {
   logActivity((d.id ? "Updated" : "Added") + " profile item: " + it.title);
   profileChanged(); closeModal(); rerender();
 };
-ACT.delItem = (d) => { if (!confirm("Delete this item from your career profile?")) return; S.profile.items = S.profile.items.filter((i) => i.id !== d.id); profileChanged(); closeModal(); rerender(); };
+ACT.delItem = async (d) => { if (!await ask("Delete this item from your career profile?")) return; S.profile.items = S.profile.items.filter((i) => i.id !== d.id); profileChanged(); closeModal(); rerender(); };
 
 // ---------------------------------------------------------------- Market intelligence
 route("market", () => {
@@ -211,15 +211,15 @@ route("settings", () => ({
 ACT.setCompanion = (d, t) => { S.settings.companionUrl = t.value.replace(/\/$/, ""); save(); };
 ACT.testCompanion = async () => { const el = document.getElementById("compStatus"); el.textContent = "Testing..."; try { const r = await fetch(S.settings.companionUrl + "/health"); const j = await r.json(); el.innerHTML = `<b class="ok">Connected.</b> Search: ${esc(j.search || "not configured")} · PDF export: ${j.pdf ? "available" : "LibreOffice not found"}`; } catch (e) { el.innerHTML = `<b class="bad">Not reachable.</b> Start it with python3 tools/careeros_server.py`; } };
 ACT.backup = () => download("CareerOS_Backup_" + TODAY() + ".json", JSON.stringify(S), "application/json");
-ACT.restore = async (d, t) => { const f = t.files[0]; if (!f) return; try { const st = JSON.parse(await f.text()); if (!st.profile || !st.jobs) throw new Error("Not a CareerOS backup"); if (!confirm("Replace all current data with this backup?")) return; S = st; invalidate(); await save(true); toast("Backup restored"); go("#/dashboard"); } catch (e) { toast("Restore failed: " + e.message, 5000); } };
+ACT.restore = async (d, t) => { const f = t.files[0]; if (!f) return; try { const st = JSON.parse(await f.text()); if (!st.profile || !st.jobs) throw new Error("Not a CareerOS backup"); if (!await ask("Replace all current data with this backup?")) return; S = st; invalidate(); await save(true); toast("Backup restored"); go("#/dashboard"); } catch (e) { toast("Restore failed: " + e.message, 5000); } };
 ACT.exportProfile = () => download("CareerOS_Master_Profile.json", JSON.stringify(S.profile, null, 2), "application/json");
 ACT.exportJobs = () => {
   const H = ["Job ID", "Job Title", "Employer", "Location", "Career Track", "Employment Type", "Salary", "Education", "Experience (min years)", "Skills", "Publication Date", "Deadline", "Verification Date", "Job Status", "Eligibility", "Match Score", "Source", "Application URL", "Notes"];
   const rows = S.jobs.map((j) => { const c = C(j); return [j.jobId, j.title, j.employer, j.location, (j.tracks || []).map(trackName).join("; "), j.type, j.salary, describeDegree(c.a.constraints.degree), c.a.constraints.minYears ?? "", c.a.keywords.slice(0, 10).map((k) => k.term).join("; "), j.published, j.deadline, j.verifiedDate, isExpired(j) ? "Closed" : j.status, c.el.label, c.m.total, j.source, j.applyUrl, j.notes || ""]; });
   download("CareerOS_Opportunities_" + TODAY() + ".csv", "﻿" + [H, ...rows].map((r) => r.map((x) => '"' + String(x == null ? "" : x).replace(/"/g, '""') + '"').join(",")).join("\n"), "text/csv");
 };
-ACT.reseed = () => { if (!confirm("Reload research jobs, companies and market facts? Manually imported jobs are kept.")) return; const manual = S.jobs.filter((j) => j.origin !== "research_session"); S.jobs = clone(SEED.jobs).concat(manual); S.companies = clone(SEED.companies); S.excluded = clone(SEED.excluded); S.market = clone(SEED.market); invalidate(); save(); toast("Research snapshot reloaded"); rerender(); };
-ACT.wipe = async () => { if (!confirm("Delete ALL CareerOS data stored in this browser? This cannot be undone.")) return; await idbClear(); S = freshState(); await rebuildMasterModel(); invalidate(); await save(true); toast("All data deleted. Fresh research snapshot loaded."); go("#/dashboard"); };
+ACT.reseed = async () => { if (!await ask("Reload research jobs, companies and market facts? Manually imported jobs are kept.")) return; const manual = S.jobs.filter((j) => j.origin !== "research_session"); S.jobs = clone(SEED.jobs).concat(manual); S.companies = clone(SEED.companies); S.excluded = clone(SEED.excluded); S.market = clone(SEED.market); invalidate(); save(); toast("Research snapshot reloaded"); rerender(); };
+ACT.wipe = async () => { if (!await ask("Delete ALL CareerOS data stored in this browser? This cannot be undone.")) return; await idbClear(); S = freshState(); await rebuildMasterModel(); invalidate(); await save(true); toast("All data deleted. Fresh research snapshot loaded."); go("#/dashboard"); };
 
 // ---------------------------------------------------------------- boot
 (async function boot() {

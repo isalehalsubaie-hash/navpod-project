@@ -54,7 +54,7 @@ ACT.chk = (d, t) => { const p = pkgFor(d.id); p.done = p.done || {}; p.done[d.i]
 ACT.dlCover = async (d) => { const j = jobById(d.id); download("Cover_Letter_" + j.employer.replace(/\W+/g, "_") + ".docx", await makeDocx(pkgFor(d.id).coverLetter.split("\n"), { after: 60 })); };
 function interviewParas(p) { const iv = p.interview; const out = [{ text: "Interview preparation", bold: true, size: 14 }, iv.note, ""]; const sec = (h, arr) => { out.push({ text: h, bold: true }); arr.forEach((x) => out.push("- " + x)); out.push(""); }; sec("Company background", iv.company); sec("Role responsibilities", iv.responsibilities); sec("Technical topics", iv.technicalTopics); sec("Questions based on the advert", iv.likelyQuestions); sec("General questions", iv.generalQuestions); sec("Questions to ask", iv.questionsToAsk); iv.evidenceMap.forEach((e) => { out.push({ text: e.item, bold: true }); e.use.forEach((u) => out.push("- " + u)); }); return out; }
 ACT.dlInterview = async (d) => { const j = jobById(d.id); download("Interview_Prep_" + j.employer.replace(/\W+/g, "_") + ".docx", await makeDocx(interviewParas(pkgFor(d.id)))); };
-ACT.printDoc = (d) => { const p = pkgFor(d.id); const w = window.open("", "_blank"); w.document.write(`<html><head><title>Document</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:12pt;max-width:720px;margin:40px auto;white-space:pre-wrap;line-height:1.45}</style></head><body>${esc(getPath(p, d.k))}<script>setTimeout(()=>print(),300)<\/script></body></html>`); w.document.close(); };
+ACT.printDoc = (d) => { if (HOOKS.noPrint) { toast("Printing is not available in this view. Use Download DOCX or Copy.", 5000); return; } const p = pkgFor(d.id); const w = window.open("", "_blank"); w.document.write(`<html><head><title>Document</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:12pt;max-width:720px;margin:40px auto;white-space:pre-wrap;line-height:1.45}</style></head><body>${esc(getPath(p, d.k))}<script>setTimeout(()=>print(),300)<\/script></body></html>`); w.document.close(); };
 ACT.dlPkg = async (d) => {
   const j = jobById(d.id), p = pkgFor(d.id), zip = new JSZip();
   const base = j.employer.replace(/\W+/g, "_") + "_" + E.cleanTitle(j.title).replace(/\W+/g, "_");
@@ -70,8 +70,8 @@ ACT.dlPkg = async (d) => {
   zip.file("Apply_Checklist.md", md("Checklist", p.checklist.map((x) => "- [ ] " + x).join("\n") + "\n\nOfficial advert: " + (j.applyUrl || j.source) + "\nJob ID: " + j.jobId));
   download("Application_Package_" + base + ".zip", await zip.generateAsync({ type: "blob" }));
 };
-ACT.markApplied = (d) => {
-  if (!confirm("Confirm: you have submitted this application yourself on the employer's site or portal?")) return;
+ACT.markApplied = async (d) => {
+  if (!await ask("Confirm: you have submitted this application yourself on the employer's site or portal?")) return;
   const a = addToTracker(d.id); a.status = "Applied"; a.appliedDate = TODAY(); a.history.push({ date: TODAY(), status: "Applied" });
   if (!a.followUp) { const f = new Date(); f.setDate(f.getDate() + 10); a.followUp = f.toISOString().slice(0, 10); }
   logActivity("Marked as applied (confirmed by you): " + jobById(d.id).title); save(); toast("Marked as Applied. Follow-up set for " + fmtDate(a.followUp)); go("#/tracker");
@@ -110,14 +110,14 @@ route("tracker", () => {
 });
 ACT.trView = (d) => { TR.view = d.v; rerender(); };
 ACT.trStatus = (d) => { TR.status = d.s; rerender(); };
-ACT.appSet = (d, t) => {
+ACT.appSet = async (d, t) => {
   const a = S.applications.find((x) => x.id === d.id);
-  if (d.k === "status" && t.value === "Applied" && !confirm("Mark as Applied only if you have actually submitted the application. Continue?")) { t.value = a.status; return; }
+  if (d.k === "status" && t.value === "Applied" && !await ask("Mark as Applied only if you have actually submitted the application. Continue?")) { t.value = a.status; return; }
   a[d.k] = t.value;
   if (d.k === "status") { a.history.push({ date: TODAY(), status: t.value }); if (t.value === "Applied" && !a.appliedDate) a.appliedDate = TODAY(); logActivity("Status → " + t.value + ": " + (jobById(a.jobId) || {}).title); }
   save(); if (d.k === "status" || d.k === "followUp") rerender();
 };
-ACT.appDel = (d) => { if (!confirm("Remove this job from the tracker? The job stays in the database.")) return; S.applications = S.applications.filter((a) => a.id !== d.id); save(); rerender(); };
+ACT.appDel = async (d) => { if (!await ask("Remove this job from the tracker? The job stays in the database.")) return; S.applications = S.applications.filter((a) => a.id !== d.id); save(); rerender(); };
 ACT.exportTracker = () => {
   const rows = [["Job ID", "Company", "Position", "Location", "Advert", "Eligibility", "Match", "Keyword coverage", "CV version", "Package", "Status", "Applied", "Deadline", "Follow-up", "Contact", "Notes"]];
   S.applications.forEach((a) => { const j = jobById(a.jobId); if (!j) return; const c = C(j); const v = S.cvVersions.find((x) => x.id === a.cvVersionId); rows.push([j.jobId, j.employer, j.title, j.location, j.applyUrl || j.source, c.el.label, c.m.total, v ? v.coverageAfter : c.cov ? c.cov.keywordCoverage : "", v ? v.name : "", a.packageId ? "Yes" : "No", a.status, a.appliedDate, a.deadline, a.followUp, a.contact, a.notes]); });

@@ -41,3 +41,8 @@ for k, v in parts.items():
 out = P("CareerOS.html")
 open(out, "w", encoding="utf-8").write(html)
 print("wrote", out, round(os.path.getsize(out) / 1e6, 2), "MB")
+# hosted (private claude.ai page) variant: adapter loads right after the seed, before the app
+web = html.replace("<script>window.CAREEROS_FONT_WIDTHS", "<script>" + js_safe(read("src/artifact_adapter.js")) + "</script>\n<script>window.CAREEROS_FONT_WIDTHS", 1)
+assert web != html
+outw = P("CareerOS_web.html"); open(outw, "w", encoding="utf-8").write(web)
+print("wrote", outw, round(os.path.getsize(outw) / 1e6, 2), "MB")

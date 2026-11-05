@@ -88,7 +88,7 @@ ACT.uploadCV = async (d, t) => {
   if (/\.docx$/i.test(f.name)) {
     let model;
     try { model = await E.readDocx(JSZip, bytes, DOMParser); } catch (e) { return toast("That DOCX could not be read: " + e.message, 6000); }
-    if (S.master.docxB64 && !confirm("Replace the current master DOCX with " + f.name + "? Existing tailored versions keep their own copies.")) return;
+    if (S.master.docxB64 && !await ask("Replace the current master DOCX with " + f.name + "? Existing tailored versions keep their own copies.")) return;
     Object.assign(S.master, { kind: "docx", name: f.name, source: "Uploaded by you", docxB64: bytesToB64(bytes), uploadedAt: TODAY(), model, approved: true });
     model.freeLines = 0;
     S.optim = {}; invalidate();
@@ -233,8 +233,8 @@ ACT.saveSug = (d) => {
 ACT.makeVersion = async (d) => {
   const j = jobById(d.id), o = S.optim[d.id], acc = acceptedChanges(o);
   const ofc = E.overflowEstimate(S.master.model, acc);
-  if (ofc.risk === "high" && !confirm("Estimated to exceed one page (+" + ofc.delta + " lines, about " + ofc.free + " free). Create the copy anyway? You can check the page count after export.")) return;
-  if (!S.settings.formatLock && !confirm("Format lock is OFF. The tailored copy is still produced by editing text only. Continue?")) return;
+  if (ofc.risk === "high" && !await ask("Estimated to exceed one page (+" + ofc.delta + " lines, about " + ofc.free + " free). Create the copy anyway? You can check the page count after export.")) return;
+  if (!S.settings.formatLock && !await ask("Format lock is OFF. The tailored copy is still produced by editing text only. Continue?")) return;
   const masterBytes = b64ToBytes(S.master.docxB64);
   const masterHashBefore = await sha(masterBytes);
   const r = await E.applyChangesToDocx(JSZip, masterBytes, acc, DOMParser, XMLSerializer);
@@ -275,6 +275,7 @@ ACT.pdfVersion = async (d) => {
   }
 };
 ACT.printVersion = async (d) => {
+  if (HOOKS.noPrint) return toast("Printing is not available in this view. Download the DOCX and open it in Word or Pages.", 5000);
   const v = S.cvVersions.find((x) => x.id === d.v);
   const m = await E.readDocx(JSZip, b64ToBytes(v.bytesB64), DOMParser);
   const w = window.open("", "_blank");
