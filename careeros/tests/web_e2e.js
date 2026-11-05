@@ -32,7 +32,7 @@ const ok = (n, c, i) => console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' + 
   await p.evaluate(() => go('#/tracker')); await p.waitForTimeout(500);
   await p.selectOption('select[data-k="status"]', 'Applied'); await p.waitForTimeout(400); await p.click('#ask-ok'); await p.waitForTimeout(400);
   await p.evaluate(() => go('#/profile')); await p.waitForTimeout(400);
-  await p.fill('input[data-p="education.gpa"]', '3.5/4'); await p.dispatchEvent('input[data-p="education.gpa"]', 'change'); await p.waitForTimeout(2500);
+  await p.fill('input[data-p="personal.availability"]', 'From February 2027'); await p.dispatchEvent('input[data-p="personal.availability"]', 'change'); await p.waitForTimeout(2500);
   const stored = await p.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('mockdb') || '{}')));
   ok('State written to private per-person store', stored.some((k) => k.startsWith('data/users/u123/careeros_')), stored.join(','));
   const size = await p.evaluate(() => localStorage.getItem('mockdb').length); ok('Compact state size', size < 600000, size + ' chars');
@@ -40,7 +40,7 @@ const ok = (n, c, i) => console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' + 
   await p.evaluate(() => go('#/tracker')); await p.waitForTimeout(500);
   ok('After reload: tracker restored from store', (await p.$eval('select[data-k="status"]', (e) => e.value)) === 'Applied');
   await p.evaluate(() => go('#/profile')); await p.waitForTimeout(400);
-  ok('After reload: GPA restored', (await p.$eval('input[data-p="education.gpa"]', (e) => e.value)) === '3.5/4');
+  ok('After reload: availability restored', (await p.$eval('input[data-p="personal.availability"]', (e) => e.value)) === 'From February 2027');
   ok('After reload: 176 research jobs present', await p.evaluate(() => S.jobs.length) >= 176);
   ok('After reload: master CV readable', await p.evaluate(() => !!(S.master.model && S.master.model.paragraphs.length === 53)));
   await p.evaluate(() => go('#/settings')); await p.waitForTimeout(300); await p.click('[data-act="wipe"]'); await p.waitForTimeout(300);

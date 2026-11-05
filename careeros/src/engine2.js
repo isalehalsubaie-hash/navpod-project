@@ -12,7 +12,8 @@
   // ---------------------------------------------------------------- Career value (0..100)
   const MAJOR = /aramco|sabic|sami\b|gami|gadd|ma'?aden|acwa|saudi electricity|swpc|neom|pif\b|kacst|kaust|lockheed|boeing|raytheon|bae\b|airbus|thales|siemens|ge vernova|schneider|abb\b|honeywell|hitachi|parsons|atkins|jacobs|worley|\bwood\b|kbr|bechtel|technip|wsp|egis|aecom|dar al|mckinsey|kpmg|deloitte|engie|saipem|luberef|amazon|aws\b|jensen hughes|alfanar|zamil|lenovo|jpmorgan|mastercard|visa\b|alstom|nestl|red sea|roshn|qiddiya|elm\b|saudia|alfaisal|hexagon|lucid/i;
   function careerValue(job, analysis, profile) {
-    const t = ((job.title || "") + "\n" + (job.description || "")).toLowerCase();
+    if (!analysis._cvText) analysis._cvText = ((job.title || "") + "\n" + (job.description || "")).toLowerCase();
+    const t = analysis._cvText;
     const f = [];
     const add = (key, label, weight, frac, why) => f.push({ key, label, weight, points: Math.round(clamp(frac) * weight * 10) / 10, why });
     const tracks = job.tracks && job.tracks.length ? job.tracks : E.inferTracks(job, analysis);
@@ -21,13 +22,15 @@
     add("relevance", "Relevance to your target tracks", 25, { 1: 1, 2: 0.8, 3: 0.55, 4: 0.25 }[best], tracks.length ? "Tracks: " + tracks.map((x) => E.TRACKS[x]).join(", ") + " (your priority " + (best < 4 ? best : "not set") + ")." : "No clear career track.");
     const tech = analysis.keywords.filter((k) => ["technical", "software", "domain"].includes(k.cat)).length;
     add("learning", "Technical learning content", 20, Math.min(1, tech / 10), tech + " technical, tool or domain topics named in the advert.");
-    const structured = /graduate (development )?program|\bgdp\b|rotation|rotational|apprentice|mentor|structured (training|learning)|training program|development program|tamayuz|tawteen|tamheer|on-the-job training|learning journey/.test(t);
-    add("development", "Structured development", 20, structured ? 1 : /intern|co-?op|trainee|junior|fresh graduate/.test(t) ? 0.55 : 0.3, structured ? "Advert describes a structured program (rotation, mentoring or formal training)." : "No structured development described in the advert.");
+    const memo = analysis._cvMemo || (analysis._cvMemo = {});
+    const test = (k, rx) => (memo[k] !== undefined ? memo[k] : (memo[k] = rx.test(t)));
+    const structured = test("s", /graduate (development )?program|\bgdp\b|rotation|rotational|apprentice|mentor|structured (training|learning)|training program|development program|tamayuz|tawteen|tamheer|on-the-job training|learning journey/);
+    add("development", "Structured development", 20, structured ? 1 : test("i", /intern|co-?op|trainee|junior|fresh graduate/) ? 0.55 : 0.3, structured ? "Advert describes a structured program (rotation, mentoring or formal training)." : "No structured development described in the advert.");
     const major = MAJOR.test(job.employer || "");
     add("employer", "Employer scale (not a reputation rating)", 15, major ? 1 : 0.45, major ? "Multinational or major Saudi organisation, based on the employer's identity only. CareerOS does not rate employers." : "Smaller or unidentified employer. This says nothing about quality.");
-    const projects = /giga[- ]?project|neom|red sea|qiddiya|diriyah|roshn|vision 2030|defen[cs]e|aerospace|refiner|power plant|substation|desalination|data cent(er|re)|metro|airport|mining|oil (and|&) gas|offshore/.test(t);
+    const projects = test("p", /giga[- ]?project|neom|red sea|qiddiya|diriyah|roshn|vision 2030|defen[cs]e|aerospace|refiner|power plant|substation|desalination|data cent(er|re)|metro|airport|mining|oil (and|&) gas|offshore/);
     add("exposure", "Exposure to major projects or sectors", 10, projects ? 1 : 0.3, projects ? "Advert names major projects or strategic sectors." : "No major project or strategic sector named.");
-    const mobility = /international|secondment|abroad|global|rotation|multinational/.test(t) || analysis.keywords.some((k) => ["systemseng", "pm", "systemsintegration", "testing", "commissioning", "reliability", "bizdev"].includes(k.id));
+    const mobility = test("m", /international|secondment|abroad|global|rotation|multinational/) || analysis.keywords.some((k) => ["systemseng", "pm", "systemsintegration", "testing", "commissioning", "reliability", "bizdev"].includes(k.id));
     add("mobility", "Future mobility (transferable skills, international exposure)", 10, mobility ? 1 : 0.4, mobility ? "Builds transferable skills (systems, project, commissioning, reliability or business development) or offers international exposure." : "Narrow or location-bound role.");
     return { total: Math.round(f.reduce((s, x) => s + x.points, 0)), factors: f, note: "Career value estimates long-term usefulness from the advert text and your track priorities. It uses no salary data and no employer ratings." };
   }
@@ -84,7 +87,7 @@
     const blockedBy = (kind) => ctx.jobs.filter((x) => x.el.label === "YELLOW" && x.el.reasons.some((r) => r.kind === kind)).length;
     if (!(P.personal.nationality || {}).value) { const n = blockedBy("nationality"); if (n) moves.push({ kind: "profile", score: 85, title: "Confirm your nationality in your profile", why: n + " Yellow opportunities are waiting on it (Saudi-nationals-only adverts).", time: "1 min", action: "profile" }); }
     if (!(P.education.coopRequired || {}).value) { const n = blockedBy("coop"); if (n) moves.push({ kind: "profile", score: 70, title: "Record whether IMSIU requires co-op", why: n + " co-op adverts need a university training letter.", time: "1 min", action: "profile" }); }
-    if (!(P.education.gpa || {}).value) { const n = blockedBy("gpa"); if (n) moves.push({ kind: "profile", score: 68, title: "Add your GPA", why: n + " adverts set a GPA minimum.", time: "1 min", action: "profile" }); }
+    if (!(P.education.gpa || {}).value && !(P.education.gpa || {}).private) { const n = blockedBy("gpa"); if (n) moves.push({ kind: "profile", score: 68, title: "Add your GPA", why: n + " adverts set a GPA minimum.", time: "1 min", action: "profile" }); }
     if (!ctx.master.approved) moves.push({ kind: "cv", score: 80, title: "Approve your master CV (or upload your original DOCX)", why: "Every tailored CV is copied from it.", time: "5 min", action: "cv" });
     const flags = (P.integrityFlags || []).filter((f) => f.severity === "high" && f.item && P.items.find((i) => i.id === f.item && i.status === "needs_confirmation"));
     if (flags.length) moves.push({ kind: "integrity", score: 60, title: "Resolve: " + flags[0].title, why: flags[0].detail.slice(0, 140), time: "5 min", action: "profile" });
@@ -122,13 +125,14 @@
 
   // ---------------------------------------------------------------- Career-track CV targets
   const TRACK_CV = { ME: "Mechanical Engineering", DEF: "UAV and Aerospace", INSP: "Safety and Inspection", PM: "Project Engineering", BD: "Business and Technical Development" };
-  function trackTargets(jobs) {
+  function trackTargets(jobs, analyze) {
+    analyze = analyze || E.analyzeJob;
     const out = [];
     for (const [code, name] of Object.entries(TRACK_CV)) {
       const set = code === "DEF" ? ["DEF", "UAV", "ROB"] : code === "INSP" ? ["INSP", "HSE"] : code === "BD" ? ["BD", "STRAT"] : [code];
       const rel = jobs.filter((j) => (j.tracks || []).some((t) => set.includes(t)));
       const freq = {};
-      rel.forEach((j) => E.analyzeJob(j).keywords.forEach((k) => { if (k.cat !== "soft" && k.cat !== "regulatory") freq[k.term] = (freq[k.term] || 0) + 1; }));
+      rel.forEach((j) => analyze(j).keywords.forEach((k) => { if (k.cat !== "soft" && k.cat !== "regulatory") freq[k.term] = (freq[k.term] || 0) + 1; }));
       const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 30).map(([k]) => k);
       out.push({ id: "TRACK-" + code, jobId: "TRACK-" + code, isTrack: true, title: name + " CV", employer: "", location: "Riyadh, Saudi Arabia", type: "Full-time", tracks: [code === "DEF" ? "DEF" : code, ...set.filter((s) => s !== code)].slice(0, 2), status: "Open", verifiedDate: "", source: "", applyUrl: "", basedOn: rel.length,
         description: "Career-track target built from the " + rel.length + " active adverts in this track. Requirements:\n- " + top.join("\n- ") });

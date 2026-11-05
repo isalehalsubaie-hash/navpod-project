@@ -1,6 +1,7 @@
 /* Master CV management, PDF/DOCX import, ATS readability, CV optimizer. */
 let pdfWorkerUrl = null;
 async function pdfText(bytes) {
+  loadLib("lib-pdfjs");
   if (!window.pdfjsLib) throw new Error("PDF engine not loaded");
   if (!pdfWorkerUrl) { pdfWorkerUrl = URL.createObjectURL(new Blob([document.getElementById("pdfworker").textContent], { type: "text/javascript" })); pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl; }
   const doc = await pdfjsLib.getDocument({ data: bytes }).promise;
@@ -266,6 +267,7 @@ ACT.makeVersion = async (d) => {
 async function sha(bytes) { const h = await crypto.subtle.digest("SHA-256", bytes); return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, "0")).join(""); }
 ACT.dlVersion = (d) => { const v = S.cvVersions.find((x) => x.id === d.v); download(v.name, b64ToBytes(v.bytesB64), "application/vnd.openxmlformats-officedocument.wordprocessingml.document"); };
 async function inAppPdf(bytes, name) {
+  loadLib("lib-jspdf");
   if (!window.CareerPDF || !window.jspdf) throw new Error("PDF engine not loaded");
   const r = await CareerPDF.docxToPdf(JSZip, bytes, DOMParser, window.jspdf.jsPDF, window.CAREEROS_PDF_FONTS);
   await download(name, new Blob([r.bytes], { type: "application/pdf" }));

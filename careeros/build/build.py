@@ -5,7 +5,7 @@ P = lambda *a: os.path.join(ROOT, *a)
 read = lambda p: open(P(p), encoding="utf-8").read()
 def js_safe(s): return s.replace("</script", "<\\/script").replace("<!--", "<\\!--")
 seed = {
-    "seedVersion": 1,
+    "seedVersion": 3,
     "researchDate": "2026-11-05",
     "profile": json.load(open(P("data/profile.json"))),
     "jobs": json.load(open(P("data/jobs.json"))),
@@ -30,6 +30,7 @@ parts = {
     "/*PDFJS*/": js_safe(read("vendor/pdf.min.js")),
     "/*PDFWORKER*/": js_safe(read("vendor/pdf.worker.min.js")),
     "/*SEED*/": seed_json,
+    "/*ENGINEHASH*/": __import__("hashlib").sha256((read("src/engine.js") + read("src/taxonomy.js")).encode()).hexdigest()[:16],
     "/*FONTW*/": read("data/font_widths.json"),
     "/*TAXONOMY*/": js_safe(read("src/taxonomy.js")),
     "/*ENGINE*/": js_safe(read("src/engine.js")),

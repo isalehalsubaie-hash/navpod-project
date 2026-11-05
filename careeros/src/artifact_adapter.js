@@ -17,11 +17,12 @@ window.CAREEROS_HOOKS = (function () {
   }
   const val = (r) => (r == null ? null : typeof r.data === "function" ? r.data() : r.data !== undefined && r.exists !== undefined ? r.data : r);
   const SEEDJ = () => window.CAREEROS_SEED;
-  const PATCH_KEYS = ["status", "verification", "verifiedDate", "description", "notes", "deadline", "tracks"];
+  const PATCH_KEYS = ["status", "verification", "verifiedDate", "description", "notes", "deadline", "tracks", "userEdited"];
   function compact(S) {
     const seed = SEEDJ(), byId = new Map(seed.jobs.map((j) => [j.id, j]));
     const o = Object.assign({}, S);
-    o.jobs = S.jobs.filter((j) => !byId.has(j.id));
+    const tracked = new Set((S.applications || []).map((a) => a.jobId));
+    o.jobs = S.jobs.filter((j) => !byId.has(j.id) || tracked.has(j.jobId)); // tracked research jobs are kept in full so they survive research updates
     o.jobPatches = {};
     for (const j of S.jobs) { const s = byId.get(j.id); if (!s) continue; const p = {}; for (const k of PATCH_KEYS) if (JSON.stringify(j[k]) !== JSON.stringify(s[k])) p[k] = j[k]; if (Object.keys(p).length) o.jobPatches[j.id] = p; }
     delete o.excluded; delete o.market;
@@ -33,7 +34,8 @@ window.CAREEROS_HOOKS = (function () {
   function expand(o) {
     const seed = SEEDJ();
     const jobs = JSON.parse(JSON.stringify(seed.jobs)).map((j) => Object.assign(j, (o.jobPatches || {})[j.id] || {}));
-    o.jobs = jobs.concat(o.jobs || []); delete o.jobPatches;
+    const seedIds = new Set(jobs.map((j) => j.id));
+    o.jobs = jobs.concat((o.jobs || []).filter((j) => !seedIds.has(j.id))); delete o.jobPatches;
     o.excluded = JSON.parse(JSON.stringify(seed.excluded)); o.market = JSON.parse(JSON.stringify(seed.market));
     if (o.master.pdfB64 === "__SEED__") o.master.pdfB64 = seed.master.pdfB64;
     if (o.master.docxB64 === "__SEED__") o.master.docxB64 = seed.master.docxB64;

@@ -23,15 +23,16 @@
 <nav class="tabbar" id="tabbar" aria-label="Primary"></nav>
 <!-- JSZip (MIT or GPLv3) and PDF.js (Apache 2.0), bundled so the app works offline -->
 <script>/*JSZIP*/</script>
-<script>/*PDFJS*/</script>
+<script type="text/plain" id="lib-pdfjs">/*PDFJS*/</script>
 <script type="text/plain" id="pdfworker">/*PDFWORKER*/</script>
-<script>window.CAREEROS_SEED = /*SEED*/;</script>
+<script type="application/json" id="seed-data">/*SEED*/</script>
+<script>window.CAREEROS_SEED = JSON.parse(document.getElementById("seed-data").textContent); window.CAREEROS_ENGINE_HASH = "/*ENGINEHASH*/";</script>
 <script>window.CAREEROS_FONT_WIDTHS = /*FONTW*/;</script>
 <script>/*TAXONOMY*/</script>
 <script>/*ENGINE*/</script>
 <script>/*ENGINE2*/</script>
 <!-- jsPDF (MIT) and Source Sans Pro subset (SIL Open Font License 1.1) for in-app PDF export -->
-<script>/*JSPDF*/</script>
+<script type="text/plain" id="lib-jspdf">/*JSPDF*/</script>
 <script>window.CAREEROS_PDF_FONTS = /*PDFFONTS*/;</script>
 <script>/*PDFRENDER*/</script>
 <script>/*APP*/</script>

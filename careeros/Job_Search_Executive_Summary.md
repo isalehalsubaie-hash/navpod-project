@@ -128,7 +128,7 @@ Airbus Defence and Space Saudi, SAMI (SAMI Autonomous), INTRA Defense Technologi
 1. **Flight hours:** current CV says "165+ flight hours", the earlier co-op CV said "165+ hours of UAV training", and the Tuwaiq bootcamps total 165 training hours. Confirm from your logbook.
 2. **"HVAC Design"** on the CV: documented work is HVAC coordination and clash resolution. CareerOS offers "HVAC Coordination" as a correction.
 3. **PCB Design:** no PCB layout project documented.
-4. **Nationality, GPA, IMSIU co-op requirement, availability:** not documented; they decide eligibility for many programs.
+4. **Nationality, IMSIU co-op requirement, availability:** not documented; they decide eligibility for many programs. (Your GPA stays private by your choice; adverts with a GPA minimum show it as a note for you to check.)
 5. **CAPM, OSHA, TOEFL** are in progress and are never shown as held.
 
 ## Important research findings

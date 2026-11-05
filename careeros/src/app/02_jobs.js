@@ -1,5 +1,5 @@
 /* Discover Opportunities, Job details, Job Analysis input. */
-const F = { q: "", tab: "apply", city: "", company: "", track: "", elig: "", minScore: 0, type: "", level: "", exp: "", deadline: "", recent: "", sort: "match", paid: "" };
+const F = { show: 30, q: "", tab: "apply", city: "", company: "", track: "", elig: "", minScore: 0, type: "", level: "", exp: "", deadline: "", recent: "", sort: "match", paid: "" };
 function jobCity(j) { const l = (j.location || "").toLowerCase(); if (/remote/.test(l)) return "Remote"; if (/riyadh|الرياض|kharj/.test(l)) return "Riyadh"; if (/jedd|jidd/.test(l)) return "Jeddah"; if (/makkah|mecca|kaec|king abdullah|rabigh/.test(l)) return "Makkah Region"; if (/dammam/.test(l)) return "Dammam"; if (/khobar/.test(l)) return "Khobar"; if (/dhahran/.test(l)) return "Dhahran"; if (/jubail|jubayl/.test(l)) return "Jubail"; if (/yanbu/.test(l)) return "Yanbu"; if (/neom/.test(l)) return "NEOM"; if (/eastern|ras al|qatif/.test(l)) return "Eastern Province (other)"; if (/madinah|medina/.test(l)) return "Madinah Region"; if (/tabuk|duba/.test(l)) return "Tabuk"; if (/dubai|abu dhabi|uae|emirates|qatar|doha|kuwait|bahrain|oman|muscat/.test(l)) return "GCC"; if (/saudi/.test(l)) return "Saudi Arabia (unspecified)"; return "Other Saudi"; }
 function jobKind(j) { const t = ((j.type || "") + " " + (j.title || "")).toLowerCase(); if (/intern|co-?op|summer|trainee|tamheer|apprentic/.test(t)) return "Internship / trainee"; if (/graduate|gdp|development program|fresh/.test(t)) return "Graduate program / fresh grad"; if (/contract/.test(t)) return "Contract"; return "Full-time"; }
 function paidLabel(j) { if (j.salary && j.salary !== "Not disclosed") return "Paid: " + j.salary; if (/volunteer|unpaid/i.test((j.type || "") + (j.description || "").slice(0, 3000)) && !/stipend|allowance|salary|paid/i.test(j.description || "")) return "Unpaid or not stated"; return "Compensation not disclosed"; }
@@ -39,7 +39,7 @@ function filteredJobs() {
 }
 function jobCard(j) {
   const c = C(j), app = appFor(j.jobId);
-  const top = c.el.reasons.find((r) => r.level !== "PASS");
+  const top = c.el.reasons.find((r) => !["PASS", "NOTE"].includes(r.level));
   return `<div class="job">
     <div class="row between" style="align-items:flex-start;flex-wrap:nowrap"><div style="min-width:0"><a class="t" href="#/job/${j.jobId}">${esc(j.title)}</a> ${isNew(j) ? '<span class="badge-new">NEW</span>' : ""}<div class="c">${esc(j.employer)} · ${esc(j.location)}</div></div>
       <div class="scores"><div class="s"><span>Match</span><b class="score">${c.m.total}</b></div><div class="s"><span>Value</span><b class="score">${c.v.total}</b></div></div></div>
@@ -67,21 +67,15 @@ route("discover", () => {
     body = `<div class="note mb">Historical, expired, upcoming-but-not-open and excluded records are kept here, separate from active opportunities. Each has a reason.</div>
       <div class="tablewrap"><table><thead><tr><th>Category</th><th>Title</th><th>Employer</th><th>Reason</th><th>Source</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${esc(r.category || "Excluded")}</td><td>${esc(r.title)}</td><td>${esc(r.employer)}</td><td class="small">${esc(r.reason)}</td><td>${r.source ? `<a href="${esc(r.source)}" target="_blank" rel="noopener">Open ↗</a>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
   } else {
-    const list = filteredJobs();
-    body = `<div class="row between mb"><div class="small muted">${list.length} opportunit${list.length === 1 ? "y" : "ies"} shown</div>
-      <div class="row"><button class="btn sm ${S.settings.discoverView === "cards" ? "primary" : ""}" data-act="view" data-v="cards">Cards</button><button class="btn sm ${S.settings.discoverView === "table" ? "primary" : ""}" data-act="view" data-v="table">Table</button></div></div>` +
-      (list.length ? (S.settings.discoverView === "table"
-        ? `<div class="tablewrap"><table><thead><tr><th>Job</th><th>Employer</th><th>Location</th><th>Type</th><th>Track</th><th>Eligibility</th><th class="num">Match</th><th class="num">Value</th><th>Published</th><th>Deadline</th><th>Link</th></tr></thead><tbody>${list.map(jobRow).join("")}</tbody></table></div>`
-        : `<div class="jobs">${list.slice(0, 120).map(jobCard).join("")}</div>${list.length > 120 ? `<p class="muted small">Showing first 120. Narrow the filters or use the table view.</p>` : ""}`)
-        : `<div class="empty">No opportunities match these filters.</div>`);
+    body = `<div id="discBody">${discoverBody()}</div>`;
   }
   return {
     title: "Discover Opportunities", sub: "Researched " + fmtDate(S.researchDate) + " · " + S.jobs.length + " opportunities in the database",
     actions: `${HOOKS.mcp ? `<a class="btn" href="#/gmail">Import job alerts from Gmail</a>` : ""}<button class="btn" data-act="refresh">Refresh opportunities</button><a class="btn" href="#/compare">Compare (${(S.compareIds || []).length})</a><a class="btn primary" href="#/analysis">+ Add a job</a>`,
     html: `<div class="tabs">${[["apply", "Apply Now (Green + Yellow)"], ["stretch", "Stretch (Orange)"], ["red", "Not eligible (Red)"], ["all", "All active"], ["expired", "Expired & excluded"]].map(([k, l]) => `<a class="${F.tab === k ? "on" : ""}" data-act="tab" data-t="${k}">${l} <span class="muted">${counts[k]}</span></a>`).join("")}</div>
-    ${F.tab === "expired" ? "" : `<div class="chips mb">${["", "Riyadh", "Jeddah", "Dammam", "Khobar", "Dhahran", "Jubail", "Yanbu", "NEOM", "GCC", "Remote"].map((c) => `<button class="chip ${F.city === c ? "on" : ""}" data-act="cityChip" data-c="${c}">${c || "All locations"}</button>`).join("")}</div>
+    ${F.tab === "expired" ? "" : `<input type="search" placeholder="Search title, company or advert text" value="${esc(F.q)}" data-inp="fq" class="mb" style="width:100%">
+    <div class="chips mb">${["", "Riyadh", "Jeddah", "Dammam", "Khobar", "Dhahran", "Jubail", "Yanbu", "NEOM", "GCC", "Remote"].map((c) => `<button class="chip ${F.city === c ? "on" : ""}" data-act="cityChip" data-c="${c}">${c || "All locations"}</button>`).join("")}</div>
     <details class="mb" id="fdet" ${window.innerWidth > 820 ? "open" : ""}><summary>Filters and sorting${activeFilterCount() ? " (" + activeFilterCount() + " active)" : ""}</summary><div class="filters mt">
-      <input type="search" placeholder="Search title, company, text" value="${esc(F.q)}" data-inp="fq" style="min-width:220px">
       <select data-chg="f" data-k="city"><option value="">All cities</option>${opt(cities.map((c) => [c, c]), F.city)}</select>
       <select data-chg="f" data-k="company" style="max-width:180px"><option value="">All companies</option>${opt(companies.map((c) => [c, c]), F.company)}</select>
       <select data-chg="f" data-k="track"><option value="">All career tracks</option>${opt(Object.entries(TRACKS), F.track)}</select>
@@ -99,10 +93,23 @@ route("discover", () => {
     ${body}`,
   };
 });
-ACT.tab = (d) => { F.tab = d.t; render(); };
-ACT.f = (d, t) => { F[d.k] = d.k === "minScore" ? parseInt(t.value, 10) : t.value; rerender(); };
+
+function discoverBody() {
+    let body;
+    const list = filteredJobs();
+    body = `<div class="row between mb"><div class="small muted">${list.length} opportunit${list.length === 1 ? "y" : "ies"} shown</div>
+      <div class="row"><button class="btn sm ${S.settings.discoverView === "cards" ? "primary" : ""}" data-act="view" data-v="cards">Cards</button><button class="btn sm ${S.settings.discoverView === "table" ? "primary" : ""}" data-act="view" data-v="table">Table</button></div></div>` +
+      (list.length ? (S.settings.discoverView === "table"
+        ? `<div class="tablewrap"><table><thead><tr><th>Job</th><th>Employer</th><th>Location</th><th>Type</th><th>Track</th><th>Eligibility</th><th class="num">Match</th><th class="num">Value</th><th>Published</th><th>Deadline</th><th>Link</th></tr></thead><tbody>${list.slice(0, F.show * 2).map(jobRow).join("")}</tbody></table></div>${list.length > F.show * 2 ? `<div class="row mt" style="justify-content:center"><button class="btn" data-act="showMore">Show more (${list.length - F.show * 2} left)</button></div>` : ""}`
+        : `<div class="jobs">${list.slice(0, F.show).map(jobCard).join("")}</div>${list.length > F.show ? `<div class="row mt" style="justify-content:center"><button class="btn" data-act="showMore">Show ${Math.min(30, list.length - F.show)} more (${list.length - F.show} left)</button></div>` : ""}`)
+        : `<div class="empty">No opportunities match these filters.</div>`);
+    return body;
+}
+ACT.tab = (d) => { F.tab = d.t; F.show = 30; render(); };
+ACT.showMore = () => { F.show += 30; rerender(); };
+ACT.f = (d, t) => { F[d.k] = d.k === "minScore" ? parseInt(t.value, 10) : t.value; F.show = 30; rerender(); };
 let fqTimer;
-ACT.fq = (d, t) => { F.q = t.value; clearTimeout(fqTimer); fqTimer = setTimeout(() => { const pos = t.selectionStart; rerender(); setTimeout(() => { const i = document.querySelector('[data-inp="fq"]'); if (i) { i.focus(); i.setSelectionRange(pos, pos); } }, 30); }, 250); };
+ACT.fq = (d, t) => { F.q = t.value; F.show = 30; clearTimeout(fqTimer); fqTimer = setTimeout(() => { const el = document.getElementById("discBody"); if (el) { el.innerHTML = discoverBody(); labelTables(el); } else rerender(); }, 220); };
 ACT.quick = (d) => { if (d.k === "DEF") { F.track = F.track === "DEF" ? "" : "DEF"; } else F.track = F.track === d.k ? "" : d.k; rerender(); };
 ACT.clearF = () => { Object.assign(F, { q: "", city: "", company: "", track: "", elig: "", minScore: 0, type: "", level: "", exp: "", deadline: "", recent: "", paid: "", sort: "match" }); rerender(); };
 ACT.view = (d) => { S.settings.discoverView = d.v; save(); rerender(); };
@@ -111,7 +118,7 @@ function addToTracker(jobId, status) {
   let a = appFor(jobId);
   const j = jobById(jobId);
   if (!a) {
-    a = { id: uid("APP"), jobId, status: status || "Interested", created: TODAY(), appliedDate: "", deadline: j.deadline || "", followUp: "", contact: "", notes: "", cvVersionId: "", packageId: "", history: [{ date: TODAY(), status: status || "Interested" }] };
+    a = { id: uid("APP"), jobId, snapshot: { title: j.title, employer: j.employer, location: j.location, tracks: j.tracks || [], source: j.source }, status: status || "Interested", created: TODAY(), appliedDate: "", deadline: j.deadline || "", followUp: "", contact: "", notes: "", cvVersionId: "", packageId: "", history: [{ date: TODAY(), status: status || "Interested" }] };
     S.applications.push(a);
     logActivity("Saved to tracker: " + j.title + " (" + j.employer + ")");
     toast("Saved to Application Tracker");
@@ -131,7 +138,7 @@ route("job", (id) => {
   if (JT.tab === "overview") {
     body = `<div class="grid g2">
       <div class="card"><h2>Eligibility ${elPill(c.el.label, c.el.summary)}</h2>
-        ${c.el.reasons.map((r) => `<div class="row" style="align-items:flex-start;flex-wrap:nowrap;margin:6px 0">${elPill(r.level === "PASS" ? "PASS" : r.level)}<span class="small">${esc(r.msg)}</span></div>`).join("")}
+        ${c.el.reasons.map((r) => `<div class="row" style="align-items:flex-start;flex-wrap:nowrap;margin:6px 0">${elPill(r.level)}<span class="small">${esc(r.msg)}</span></div>`).join("")}
         <p class="tiny muted mt">Eligibility is separate from the match score. A high score never overrides a failed mandatory requirement. Missing personal information is never treated as proof of eligibility.</p></div>
       <div class="card"><h2>Opportunity match <span class="score">${c.m.total}<small>/100</small></span></h2>${meter(c.m.total)}
         <p class="small mt">${esc(c.m.strategy)}</p>
@@ -183,7 +190,7 @@ route("job", (id) => {
   } else if (JT.tab === "strategy") {
     body = `<div class="card"><h2>Recommended application strategy</h2><p>${esc(c.m.strategy)}</p>
       <h3>Emphasise</h3>${c.m.emphasize.map((x) => `<span class="kw supported">${esc(x)}</span>`).join("") || "-"}
-      <h3>Blocking or risky items</h3><ul class="small">${c.el.reasons.filter((r) => r.level !== "PASS").map((r) => `<li>${esc(r.level)}: ${esc(r.msg)}</li>`).join("") || "<li>None</li>"}</ul>
+      <h3>Blocking or risky items</h3><ul class="small">${c.el.reasons.filter((r) => !["PASS", "NOTE"].includes(r.level)).map((r) => `<li>${esc(r.level)}: ${esc(r.msg)}</li>`).join("") || "<li>None</li>"}</ul>
       <h3>Next steps</h3><ol class="small"><li><a href="#/optimize/${j.jobId}">Optimise the CV for this job</a> and approve each change.</li><li><a href="#/builder/${j.jobId}">Generate the application package</a>.</li><li>Apply on the official advert: <a href="${esc(j.applyUrl || j.source)}" target="_blank">${esc(j.applyUrl || j.source)}</a></li><li>Mark as Applied in the tracker only after you submit.</li></ol></div>`;
   } else {
     body = `<div class="card"><h2>Original advert text</h2><p class="small muted">Captured ${fmtDate(j.verifiedDate)} from <a href="${esc(j.source)}" target="_blank">${esc(j.source)}</a>. Always re-check the live advert before applying.</p><pre class="doc">${esc(j.description || "No description stored.")}</pre>
@@ -202,7 +209,7 @@ ACT.editJD = (d) => {
   const j = jobById(d.id);
   modal(`<h2>Edit job description</h2><textarea id="jdText" style="min-height:320px">${esc(j.description || "")}</textarea><div class="row mt"><button class="btn primary" data-act="saveJD" data-id="${j.jobId}">Save and re-analyse</button><button class="btn" data-act="closeModal">Cancel</button></div>`);
 };
-ACT.saveJD = (d) => { const j = jobById(d.id); j.description = document.getElementById("jdText").value; invalidate(j.jobId); save(); closeModal(); rerender(); };
+ACT.saveJD = (d) => { const j = jobById(d.id); j.description = document.getElementById("jdText").value; j.userEdited = true; invalidate(j.jobId); save(); closeModal(); rerender(); };
 function companyFor(name) { return S.companies.find((c) => companyMatch(c, name)); }
 
 // ---------------------------------------------------------------- Job Analysis (independent input)
@@ -286,7 +293,7 @@ ACT.recheck = async (d) => {
   invalidate(j.jobId); logActivity("Re-checked advert: " + j.title); save(); rerender();
 };
 
-ACT.cityChip = (d) => { F.city = d.c; rerender(); };
+ACT.cityChip = (d) => { F.city = d.c; F.show = 30; rerender(); };
 function activeFilterCount() { return ["q", "company", "track", "elig", "type", "level", "exp", "deadline", "recent", "paid"].filter((k) => F[k]).length + (F.minScore ? 1 : 0); }
 
 /** Downscale a photo so several screenshots fit in one AI request. */

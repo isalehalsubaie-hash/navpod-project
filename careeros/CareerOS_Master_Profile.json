@@ -96,8 +96,9 @@
     "academicStatus": "Final-year (senior) student. Not yet graduated. Expected graduation January 2027.",
     "gpa": {
       "value": "",
-      "status": "needs_confirmation",
-      "note": "Not documented. Aramco and many graduate programs set GPA minimums."
+      "status": "confirmed_user",
+      "private": true,
+      "note": "You keep your GPA private. CareerOS never asks for it; GPA minimums in adverts are shown as notes for you to check yourself."
     },
     "coopRequired": {
       "value": "",
@@ -1823,8 +1824,8 @@
     {
       "id": "F6",
       "severity": "medium",
-      "title": "Nationality and GPA not documented",
-      "detail": "Many Saudi programs require Saudi nationality and a minimum GPA. Set both in Settings.",
+      "title": "Nationality not documented",
+      "detail": "Many Saudi programs require Saudi nationality. Set it in your profile to unlock them. (Your GPA is private by your choice; GPA minimums are shown as notes you check yourself.)",
       "item": null
     },
     {

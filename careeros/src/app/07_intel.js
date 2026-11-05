@@ -10,7 +10,8 @@ function devMapData() {
   _dmRev = S.profileRev + S.jobs.length * 1000; return _dm;
 }
 let _tt = null;
-function trackTargetsList() { return _tt || (_tt = E.trackTargets(S.jobs.filter((j) => !isExpired(j)))); }
+let _ttKey = "";
+function trackTargetsList() { const k = S.jobs.length + "|" + S.profileRev; if (!_tt || _ttKey !== k) { _tt = E.trackTargets(S.jobs.filter((j) => !isExpired(j) && !j.isTrack), A); _ttKey = k; } return _tt; }
 function trackTarget(id) { return /^TRACK-/.test(id || "") ? trackTargetsList().find((t) => t.jobId === id) : null; }
 const _jobById = jobById;
 jobById = (id) => _jobById(id) || trackTarget(id);
@@ -31,7 +32,7 @@ route("compare", () => {
     ["Type", (x) => esc(jobKind(x.job))], ["Employer", (x) => esc(x.job.employer)], ["Development", (x) => esc(x.v.factors.find((f) => f.key === "development").why)],
     ["Key skills", (x) => x.a.keywords.filter((k) => k.cat !== "soft").slice(0, 6).map((k) => `<span class="kw">${esc(k.term)}</span>`).join("")],
     ["Missing", (x) => x.m.missing.slice(0, 6).map((k) => `<span class="kw missing">${esc(k)}</span>`).join("") || "-"],
-    ["Blocking items", (x) => x.el.reasons.filter((q) => q.level !== "PASS").map((q) => `<div class="tiny">${esc(q.level)}: ${esc(q.msg)}</div>`).join("") || "None"],
+    ["Blocking items", (x) => x.el.reasons.filter((q) => !["PASS", "NOTE"].includes(q.level)).map((q) => `<div class="tiny">${esc(q.level)}: ${esc(q.msg)}</div>`).join("") || "None"],
   ];
   return { title: "Compare Opportunities", sub: ids.length + " selected", actions: `<button class="btn" data-act="cmpClear">Clear selection</button><a class="btn" href="#/discover">Add more</a>`,
     html: `<div class="card mb"><h2>Recommendation</h2><p>${esc(r.recommendation)}</p><p class="tiny muted">${esc(r.method)} Not a hiring probability.</p></div>

@@ -71,7 +71,7 @@ Uploading a **PDF** gives you text extraction and an ATS readability check, but 
 
 *My Career Profile → + Add experience, project or certificate.* Enter facts only, choose a verification status (Verified from documentation / Confirmed by me / Requires confirmation / Suggested), and save. Skills are detected automatically. Only Verified or Confirmed evidence is ever used in a CV, cover letter or form answer.
 
-Fill the personal fields at the top (nationality, GPA, IMSIU co-op requirement, availability, salary expectation). Eligibility for every job recalculates immediately. **Set your nationality first:** 27 adverts are Saudi-nationals-only and stay YELLOW until it is confirmed.
+Fill the personal fields at the top (nationality, IMSIU co-op requirement, availability, salary expectation). Your GPA is private: CareerOS never asks for it, and GPA minimums in adverts appear as notes you check yourself. Eligibility for every job recalculates immediately. **Set your nationality first:** 27 adverts are Saudi-nationals-only and stay YELLOW until it is confirmed.
 
 Resolve the integrity flags shown on the profile page (flight hours wording, "HVAC Design", PCB design, items in progress).
 

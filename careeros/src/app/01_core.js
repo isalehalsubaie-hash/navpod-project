@@ -7,13 +7,17 @@ const TODAY = () => new Date().toISOString().slice(0, 10);
 const STATUSES = ["Discovered", "Not reviewed", "Interested", "To apply", "CV prepared", "Applied", "Assessment", "Interview", "Rejected", "Offer received", "Accepted", "Follow-up required", "Withdrawn"];
 const SUBMITTED = new Set(["Applied", "Assessment", "Interview", "Rejected", "Offer received", "Accepted", "Follow-up required"]);
 let S = null;
+/** Large libraries are embedded as text and only executed the first time they are needed. */
+const _libs = {};
+function loadLib(id) { if (_libs[id]) return; const src = document.getElementById(id); if (!src) throw new Error("Library " + id + " missing"); const s = document.createElement("script"); s.textContent = src.textContent; document.head.appendChild(s); _libs[id] = true; }
 const HOOKS = window.CAREEROS_HOOKS || {};
 
 // ---------------------------------------------------------------- helpers
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const uid = (p) => p + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const clone = (o) => JSON.parse(JSON.stringify(o));
-const fmtDate = (d) => (d ? new Date(d + (d.length === 10 ? "T00:00:00" : "")).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "");
+const _fmt = new Map(); const _fmtr = typeof Intl !== "undefined" ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }) : null;
+const fmtDate = (d) => { if (!d) return ""; let v = _fmt.get(d); if (v === undefined) { const dt = new Date(d + (d.length === 10 ? "T00:00:00" : "")); v = isNaN(dt) ? String(d) : _fmtr ? _fmtr.format(dt) : dt.toDateString(); _fmt.set(d, v); } return v; };
 const daysUntil = (d) => (d ? Math.round((new Date(d + "T00:00:00") - new Date(TODAY() + "T00:00:00")) / 86400000) : null);
 const b64ToBytes = (b64) => { const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
 const bytesToB64 = (u8) => { let s = ""; const c = 0x8000; for (let i = 0; i < u8.length; i += c) s += String.fromCharCode.apply(null, u8.subarray(i, i + c)); return btoa(s); };
@@ -65,9 +69,9 @@ async function idbClear() { const db = await idb(); return new Promise((res) => 
 let saveTimer = null;
 function save(now) {
   clearTimeout(saveTimer);
-  const go = () => Promise.all([idbSet("state", S).catch((e) => { if (!HOOKS.save) toast("Could not save: " + e.message); }), HOOKS.save ? HOOKS.save(S) : null]).then(() => { S._savedAt = new Date().toISOString(); }).catch((e) => toast("Could not save: " + e.message, 5000));
+  const go = () => Promise.all([HOOKS.save ? null : idbSet("state", S).catch((e) => toast("Could not save: " + e.message)), HOOKS.save ? HOOKS.save(S) : null]).then(() => { S._savedAt = new Date().toISOString(); }).catch((e) => toast("Could not save: " + e.message, 5000));
   if (now) return go();
-  saveTimer = setTimeout(go, 250);
+  saveTimer = setTimeout(go, 600);
 }
 
 function freshState() {
@@ -84,9 +88,26 @@ function freshState() {
 function mergeSeed(st) {
   // newer research seeds add jobs/companies without touching user edits
   if ((st.seedVersion || 0) >= SEED.seedVersion) return st;
-  const have = new Set(st.jobs.map((j) => j.id));
-  let added = 0;
-  for (const j of SEED.jobs) if (!have.has(j.id)) { st.jobs.push(clone(j)); added++; }
+  // Research jobs are refreshed from the new snapshot; your edits (description, re-check results) are kept.
+  // Research jobs dropped from the snapshot are removed unless you are tracking them.
+  const seedById = new Map(SEED.jobs.map((j) => [j.id, j]));
+  const tracked = new Set((st.applications || []).map((a) => a.jobId));
+  let added = 0, removed = 0;
+  const kept = [];
+  for (const j of st.jobs) {
+    const s = seedById.get(j.id);
+    if (j.origin === "research_session" && !s) { if (tracked.has(j.jobId)) kept.push(j); else removed++; continue; }
+    if (s) {
+      const n = clone(s);
+      if (j.userEdited) n.description = j.description, n.userEdited = true;
+      if (/^Re-checked/.test(j.verification || "")) { n.status = j.status; n.verification = j.verification; n.verifiedDate = j.verifiedDate; }
+      kept.push(n);
+    } else kept.push(j);
+  }
+  const have = new Set(kept.map((j) => j.id));
+  for (const j of SEED.jobs) if (!have.has(j.id)) { kept.push(clone(j)); added++; }
+  st.jobs = kept;
+  if (removed) st.activity.unshift({ date: TODAY(), text: "Research update removed " + removed + " listings that no longer qualify" });
   st.excluded = clone(SEED.excluded); st.market = clone(SEED.market);
   const hc = new Set(st.companies.map((c) => c.name));
   for (const c of SEED.companies) if (!hc.has(c.name)) st.companies.push(clone(c));
@@ -98,7 +119,10 @@ async function loadState() {
   let st = null;
   try { st = HOOKS.load ? await HOOKS.load() : null; } catch (e) { console.warn(e); }
   if (!st) { try { st = await idbGet("state"); } catch (e) { console.warn(e); } }
+  await loadAnalysisCache();
   S = st ? mergeSeed(st) : freshState();
+  S.migrations = S.migrations || {};
+  if (!S.migrations.gpaPrivate) { const g = S.profile.education.gpa = S.profile.education.gpa || {}; if (!g.value) { g.private = true; g.status = "confirmed_user"; g.note = "You keep your GPA private. CareerOS never asks for it."; } S.migrations.gpaPrivate = true; S.profileRev++; }
   if (!S.master.model && S.master.docxB64) await rebuildMasterModel();
   save(true);
 }
@@ -114,12 +138,31 @@ async function rebuildMasterModel() {
 // ---------------------------------------------------------------- computed values (cached)
 const cache = new Map();
 let evIndex = null;
-function invalidate(jobId) { if (jobId) cache.delete(jobId); else { cache.clear(); evIndex = null; } }
+/* Two caches: the advert analysis depends only on the advert text, so it survives profile edits;
+   eligibility, match, coverage and value depend on the profile and are recomputed when it changes. */
+const acache = new Map();
+let acacheDirty = false, acacheTimer = null;
+const ACACHE_KEY = "acache:" + (window.CAREEROS_ENGINE_HASH || "dev");
+async function loadAnalysisCache() {
+  try { const c = await idbGet(ACACHE_KEY); if (c && c.entries) for (const [id, e] of Object.entries(c.entries)) acache.set(id, e); } catch (e) { /* cache is optional */ }
+}
+function scheduleAnalysisCacheSave() {
+  if (!acacheDirty) return; clearTimeout(acacheTimer);
+  const idle = (fn) => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 20000 }) : setTimeout(fn, 0));
+  acacheTimer = setTimeout(() => idle(async () => {
+    acacheDirty = false;
+    const entries = {}; for (const [id, e] of acache) { const a = {}; for (const k in e.a) if (k[0] !== "_") a[k] = e.a[k]; entries[id] = { key: e.key, a }; }
+    try { const db = await idb(); await new Promise((res) => { const t = db.transaction(STORE, "readwrite"); const st = t.objectStore(STORE); st.put({ entries }, ACACHE_KEY); const r = st.getAllKeys(); r.onsuccess = () => { for (const k of r.result) if (String(k).startsWith("acache:") && k !== ACACHE_KEY) st.delete(k); }; t.oncomplete = res; t.onerror = res; }); } catch (e) { /* optional */ }
+  }), 8000);
+}
+function strHash(t) { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+function A(job) { const key = strHash((job.title || "") + "\u0001" + (job.description || "") + "\u0001" + JSON.stringify(job.constraints || null)); let e = acache.get(job.jobId); if (!e || e.key !== key) { e = { key, a: E.analyzeJob(job) }; acache.set(job.jobId, e); acacheDirty = true; scheduleAnalysisCacheSave(); } return e.a; }
+function invalidate(jobId) { if (jobId) { cache.delete(jobId); acache.delete(jobId); } else { cache.clear(); evIndex = null; } }
 function evidenceIndex() { return evIndex || (evIndex = E.profileEvidenceIndex(S.profile)); }
 function C(job) {
   let c = cache.get(job.jobId);
   if (c) return c;
-  const a = E.analyzeJob(job);
+  const a = A(job);
   const el = E.evaluateEligibility(job, S.profile, a, TODAY());
   const m = E.scoreMatch(job, S.profile, a, { evidenceIndex: evidenceIndex() });
   const cov = S.master.model ? E.cvCoverage(a, S.master.model.text, S.profile, { evidenceIndex: evidenceIndex() }) : null;

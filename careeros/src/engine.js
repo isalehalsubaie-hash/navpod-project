@@ -26,7 +26,26 @@
     variantCache.set(v, re);
     return re;
   }
+  // Fast pre-check: the longest alphanumeric chunk of a variant must appear (lowercased) in the text
+  // before the slower boundary-aware regular expression runs.
+  const needleCache = new Map();
+  function needle(v) {
+    let n = needleCache.get(v);
+    if (n === undefined) { const parts = v.toLowerCase().split(/[^a-z0-9\u0600-\u06ff+#]+/).filter(Boolean).sort((a, b) => b.length - a.length); n = parts[0] || ""; needleCache.set(v, n); }
+    return n;
+  }
+  let lowCacheKey = null, lowCacheVal = "", tokCache = null;
+  function lower(text) { if (text !== lowCacheKey) { lowCacheKey = text; lowCacheVal = text.toLowerCase(); tokCache = null; } return lowCacheVal; }
+  function tokens(text) { lower(text); if (!tokCache) tokCache = new Set(lowCacheVal.split(/[^a-z0-9]+/)); return tokCache; }
+  const simpleVariant = new Map();
   function countVariant(text, v) {
+    const n = needle(v);
+    if (n) {
+      let simple = simpleVariant.get(v);
+      if (simple === undefined) { simple = !/[^A-Za-z0-9 ]/.test(v); simpleVariant.set(v, simple); }
+      // plain words: each word of the variant must be a whole word of the text; otherwise substring check
+      if (simple && text.length > 600 ? !tokens(text).has(n) : !lower(text).includes(n)) return 0;
+    }
     const re = variantRegex(v);
     re.lastIndex = 0;
     const m = text.match(re);
@@ -163,6 +182,10 @@
     const taxonomy = opts.taxonomy || TAXONOMY;
     const text = norm(job.description || "");
     const lines = splitLines(text);
+    // keywords present anywhere in the advert; per-line matching only needs to consider these
+    const keywords = findKeywords((job.title || "") + "\n" + text, taxonomy);
+    const present = new Set(keywords.map((k) => k.id));
+    const lineTax = taxonomy.filter((k) => present.has(k.id));
     let section = "general";
     const reqs = [];
     const responsibilities = [];
@@ -171,7 +194,7 @@
       const hdr = SECTION_RES.find(([, rx]) => rx.test(line) && line.length < 70);
       if (hdr && line.split(" ").length <= 8) { section = hdr[0]; continue; }
       if (section === "about" || section === "benefits") continue;
-      const kws = findKeywords(line, taxonomy);
+      const kws = findKeywords(line, lineTax);
       const looksReq = /experience|degree|bachelor|knowledge|proficien|familiar|ability|skills?|understanding|certif|licen|years|fluent|graduate|gpa|must|required|preferred|nationality|saudi|qualification|background|exposure/i.test(line);
       if (section === "responsibilities" || (section === "general" && /^(develop|design|support|coordinate|prepare|conduct|perform|assist|manage|lead|ensure|review|monitor|work|participate|carry|maintain|implement|provide|oversee|analy|create|plan|execute|drive|build|track|deliver)/i.test(line) && !looksReq)) {
         if (line.length > 15) responsibilities.push({ text: line, keywords: kws.map((k) => k.id) });
@@ -184,7 +207,6 @@
         if (line.length > 8 && (looksReq || kws.length)) reqs.push({ text: line, importance, keywords: kws.map((k) => k.id), section });
       }
     }
-    const keywords = findKeywords((job.title || "") + "\n" + text, taxonomy);
     const constraints = Object.assign(extractConstraints(text, job.title), job.constraints || {});
     const byCat = (cat) => keywords.filter((k) => k.cat === cat).map((k) => k.term);
     // repeated terms
@@ -289,7 +311,8 @@
     else if (c.degree === "business") bump(2, "Advert asks for a business / finance degree. An engineering degree may be accepted for analyst roles; confirm.", "degree");
     else if (c.degree === "mechanical" || c.degree === "engineering") pass("Degree field matches (" + (c.degree === "mechanical" ? "Mechanical Engineering" : "Engineering") + ").");
     // GPA
-    if (c.gpa) {
+    if (c.gpa && edu.gpa && edu.gpa.private) reasons.push({ level: "NOTE", msg: "Advert sets a minimum GPA of " + c.gpa.min + (c.gpa.scale ? "/" + c.gpa.scale : "") + ". You keep your GPA private, so check this yourself.", kind: "gpa" });
+    else if (c.gpa) {
       if (isNaN(gpaVal)) bump(1, "Minimum GPA " + c.gpa.min + (c.gpa.scale ? "/" + c.gpa.scale : "") + " stated. Your GPA is not in your profile.", "gpa");
       else if (gpaVal < c.gpa.min) bump(3, "Minimum GPA " + c.gpa.min + " is above your recorded GPA " + gpaVal + ".", "gpa");
       else pass("GPA requirement met.");
@@ -608,7 +631,7 @@
       return { i, text, isHeading, section: isHeading ? text.trim() : section, bold, inTable, bullet: /^[•▪◦\-–*]\s*\t?/.test(text) || wEls(p, "numPr").length > 0 };
     });
     const fonts = new Set();
-    const collectFonts = (x) => { const d = new DOMParserImpl().parseFromString(x, "application/xml"); wEls(d, "rFonts").forEach((f) => { const a = f.getAttributeNS(W, "ascii") || f.getAttribute("w:ascii"); if (a) fonts.add(a); }); };
+    const collectFonts = (x) => { const re = /<w:rFonts\b[^>]*\bw:ascii="([^"]+)"/g; let m; while ((m = re.exec(x))) fonts.add(m[1]); };
     collectFonts(xml);
     if (zip.file("word/styles.xml")) collectFonts(await zip.file("word/styles.xml").async("string"));
     const pgSz = wEls(doc, "pgSz")[0], pgMar = wEls(doc, "pgMar")[0];
@@ -1009,7 +1032,7 @@
       { q: "What is your availability?", a: (P.availability && P.availability.value) || "[YOUR INPUT REQUIRED: start date and any co-op window]", input: !(P.availability && P.availability.value) },
       { q: "What are your salary expectations?", a: (P.salaryExpectation && P.salaryExpectation.value) || "[YOUR INPUT REQUIRED. CareerOS never fills this in.]" + (job.salary && job.salary !== "Not disclosed" ? " Advertised: " + job.salary + "." : ""), input: !(P.salaryExpectation && P.salaryExpectation.value) },
       { q: "Nationality / right to work?", a: (P.nationality && P.nationality.value) || "[YOUR INPUT REQUIRED]", input: !(P.nationality && P.nationality.value) },
-      { q: "GPA?", a: (E.gpa && E.gpa.value) || "[YOUR INPUT REQUIRED]", input: !(E.gpa && E.gpa.value) },
+      { q: "GPA?", a: (E.gpa && E.gpa.value) || (E.gpa && E.gpa.private ? "[Private: enter it yourself only if the form requires it]" : "[YOUR INPUT REQUIRED]"), input: !(E.gpa && (E.gpa.value || E.gpa.private)) },
     ];
     const sectionsHit = {};
     for (const r of (opts.coverage ? opts.coverage.rows : [])) if (["exact", "equivalent"].includes(r.status)) sectionsHit[r.term] = 1;

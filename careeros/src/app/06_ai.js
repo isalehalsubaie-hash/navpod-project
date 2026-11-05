@@ -14,7 +14,7 @@ const AI_PROMPTS = [
   "How can I position my UAV experience for an engineering position?",
   "How can I position my engineering background for technical business development?",
 ];
-function compactJob(j) { const c = C(j); return { id: j.jobId, title: j.title, employer: j.employer, location: j.location, type: j.type, tracks: (j.tracks || []).map(trackName), eligibility: c.el.label, eligibilityReasons: c.el.reasons.filter((r) => r.level !== "PASS").map((r) => r.msg).slice(0, 3), match: c.m.total, careerValue: c.v.total, keywordCoverage: c.cov ? c.cov.keywordCoverage : null, deadline: j.deadline || null, published: j.published || null, verified: j.verifiedDate, status: isExpired(j) ? "Closed" : j.status, tracker: (appFor(j.jobId) || {}).status || null }; }
+function compactJob(j) { const c = C(j); return { id: j.jobId, title: j.title, employer: j.employer, location: j.location, type: j.type, tracks: (j.tracks || []).map(trackName), eligibility: c.el.label, eligibilityReasons: c.el.reasons.filter((r) => !["PASS", "NOTE"].includes(r.level)).map((r) => r.msg).slice(0, 3), match: c.m.total, careerValue: c.v.total, keywordCoverage: c.cov ? c.cov.keywordCoverage : null, deadline: j.deadline || null, published: j.published || null, verified: j.verifiedDate, status: isExpired(j) ? "Closed" : j.status, tracker: (appFor(j.jobId) || {}).status || null }; }
 const AI_TOOLS = () => [
   { name: "search_jobs", description: "Search the user's saved opportunity database (researched, imported and manually added jobs). Returns compact rows with eligibility, match (0-100), career value (0-100), deadline and tracker status. Never returns jobs that do not exist in the database.",
     inputSchema: { type: "object", properties: { query: { type: "string", description: "Words to match in title, employer or description" }, track: { type: "string", enum: Object.keys(TRACKS), description: "Career track code" }, eligibility: { type: "array", items: { type: "string", enum: ["GREEN", "YELLOW", "ORANGE", "RED"] } }, minMatch: { type: "number" }, sort: { type: "string", enum: ["match", "value", "deadline", "newest"] }, limit: { type: "number" } } },
@@ -49,6 +49,7 @@ Rules:
 - Cite evidence: job ids like CO-0003 and profile item ids like E04 or P01 when you rely on them.
 - You cannot browse the web or check live job boards. If a question needs that, say so and suggest Discover, Job Analysis or the Gmail import.
 - Eligibility, match, career value and readiness are separate measures; none is a probability of being hired.
+- The user keeps their GPA private by choice. Never ask for it or list it as missing; mention GPA minimums only as something to check.
 - Be concise and practical: short paragraphs or numbered steps. No em dashes. Plain text with simple bullets.`;
 function aiHistoryText() { const h = (S.aiChat || []).slice(-12).map((m) => ({ role: m.role, content: m.content })); while (h.length && h[0].role !== "user") h.shift(); return h; }
 async function aiSample() { return HOOKS.sample ? HOOKS.sample() : null; }

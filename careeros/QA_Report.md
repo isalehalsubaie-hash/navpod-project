@@ -60,3 +60,26 @@ Covered in 2.0: next best moves, compare and recommendation, career value factor
 
 ## What was not tested against the real host
 The AI (`sample`), Gmail connector (`mcp`), private storage (`db`) and downloads were exercised against simulations of the documented interfaces. On the real claude.ai page the first AI or Gmail use asks for your consent. If anything behaves differently there, it is reported in the page as an error message and falls back to the built-in features.
+
+# Performance and bug-fix pass (5 November 2026)
+
+Measured on an iPhone 13 viewport with the CPU slowed 4x (`tests/perf.js`):
+
+| Action | Before | After |
+|---|---|---|
+| App start (first launch) | 10.4 s | 3.4 s |
+| App start (later launches, cached analyses) | 10.4 s | 1.1 to 1.7 s |
+| Open Command Center | 14.1 s | 0.03 to 0.1 s |
+| Change a profile field | 17.9 s | 1.0 s |
+| Open Discover | 0.25 s | 0.10 to 0.20 s |
+
+What changed: keyword matching pre-check (identical results, verified on all 279 jobs), per-line matching limited to keywords present in the advert (7x faster analysis), advert analyses cached separately from profile-dependent scores and kept on the device between sessions (keyed by a content hash and the engine version), PDF libraries loaded only when used, embedded data parsed as JSON, Discover shows 30 cards at a time with Show more, search updates only the result list (no keyboard flicker on iPhone), translucent blur effects removed (iOS scroll smoothness), one-time cache save deferred to idle time.
+
+Bugs fixed:
+1. Search box on iPhone was hidden inside the collapsed Filters panel; it is now always visible.
+2. Opening the app after a research update did not add new jobs to locally saved data (seed version not bumped); research jobs now refresh while keeping your edits, removed untracked listings are dropped and tracked ones kept.
+3. Tracker entries could disappear if their job left the research data; applications now keep a snapshot.
+4. On the private page every save also wrote a 3 MB copy to on-device storage; removed.
+5. GPA: now private by default. No GPA prompts, to-dos or eligibility warnings; GPA minimums show as neutral notes. Existing saved data migrated.
+
+Verification: `tests/clickall.js` clicked 481 actions across 22 screens (desktop file and iPhone private page) with no errors; `tests/cache_e2e.js` (3/3) proves cached and fresh results are identical; `tests/merge_e2e.js` (7/7) proves research refreshes keep your data; all earlier suites still pass (48/48, 30/30, 14/14, 24/24, 13/13, 8/8, 12/12 tailoring pages).
