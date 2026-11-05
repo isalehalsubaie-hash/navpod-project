@@ -211,11 +211,12 @@ route("analysis", () => {
   return {
     title: "Job Analysis", sub: "Analyse any advert: paste text, upload a PDF or DOCX, or pick a job from Discover",
     html: `<div class="grid g2"><div class="card"><h2>Analyse a new job</h2>
+      <div class="note mb small"><b>From your phone:</b> take screenshots of the whole advert (several are fine, in order) and tap <b>📷 Add from screenshots</b>. ${HOOKS.sample ? "CareerOS AI reads them and fills in the form for you to check." : "Screenshot reading needs your private claude.ai page. Here, use iPhone Live Text: open the screenshot in Photos, press and hold the text, Select All, Copy, and paste below."}</div>
       <div class="grid g2"><label class="f">Job title *<input type="text" id="nj_title"></label><label class="f">Company *<input type="text" id="nj_company"></label>
       <label class="f">Location<input type="text" id="nj_loc" value="Riyadh, Saudi Arabia"></label><label class="f">Advert URL<input type="url" id="nj_url" placeholder="https://"></label>
       <label class="f">Employment type<select id="nj_type"><option>Full-time</option><option>Internship</option><option>Graduate program</option><option>Contract</option></select></label><label class="f">Deadline (if stated)<input type="date" id="nj_deadline"></label></div>
       <label class="f mt">Job description (paste the complete advert)<textarea id="nj_desc" style="min-height:220px" placeholder="Paste the full job description here"></textarea></label>
-      <div class="row mt"><label class="btn">Upload PDF or DOCX<input type="file" id="nj_file" accept=".pdf,.docx" class="hide" data-chg="jdFile"></label><span class="small muted" id="nj_fileinfo"></span></div>
+      <div class="row mt"><label class="btn primary">📷 Add from screenshots<input type="file" id="nj_img" accept="image/*" multiple class="hide" data-chg="jdImages"></label><label class="btn">Upload PDF or DOCX<input type="file" id="nj_file" accept=".pdf,.docx" class="hide" data-chg="jdFile"></label><span class="small muted" id="nj_fileinfo"></span></div>
       <div class="row mt"><button class="btn primary big" data-act="analyseNew">Analyse this job</button></div>
       <p class="tiny muted mt">The analysis runs in your browser. Nothing is sent anywhere. The job is saved as a manually imported opportunity with its own ID.</p></div>
       <div class="card"><h2>Recently analysed and imported</h2>${analysed.length ? `<table><tbody>${analysed.slice(0, 30).map((j) => `<tr><td><a href="#/job/${j.jobId}">${esc(j.title)}</a><div class="tiny muted">${esc(j.employer)} · ${esc(j.origin === "manual" ? "Manually imported" : "Researched")}</div></td><td>${elPill(C(j).el.label)}</td><td class="num">${C(j).m.total}</td></tr>`).join("")}</tbody></table>` : `<p class="muted small">Nothing yet. Jobs you optimise a CV for, or import here, appear in this list.</p>`}
@@ -237,9 +238,9 @@ ACT.jdFile = async (d, t) => {
 ACT.analyseNew = () => {
   const v = (id) => document.getElementById(id).value.trim();
   if (!v("nj_title") || !v("nj_company") || v("nj_desc").length < 40) return toast("Enter a title, company and the job description (at least a few lines).");
-  const job = { id: uid("MAN"), jobId: uid("MAN"), title: v("nj_title"), employer: v("nj_company"), location: v("nj_loc"), country: /saudi|riyadh|jeddah|dammam/i.test(v("nj_loc")) ? "Saudi Arabia" : "", type: v("nj_type"), seniority: "", description: v("nj_desc"), source: v("nj_url") || "Manually imported", applyUrl: v("nj_url"), published: "", deadline: v("nj_deadline"), status: "Unknown", verifiedDate: TODAY(), verification: "Manually imported by you on " + TODAY() + "; open status not verified by CareerOS", verificationLevel: "Manual import", origin: "manual", salary: "Not disclosed", tracks: [] };
+  const job = { id: uid("MAN"), jobId: uid("MAN"), title: v("nj_title"), employer: v("nj_company"), location: v("nj_loc"), country: /saudi|riyadh|jeddah|dammam/i.test(v("nj_loc")) ? "Saudi Arabia" : "", type: v("nj_type"), seniority: "", description: v("nj_desc"), source: v("nj_url") || "Manually imported", applyUrl: v("nj_url"), published: "", deadline: v("nj_deadline"), status: "Unknown", verifiedDate: TODAY(), verification: (window.__jdFromScreens ? "Transcribed by CareerOS AI from " + window.__jdFromScreens.count + " screenshot(s) you uploaded on " + TODAY() + ". Check it against the live advert" : "Manually imported by you on " + TODAY()) + "; open status not verified by CareerOS", verificationLevel: window.__jdFromScreens ? "Screenshot import (AI transcription)" : "Manual import", origin: "manual", salary: "Not disclosed", tracks: [] };
   job.tracks = E.inferTracks(job, E.analyzeJob(job));
-  S.jobs.push(job); logActivity("Imported and analysed: " + job.title + " (" + job.employer + ")"); save();
+  window.__jdFromScreens = null; S.jobs.push(job); logActivity("Imported and analysed: " + job.title + " (" + job.employer + ")"); save();
   JT.tab = "requirements"; go("#/job/" + job.jobId);
 };
 
@@ -287,3 +288,56 @@ ACT.recheck = async (d) => {
 
 ACT.cityChip = (d) => { F.city = d.c; rerender(); };
 function activeFilterCount() { return ["q", "company", "track", "elig", "type", "level", "exp", "deadline", "recent", "paid"].filter((k) => F[k]).length + (F.minScore ? 1 : 0); }
+
+/** Downscale a photo so several screenshots fit in one AI request. */
+async function shrinkImage(file, maxSide) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const k = Math.min(1, maxSide / Math.max(img.width, img.height));
+    const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return await new Promise((res) => c.toBlob(res, "image/jpeg", 0.85));
+  } finally { URL.revokeObjectURL(url); }
+}
+ACT.jdImages = async (d, t) => {
+  const files = [...t.files].slice(0, 8); if (!files.length) return;
+  const info = document.getElementById("nj_fileinfo");
+  const sample = await aiSample();
+  let can = !!sample;
+  if (sample && typeof sample.limits === "function") { try { const l = await sample.limits(); can = !!(l && l.images); } catch (e) { can = false; } }
+  if (!can) { modal(`<h2>Reading screenshots</h2><p class="small">Screenshot reading uses CareerOS AI, which is only available on your private claude.ai page${sample ? " with image access" : ""}.</p><p class="small"><b>Alternative on iPhone:</b> open the screenshot in Photos, press and hold the text, choose Select All, then Copy, and paste it into the job description box.</p><button class="btn primary" data-act="closeModal">OK</button>`); t.value = ""; return; }
+  info.textContent = "Reading " + files.length + " screenshot(s)...";
+  try {
+    const images = []; for (const f of files) images.push(await shrinkImage(f, 1600));
+    const prompt = "These " + images.length + " image(s) are screenshots of one job advert, in order (or of an application portal page). Transcribe the advert text faithfully; do not add, summarise or invent anything. Return only JSON with these keys: " +
+      '{"title": string, "company": string, "location": string, "employmentType": "Full-time"|"Internship"|"Graduate program"|"Contract"|"", "deadline": "YYYY-MM-DD" or "", "url": string or "", "reference": string or "", "description": string (the full advert text, keep headings and bullet points on separate lines), "pageKind": "advert"|"application_confirmation"|"other", "unreadable": string (parts you could not read, or "")}. ' +
+      "Use empty strings for anything not visible. If the screenshots show an application confirmation or thank-you page instead of the advert, set pageKind to application_confirmation.";
+    const opts = { images, cache: false, modelTier: "default" };
+    let r;
+    if (typeof sample.json === "function") r = await sample.json(prompt, opts);
+    else { const out = await sample(prompt, opts); r = JSON.parse((out.text.match(/\{[\s\S]*\}/) || ["{}"])[0]); }
+    const set = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = String(v).replace(/\u2014/g, " - "); };
+    set("nj_title", r.title); set("nj_company", r.company); set("nj_loc", r.location); set("nj_url", r.url); set("nj_deadline", /^\d{4}-\d{2}-\d{2}$/.test(r.deadline || "") ? r.deadline : "");
+    if (r.employmentType) set("nj_type", r.employmentType);
+    set("nj_desc", (r.description || "") + (r.reference ? "\n\nReference: " + r.reference : ""));
+    window.__jdFromScreens = { count: images.length, unreadable: r.unreadable || "" };
+    info.textContent = "Filled from " + images.length + " screenshot(s). Check every field against your screenshots before analysing." + (r.unreadable ? " Could not read: " + r.unreadable : "");
+    if (r.pageKind === "application_confirmation") {
+      const match = S.jobs.find((j) => r.title && j.title.toLowerCase().startsWith(String(r.title).toLowerCase().split(" (")[0].slice(0, 25)) && (!r.company || (j.employer || "").toLowerCase().includes(String(r.company).toLowerCase().split(" ")[0])));
+      modal(`<h2>This looks like an application confirmation</h2><p class="small">The screenshot shows a "thank you" or submitted page${r.title ? " for <b>" + esc(r.title) + "</b>" : ""}, not the job advert. The job description is usually not on this page.</p>
+        ${match ? `<p class="small">It matches <b>${esc(match.jobId)} ${esc(match.title)}</b> (${esc(match.employer)}) in your database.</p><div class="row"><button class="btn primary" data-act="markFromShot" data-id="${match.jobId}">I submitted it: mark as Applied</button><a class="btn" href="#/job/${match.jobId}" data-act="closeModal">Open the job</a></div>` : `<p class="small">Take screenshots of the advert itself, or paste the link and the advert text.</p>`}
+        <div class="row mt"><button class="btn" data-act="closeModal">Close</button></div>`);
+    }
+  } catch (e) {
+    info.textContent = "";
+    toast(e && e.code === "not_granted" ? "Image reading was not allowed. Allow it when prompted, or paste the text instead." : "Could not read the screenshots: " + (e.message || e.code), 6000);
+  }
+  t.value = "";
+};
+ACT.markFromShot = async (d) => {
+  if (!(await ask("Mark this application as Applied? Only do this if you submitted it."))) return;
+  const a = addToTracker(d.id); a.status = "Applied"; a.appliedDate = a.appliedDate || TODAY(); a.channel = a.channel || "Employer career portal"; a.history.push({ date: TODAY(), status: "Applied" });
+  if (!a.followUp) { const f = new Date(); f.setDate(f.getDate() + 10); a.followUp = f.toISOString().slice(0, 10); }
+  logActivity("Marked as applied from a screenshot: " + jobById(d.id).title); save(); closeModal(); toast("Marked as Applied. Follow-up set for " + fmtDate(a.followUp)); go("#/tracker");
+};

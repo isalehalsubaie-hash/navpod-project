@@ -30,7 +30,7 @@ route("dashboard", () => {
   const devDone = Object.values(S.devDone || {}).filter((x) => /^Done/.test(x)).length, devLearning = Object.values(S.devDone || {}).filter((x) => x === "Learning").length;
   return {
     title: "Dashboard", sub: "Today " + fmtDate(TODAY()) + " · research verified " + fmtDate(S.researchDate),
-    actions: `<a class="btn" href="#/ai">Ask CareerOS AI</a><a class="btn primary" href="#/discover">Find opportunities</a>`,
+    actions: `<a class="btn" href="#/analysis">📷 Add a job from screenshots</a><a class="btn" href="#/ai">Ask CareerOS AI</a><a class="btn primary" href="#/discover">Find opportunities</a>`,
     html: `${closing.filter((j) => daysUntil(j.deadline) <= 7).length ? `<div class="flag high mb"><b>Closing within 7 days:</b> ${closing.filter((j) => daysUntil(j.deadline) <= 7).map((j) => `<a href="#/job/${j.jobId}">${esc(j.title)} · ${esc(j.employer)}</a> (${fmtDate(j.deadline)})`).join("; ")}</div>` : ""}
     <div class="grid mb"><div class="card span2"><h2>✦ My next best moves <span class="tag tiny muted">ranked from deadlines, eligibility, match, career value and effort</span></h2>
         ${moves.length ? `<div class="moves">${moves.map((m, i) => `<div class="move"><span class="n">${i + 1}</span><div style="min-width:0"><b>${esc(m.title)}</b><div class="why">${esc(m.why)}</div><div class="tm">About ${esc(m.time)}</div></div><a class="btn sm primary" href="#/${m.action === "job" ? "job/" + m.jobId : m.action === "optimize" ? "optimize/" + m.jobId : m.action === "builder" ? "builder/" + m.jobId : m.action === "interview" ? "interview/" + m.jobId : m.action}">Go</a></div>`).join("")}</div>` : emptyState("Nothing urgent", "Explore Discover for new roles.")}</div></div>

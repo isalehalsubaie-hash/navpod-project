@@ -415,5 +415,21 @@
  },
  "LI-4479939512": {
   "notes": "Hotel engineering and facilities role (Diriyah). Facilities maintenance, relevant to maintenance and MEP experience."
+ },
+ "LI-4487585379": {
+  "tracks": [
+   "STRAT",
+   "PM"
+  ],
+  "devPotential": 5,
+  "devNote": "Big Four firm; outstanding COOPs considered for the Hamaat Graduate Program",
+  "constraints": {
+   "studentOnly": true,
+   "gpa": {
+    "min": 3,
+    "scale": 4
+   }
+  },
+  "notes": "KPMG COOP Program (requisition 12091 on KPMG's SuccessFactors portal). Senior students currently enrolled in a bachelor's, minimum GPA 3/4 or 4/5, 6 months, fluent English and Arabic, online assessments and interviews. Advisory accepts engineering majors (computer, industrial, electrical and derivatives) and project management. You shared KPMG's post-submission screen on 5 Nov 2026: mark it Applied in the tracker if you submitted."
  }
 }
