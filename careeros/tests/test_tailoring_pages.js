@@ -21,7 +21,9 @@ const OUT = path.join(__dirname, 'out/pages'); fs.mkdirSync(OUT, { recursive: tr
     const pages = parseInt(execSync(`pdfinfo "${f.replace(/docx$/, 'pdf')}"`).toString().match(/Pages:\s+(\d+)/)[1], 10);
     const re = await E.readDocx(JSZip, out.bytes, DOMParser);
     const changed = new Set(acc.map((x) => x.paragraph));
-    const untouchedOk = m.paragraphs.every((p, i) => changed.has(i) || re.paragraphs[i].text === p.text);
+    // every paragraph of the copy equals the master with exactly the accepted edits and inserted lines applied
+    const expectedParas = E.applySuggestionsToText(m, acc).split('\n');
+    const untouchedOk = expectedParas.length === re.paragraphs.length && expectedParas.every((t, i) => re.paragraphs[i].text === t) && m.paragraphs.every((p, i) => changed.has(i) || re.paragraphs.some((q) => q.text === p.text));
     const metaOk = JSON.stringify(re.meta.margins) === JSON.stringify(m.meta.margins) && re.meta.fonts.join() === m.meta.fonts.join() && re.meta.hyperlinks === m.meta.hyperlinks;
     let pagesWithRemoval = '';
     if (pages > 1) { const acc2 = r.suggestions.filter((s) => s.type !== 'Integrity'); const o2 = await E.applyChangesToDocx(JSZip, masterBytes, acc2, DOMParser, XMLSerializer); const f2 = path.join(OUT, j.jobId + '_with_removal.docx'); fs.writeFileSync(f2, o2.bytes); execSync(`soffice --headless --convert-to pdf --outdir "${OUT}" "${f2}"`, { stdio: 'ignore' }); pagesWithRemoval = parseInt(execSync(`pdfinfo "${f2.replace(/docx$/, 'pdf')}"`).toString().match(/Pages:\s+(\d+)/)[1], 10); }

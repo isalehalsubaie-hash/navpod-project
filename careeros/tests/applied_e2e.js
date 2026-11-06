@@ -17,6 +17,18 @@ const ok = (n, c, i) => { console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' 
   await p.evaluate(() => go('#/dashboard')); await p.waitForTimeout(400);
   ok('Not in Dashboard suggestions', !(await p.$(`.move a[href$="${top}"]`)) && !(await p.evaluate((id) => nextMoves().some((m) => m.jobId === id && m.kind === 'apply'), top)));
   ok('Still in tracker', await p.evaluate((id) => appFor(id).status === 'Applied', top));
+  // Quick wins: confirming a skill adds it to the profile and removes it from the list
+  await p.evaluate(() => go('#/profile')); await p.waitForTimeout(400);
+  const qk = await p.getAttribute('[data-act="qwYes"] >> nth=0', 'data-k');
+  await p.click('[data-act="qwYes"] >> nth=0'); await p.waitForTimeout(400);
+  ok('Quick win confirmed into profile skills', await p.evaluate((k) => S.profile.skills.some((s) => s.kid === k && s.status === 'confirmed_user'), qk), qk);
+  ok('Confirmed quick win leaves the list', !(await p.$(`[data-act="qwYes"][data-k="${qk}"]`)));
+  const nk = await p.getAttribute('[data-act="qwNo"] >> nth=0', 'data-k'); await p.click('[data-act="qwNo"] >> nth=0'); await p.waitForTimeout(300);
+  ok('Dismissed quick win hidden, not added', !(await p.$(`[data-act="qwYes"][data-k="${nk}"]`)) && await p.evaluate((k) => !S.profile.skills.some((s) => s.kid === k), nk));
+  // Coursework line offered for a maintenance advert, never for one that does not ask for it
+  const r = await p.evaluate(() => { const out = {}; for (const id of ['CO-0010', 'CO-0001']) { const j = jobById(id); const o = E.optimizeSuggestions(j, C(j).a, S.master.model, S.profile, { evidenceIndex: evidenceIndex() }); out[id] = (o.suggestions.find((s) => s.type === 'Coursework') || {}).proposed || ''; } return out; });
+  ok('Coursework line for a maintenance advert', /Maintenance Engineering \(A\+\)/.test(r['CO-0010']), r['CO-0010']);
+  ok('No pasted coursework when the advert does not ask', !/Maintenance/.test(r['CO-0001']) || /maint/i.test(await p.evaluate(() => jobById('CO-0001').description)), r['CO-0001']);
   ok('No page errors', !errs.length, errs.join(' | '));
   await b.close();
 })().catch((e) => { console.error('CRASH', e); process.exit(1); });

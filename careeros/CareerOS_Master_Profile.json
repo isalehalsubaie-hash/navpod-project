@@ -107,12 +107,20 @@
     },
     "courses": [
       {
-        "title": "ME 1446 Gas Dynamics: PSP shock mapping test campaign (sole author)",
+        "title": "ME 1446 Gas Dynamics",
+        "grade": "A+",
         "date": "2026-06",
-        "status": "verified_doc",
+        "status": "confirmed_user",
         "evidence": [
           "S-PORT"
-        ]
+        ],
+        "note": "Grade A+ confirmed by you. Includes your PSP shock mapping test campaign (sole author)."
+      },
+      {
+        "title": "Maintenance Engineering",
+        "grade": "A+",
+        "status": "confirmed_user",
+        "note": "Grade A+ confirmed by you. Check the exact course title on your transcript and correct it here if it differs."
       }
     ]
   },
@@ -967,6 +975,45 @@
       "evidence": [
         "S-PORT"
       ]
+    },
+    {
+      "id": "K01",
+      "type": "coursework",
+      "title": "Maintenance Engineering (grade A+)",
+      "cvLabel": "Maintenance Engineering (A+)",
+      "org": "Imam Mohammad Ibn Saud Islamic University",
+      "skills": [
+        "maintenance"
+      ],
+      "tracks": [
+        "ME",
+        "ENERGY",
+        "INSP"
+      ],
+      "status": "confirmed_user",
+      "evidence": [],
+      "notes": "Course grade confirmed by you. Shows maintenance knowledge from coursework, not job experience; present it that way in interviews. Check the exact course title on your transcript."
+    },
+    {
+      "id": "K02",
+      "type": "coursework",
+      "title": "ME 1446 Gas Dynamics (grade A+)",
+      "cvLabel": "Gas Dynamics (A+)",
+      "org": "Imam Mohammad Ibn Saud Islamic University",
+      "skills": [
+        "fluids"
+      ],
+      "tracks": [
+        "ME",
+        "DEF",
+        "UAV",
+        "ENERGY"
+      ],
+      "status": "confirmed_user",
+      "evidence": [
+        "S-PORT"
+      ],
+      "notes": "Course grade confirmed by you; the PSP shock mapping campaign (P05) was part of this course."
     }
   ],
   "skills": [

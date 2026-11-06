@@ -1,8 +1,36 @@
 /* CareerOS 2.0 modules: shared helpers, Compare, Company intelligence, Interview prep,
    Development map, Analytics, Gmail import, career-track CV targets. */
 function nextMoves() {
-  return E.nextBestMoves({ jobs: S.jobs.filter((j) => !isExpired(j)).map((j) => ({ job: j, ...C(j) })), applications: S.applications, profile: S.profile, master: S.master, today: TODAY(), cvVersions: S.cvVersions, packages: S.packages });
+  const moves = E.nextBestMoves({ jobs: S.jobs.filter((j) => !isExpired(j)).map((j) => ({ job: j, ...C(j) })), applications: S.applications, profile: S.profile, master: S.master, today: TODAY(), cvVersions: S.cvVersions, packages: S.packages });
+  const qw = quickWins();
+  if (qw.length && qw[0].n >= 5) moves.push({ kind: "profile", score: 72, title: "Quick win: confirm skills you already have", why: qw.slice(0, 3).map((x) => x.term + " (" + x.n + " jobs)").join(", ") + " are asked for but not on your CV. Confirm only what you can back up in an interview.", time: "2 min", action: "profile" });
+  return moves.sort((a, b) => b.score - a.score).slice(0, 7);
 }
+/* Skills most often requested by reachable jobs that your profile has no confirmed evidence for.
+   Confirming one (only if true) lets the CV Optimizer add it; certifications and sector experience are left to the Development Map. */
+let _qw = null, _qwKey = "";
+function quickWins() {
+  const key = S.profileRev + "|" + S.jobs.length + "|" + Object.keys(S.qwDismissed || {}).length;
+  if (_qw && _qwKey === key) return _qw;
+  const cnt = {}, idx = evidenceIndex();
+  for (const j of S.jobs) {
+    if (isExpired(j) || alreadyApplied(j)) continue;
+    const c = C(j); if (!["GREEN", "YELLOW", "ORANGE"].includes(c.el.label) || !c.cov) continue;
+    for (const r of c.cov.rows) if ((r.status === "missing" || r.status === "unsupported") && !(idx[r.id] && idx[r.id].trusted.length)) cnt[r.id] = (cnt[r.id] || 0) + 1;
+  }
+  const tax = new Map(E.TAXONOMY.map((t) => [t.id, t]));
+  _qw = Object.entries(cnt).map(([id, n]) => ({ id, n, term: (tax.get(id) || {}).term || id, cat: (tax.get(id) || {}).cat }))
+    .filter((x) => ["software", "business", "technical", "soft"].includes(x.cat) && !(S.qwDismissed || {})[x.id])
+    .sort((a, b) => b.n - a.n).slice(0, 10);
+  _qwKey = key; return _qw;
+}
+ACT.qwYes = (d) => {
+  const t = E.TAXONOMY.find((x) => x.id === d.k); if (!t) return;
+  if (!S.profile.skills.some((s) => s.kid === t.id)) S.profile.skills.push({ kid: t.id, name: t.term, status: "confirmed_user", strength: "listed", evidence: [], note: "Confirmed by you in Quick wins. Be ready to give a concrete example in interviews." });
+  else { const s = S.profile.skills.find((x) => x.kid === t.id); s.status = "confirmed_user"; }
+  logActivity("Skill confirmed: " + t.term); profileChanged(); toast(t.term + " added to your confirmed skills. Tailored CVs can now include it."); rerender();
+};
+ACT.qwNo = (d) => { S.qwDismissed = S.qwDismissed || {}; S.qwDismissed[d.k] = TODAY(); save(); rerender(); };
 let _dm = null, _dmRev = -1;
 function devMapData() {
   if (_dm && _dmRev === S.profileRev + S.jobs.length * 1000) return _dm;

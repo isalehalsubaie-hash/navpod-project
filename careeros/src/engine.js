@@ -700,12 +700,20 @@
     const doc = new DOMParserImpl().parseFromString(xml, "application/xml");
     const ps = bodyParagraphs(doc);
     const log = [];
-    const removals = [];
+    const removals = [], lastInserted = new Map();
     for (const ch of changes) {
       const p = ps[ch.paragraph];
       if (!p) { log.push({ id: ch.id, ok: false, error: "Paragraph " + ch.paragraph + " not found" }); continue; }
       try {
         if (ch.op === "remove") removals.push(p);
+        else if (ch.op === "insert") {
+          // new paragraph: a copy of a template paragraph (same style, numbering and run formatting) with its text replaced
+          const t = ps[ch.template]; if (!t) throw new Error("Template paragraph " + ch.template + " not found");
+          const clone = t.cloneNode(true);
+          editParagraphText(clone, ch.templateText, ch.proposed, doc);
+          const after = lastInserted.get(ch.paragraph) || p;
+          after.parentNode.insertBefore(clone, after.nextSibling); lastInserted.set(ch.paragraph, clone);
+        }
         else editParagraphText(p, ch.original, ch.proposed, doc);
         log.push({ id: ch.id, ok: true });
       } catch (e) { log.push({ id: ch.id, ok: false, error: e.message }); }
@@ -808,7 +816,7 @@
     let n = 0;
     const P = cvModel.paragraphs;
     const findP = (pred) => P.find(pred);
-    const push = (o) => { o.id = "S" + ++n; const kind = o.type === "Headline" ? "headline" : ""; o.lineDelta = o.op === "remove" ? -estLines(o.original, kind) : estLines(o.proposed, kind) - estLines(o.original, kind); o.status = "pending"; sugg.push(o); };
+    const push = (o) => { o.id = "S" + ++n; const kind = o.type === "Headline" ? "headline" : ""; o.lineDelta = o.op === "remove" ? -estLines(o.original, kind) : o.op === "insert" ? estLines(o.proposed, kind) : estLines(o.proposed, kind) - estLines(o.original, kind); o.status = "pending"; sugg.push(o); };
     const isInternship = /intern|co-?op|trainee|summer/i.test((job.type || "") + " " + job.title);
 
     // 1. headline
@@ -892,6 +900,17 @@
         block.forEach((p, j) => push({ type: "Remove (needs permission)", op: "remove", paragraph: p.i, section: p.section, original: p.text, proposed: "", reason: j === 0 ? "The fintech business-development internship is least relevant to this engineering role. Removing it frees about 3 lines for engineering content. Only applied if you accept." : "Part of the TalMal block above.", evidence: "Relevance: E02 is tagged BD/STRAT only." }));
       }
     }
+    // 8. relevant coursework with grades the user confirmed, as a new bullet under the degree line
+    const edu = findP((p) => p.section && /education/i.test(p.section) && !p.isHeading && /degree|bachelor/i.test(p.text));
+    const tpl = P.find((p) => /^•\t/.test(p.text) && p.bullet);
+    const already = P.some((p) => /coursework/i.test(p.text));
+    if (edu && tpl && !already) {
+      const jdIds = new Set(analysis.keywords.map((k) => k.id));
+      const cw = (profile.items || []).filter((it) => it.type === "coursework" && TRUSTED.has(it.status) && it.cvLabel)
+        .filter((it) => (it.skills || []).some((k) => jdIds.has(k)));
+      if (cw.length) push({ type: "Coursework", op: "insert", paragraph: edu.i, template: tpl.i, templateText: tpl.text, section: "Education", original: "", proposed: "•\tRelevant coursework: " + cw.map((it) => it.cvLabel).join(", "),
+        reason: "The advert asks for " + [...new Set(cw.flatMap((it) => it.skills).filter((k) => jdIds.has(k)))].map((k) => (taxonomy.find((t) => t.id === k) || { term: k }).term).join(", ") + ". Your top grades in these courses are evidence of it, added as one new line under your degree.", evidence: cw.map((it) => it.id + ": " + it.title + " (" + it.status.replace("_", " ") + ")").join("; ") });
+    }
     // measure each wording change on its own; drop any that would lower keyword coverage
     const base = cov.counts.exact + cov.counts.equivalent;
     const kept = [];
@@ -921,7 +940,7 @@
   function mergeParagraphChanges(changes) {
     const out = [], conflicts = [], byPara = new Map();
     for (const ch of changes) {
-      if (ch.op === "remove" || ch.paragraph == null) { out.push(ch); continue; }
+      if (ch.op === "remove" || ch.op === "insert" || ch.paragraph == null) { out.push(ch); continue; }
       const prev = byPara.get(ch.paragraph);
       if (!prev) { const c = { ...ch, mergedIds: [ch.id], _spans: [] }; byPara.set(ch.paragraph, c); out.push(c); continue; }
       if (prev.original !== ch.original) { conflicts.push({ id: ch.id, error: "Written against a different version of this line" }); continue; }
@@ -940,13 +959,19 @@
     return { changes: out, conflicts };
   }
   function applySuggestionsToText(cvModel, accepted) {
-    const map = new Map();
-    for (const s of accepted) map.set(s.paragraph, s);
-    return cvModel.paragraphs.filter((p) => !(map.get(p.i) && map.get(p.i).op === "remove")).map((p) => (map.has(p.i) ? map.get(p.i).proposed : p.text)).join("\n");
+    const map = new Map(), ins = new Map();
+    for (const s of accepted) { if (s.op === "insert") { if (!ins.has(s.paragraph)) ins.set(s.paragraph, []); ins.get(s.paragraph).push(s.proposed); } else map.set(s.paragraph, s); }
+    const out = [];
+    for (const p of cvModel.paragraphs) {
+      const m = map.get(p.i);
+      if (!(m && m.op === "remove")) out.push(m ? m.proposed : p.text);
+      for (const t of ins.get(p.i) || []) out.push(t);
+    }
+    return out.join("\n");
   }
   function overflowEstimate(cvModel, accepted) {
     const kind = (a) => (a.type === "Headline" ? "headline" : "");
-    const delta = accepted.reduce((s, a) => s + (a.op === "remove" ? -estLines(a.original, kind(a)) : estLines(a.proposed, kind(a)) - estLines(a.original, kind(a))), 0);
+    const delta = accepted.reduce((s, a) => s + (a.op === "remove" ? -estLines(a.original, kind(a)) : a.op === "insert" ? estLines(a.proposed, kind(a)) : estLines(a.proposed, kind(a)) - estLines(a.original, kind(a))), 0);
     const free = cvModel.freeLines != null ? cvModel.freeLines : 0;
     return { delta, free, risk: delta > free ? "high" : delta > 0 ? "low" : "none", note: (FONT_W ? "Measured with Source Sans Pro glyph widths on the master layout (matches LibreOffice line breaks)." : "Estimated from characters per line.") + " Word can wrap slightly differently; confirm the page count after export." };
   }

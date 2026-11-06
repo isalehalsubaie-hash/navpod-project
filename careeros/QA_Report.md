@@ -97,3 +97,12 @@ Bugs fixed:
 
 Results: `e2e.js` 48/48, `e2e2.js` 32/32, `web_e2e.js` all pass, `save_atomic_e2e.js` 3/3, `applied_e2e.js` 6/6, `cache_e2e.js` 3/3, `merge_e2e.js` 7/7, `test_data.js` 24/24, `test_engine2.js` 20/20, `test_tailoring_pages.js` 0 failures, `smoke.js` 0 errors, `clickall.js` no problems on desktop and iPhone, local file and private page.
 
+## Update, 6 November 2026 (2): coursework, quick wins
+
+1. Profile: Maintenance Engineering (A+) and ME 1446 Gas Dynamics (A+), confirmed by the user, added as coursework evidence (maintenance and fluid mechanics). Existing saved profiles receive them once on next start.
+2. CV Optimizer: new "Coursework" suggestion inserts one bullet under the degree line when the advert asks for what a course covers (46 of 135 reachable jobs ask for maintenance, the most common gap). The new paragraph is a copy of an existing bullet with its text replaced, so formatting is identical. The TalMal fintech role stays on the master CV and is still offered for removal (with permission) for engineering roles, which also keeps the page count at one when coursework is added.
+3. Profile "Quick wins" card and a matching next best move: the most requested skills without confirmed evidence (currently Planning and Scheduling, QA/QC, Testing and Commissioning, MS Office, Reliability Engineering, Excel, AutoCAD and others), confirm or dismiss in one tap.
+4. Average keyword coverage across reachable jobs if every suggestion is accepted: 50% before tailoring, 61% after.
+
+Results: `test_tailoring_pages.js` 0 failures (now checks every paragraph of each tailored copy, including inserted lines), `applied_e2e.js` 11/11, `merge_e2e.js` 8/8, `e2e.js` 48/48, `e2e2.js` 32/32, `web_e2e.js`, `save_atomic_e2e.js`, `cache_e2e.js` all pass, `test_data.js` 24/24, `test_engine2.js` 20/20.
+

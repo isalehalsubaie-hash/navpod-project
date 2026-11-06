@@ -189,7 +189,7 @@ route("optimize", (id) => {
   <p class="tiny muted">Green = added words, red = removed words. Accept, reject or edit each change. Edited text is checked for unsupported keywords.</p>
   <div class="tablewrap" style="max-height:none"><table class="cmp"><thead><tr><th style="width:12%">Type / section</th><th style="width:29%">Original CV</th><th style="width:29%">Suggested CV</th><th style="width:18%">Reason</th><th style="width:12%">Decision</th></tr></thead><tbody>
   ${o.suggestions.map((s) => { const dcs = o.decisions[s.id] || {}; const prop = dcs.text || s.proposed; return `<tr class="${dcs.status === "rejected" ? "chg-rejected" : dcs.status ? "chg-accepted" : ""}"><td class="small"><b>${esc(s.type)}</b><div class="tiny muted">${esc(s.section)}</div>${s.lineDelta > 0 ? `<div class="tiny warnc">+${s.lineDelta} line</div>` : ""}</td>
-    <td class="orig">${esc(s.original.replace(/^•\t/, "• "))}</td><td>${s.op === "remove" ? "<del>(remove this paragraph)</del>" : wordDiff(s.original.replace(/^•\t/, "• "), prop.replace(/^•\t/, "• "))}${dcs.status === "edited" ? '<div class="tiny warnc">Edited by you</div>' : ""}</td>
+    <td class="orig">${esc(s.original.replace(/^•\t/, "• "))}</td><td>${s.op === "insert" ? '<div class="tiny muted">New line under your degree:</div>' + esc(prop.replace(/^•\t/, "• ")) : s.op === "remove" ? "<del>(remove this paragraph)</del>" : wordDiff(s.original.replace(/^•\t/, "• "), prop.replace(/^•\t/, "• "))}${dcs.status === "edited" ? '<div class="tiny warnc">Edited by you</div>' : ""}</td>
     <td class="small">${esc(s.reason)}<div class="tiny muted">${esc(s.evidence)}</div></td>
     <td>${dcs.status ? `<div class="small"><b>${esc(dcs.status)}</b></div><button class="btn sm" data-act="decide" data-id="${id}" data-s="${s.id}" data-v="">Undo</button>` : `<div class="row" style="gap:4px"><button class="btn sm primary" data-act="decide" data-id="${id}" data-s="${s.id}" data-v="accepted">Accept</button><button class="btn sm" data-act="decide" data-id="${id}" data-s="${s.id}" data-v="rejected">Reject</button>${s.op === "remove" ? "" : `<button class="btn sm" data-act="editSug" data-id="${id}" data-s="${s.id}">Edit</button>`}</div>`}</td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">No changes suggested: the CV already reflects what this advert asks for, as far as your evidence allows.</td></tr>`}
   </tbody></table></div></div>
@@ -197,12 +197,19 @@ route("optimize", (id) => {
   <div class="card"><h2>Create the tailored copy</h2><p class="small">Applies the ${acceptedRaw(o).length} accepted change(s) to a <b>new copy</b> of the master DOCX, keeps every run's formatting, then re-opens the result and checks it against the master.</p>
     <button class="btn primary big" data-act="makeVersion" data-id="${id}" ${acc.length ? "" : "disabled"}>Create tailored CV (DOCX)</button>
     <h3>Versions for this job</h3>${versionsTable(S.cvVersions.filter((v) => v.jobId === id))}</div></div>
-  <div class="card mt"><h2>Preview with accepted changes</h2>${cvPreview(previewParas(M.model, acc), new Set(acc.map((a) => a.paragraph)))}</div>`;
+  <div class="card mt"><h2>Preview with accepted changes</h2>${cvPreview(previewParas(M.model, acc), new Set(acc.map((a) => (a.op === "insert" ? a.paragraph + 0.5 : a.paragraph))))}</div>`;
   return { title: "CV Optimizer", sub: j.title + " · " + j.employer, actions: `<a class="btn" href="#/job/${id}">Job analysis</a><a class="btn primary" href="#/builder/${id}">Application Builder →</a>`, html };
 });
 function previewParas(model, acc) {
-  const map = new Map(acc.map((a) => [a.paragraph, a]));
-  return model.paragraphs.filter((p) => !(map.get(p.i) && map.get(p.i).op === "remove")).map((p) => (map.has(p.i) ? { ...p, text: map.get(p.i).proposed } : p));
+  const map = new Map(), ins = new Map();
+  for (const a of acc) { if (a.op === "insert") { if (!ins.has(a.paragraph)) ins.set(a.paragraph, []); ins.get(a.paragraph).push(a); } else map.set(a.paragraph, a); }
+  const out = [];
+  for (const p of model.paragraphs) {
+    const m = map.get(p.i);
+    if (!(m && m.op === "remove")) out.push(m ? { ...p, text: m.proposed } : p);
+    for (const x of ins.get(p.i) || []) { const t = model.paragraphs[x.template] || p; out.push({ ...t, i: p.i + 0.5, section: p.section, isHeading: false, text: x.proposed }); }
+  }
+  return out;
 }
 function versionsTable(vs) {
   if (!vs.length) return `<p class="small muted">None yet.</p>`;
@@ -227,7 +234,7 @@ ACT.editSug = (d) => {
 ACT.saveSug = (d) => {
   const o = S.optim[d.id], s = o.suggestions.find((x) => x.id === d.s);
   let txt = document.getElementById("sugText").value.trim();
-  if (/^•\t/.test(s.original)) txt = "•\t" + txt;
+  if (/^•\t/.test(s.original || s.proposed) && !/^•\t/.test(txt)) txt = "•\t" + txt;
   const idx = evidenceIndex();
   const unsupported = E.findKeywords(txt).filter((k) => !E.findKeywords(s.original).some((x) => x.id === k.id) && !(idx[k.id] && idx[k.id].trusted.length));
   if (unsupported.length && !document.getElementById("sugWarn").dataset.shown) {

@@ -129,6 +129,11 @@ async function loadState() {
   S = st ? mergeSeed(st) : freshState();
   S.migrations = S.migrations || {};
   if (!S.migrations.gpaPrivate) { const g = S.profile.education.gpa = S.profile.education.gpa || {}; if (!g.value) { g.private = true; g.status = "confirmed_user"; g.note = "You keep your GPA private. CareerOS never asks for it."; } S.migrations.gpaPrivate = true; S.profileRev++; }
+  if (!S.migrations.coursework) { // course grades the user confirmed (6 Nov 2026): add to existing saved profiles once
+    for (const it of SEED.profile.items.filter((x) => x.type === "coursework")) if (!S.profile.items.some((x) => x.id === it.id)) S.profile.items.push(clone(it));
+    if (!(S.profile.education.courses || []).some((c) => c.grade)) S.profile.education.courses = clone(SEED.profile.education.courses);
+    S.migrations.coursework = true; S.profileRev++;
+  }
   if (!S.master.model && S.master.docxB64) await rebuildMasterModel();
   save(true);
 }

@@ -67,13 +67,15 @@ function trackAdvice(rows) {
 const PT = { type: "" };
 route("profile", () => {
   const P = S.profile;
-  const types = ["employment", "internship", "project", "leadership", "achievement", "training", "certification", "research"];
+  const types = ["employment", "internship", "project", "coursework", "leadership", "achievement", "training", "certification", "research"];
   const items = P.items.filter((i) => !PT.type || i.type === PT.type);
   const fld = (label, path, obj) => `<tr><th style="position:static;width:170px">${label}</th><td><div class="row"><input type="text" value="${esc(obj.value)}" data-chg="pfield" data-p="${path}" style="flex:1;min-width:160px">${stPill(obj.status)}</div><div class="tiny muted">${esc(obj.note || "")}</div></td></tr>`;
   return {
     title: "My Career Profile", sub: "The single source of truth for every generated application",
     actions: `<button class="btn primary" data-act="editItem" data-id="">+ Add experience, project or certificate</button>`,
-    html: `<div class="grid g2"><div class="card"><h2>Personal and academic status</h2><table><tbody>
+    html: `${(() => { const qw = quickWins(); return qw.length ? `<div class="card mb"><h2>Quick wins: skills employers ask for that are not on your CV</h2><p class="small muted">Counted across the jobs you can apply for now. Tap <b>I have this</b> only if you can back it up with an example; CareerOS will then add it when it tailors a CV. Tap <b>No</b> to hide it.</p>
+      ${qw.map((x) => `<div class="row" style="padding:6px 0;border-bottom:1px solid var(--line);flex-wrap:nowrap"><div style="flex:1;min-width:0"><b class="small">${esc(x.term)}</b> <span class="tiny muted">asked for by ${x.n} job${x.n === 1 ? "" : "s"}</span></div><button class="btn sm primary" data-act="qwYes" data-k="${esc(x.id)}">I have this</button><button class="btn sm ghost" data-act="qwNo" data-k="${esc(x.id)}">No</button></div>`).join("")}</div>` : ""; })()}
+    <div class="grid g2"><div class="card"><h2>Personal and academic status</h2><table><tbody>
       <tr><th style="position:static;width:170px">Name</th><td>${esc(P.personal.name)}</td></tr><tr><th style="position:static">Contact</th><td class="small">${esc(P.personal.email)} · ${esc(P.personal.phone)} · ${esc(P.personal.city)}</td></tr>
       <tr><th style="position:static">Education</th><td class="small">${esc(P.education.degree)}, ${esc(P.education.university)} · ${esc(P.education.start)} to ${esc(P.education.expectedGraduation)} ${stPill(P.education.status)}<br><b>${esc(P.education.academicStatus)}</b></td></tr>
       <tr><th style="position:static">Graduated?</th><td><select data-chg="graduated"><option value="no" ${!P.education.graduated ? "selected" : ""}>No (student)</option><option value="yes" ${P.education.graduated ? "selected" : ""}>Yes, officially graduated</option></select> <input type="month" value="${esc(P.education.expectedGraduation)}" data-chg="gradDate"></td></tr>
@@ -107,7 +109,7 @@ ACT.editItem = (d) => {
   const it = S.profile.items.find((i) => i.id === d.id) || { id: "", type: "project", title: "", org: "", start: "", end: "", bullets: [], skills: [], tracks: [], status: "confirmed_user", evidence: [], notes: "" };
   modal(`<h2>${it.id ? "Edit" : "Add"} career evidence</h2><div class="grid g2">
     <label class="f">Title<input type="text" id="it_title" value="${esc(it.title)}"></label><label class="f">Organisation<input type="text" id="it_org" value="${esc(it.org)}"></label>
-    <label class="f">Type<select id="it_type">${["employment", "internship", "project", "leadership", "achievement", "training", "certification", "research", "competition"].map((t) => `<option ${t === it.type ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+    <label class="f">Type<select id="it_type">${["employment", "internship", "project", "coursework", "leadership", "achievement", "training", "certification", "research", "competition"].map((t) => `<option ${t === it.type ? "selected" : ""}>${t}</option>`).join("")}</select></label>
     <label class="f">Verification<select id="it_status">${Object.entries(E.STATUS_LABEL).map(([k, v]) => `<option value="${k}" ${k === it.status ? "selected" : ""}>${v}</option>`).join("")}</select></label>
     <label class="f">Start (YYYY-MM)<input type="text" id="it_start" value="${esc(it.start)}"></label><label class="f">End (YYYY-MM or Present)<input type="text" id="it_end" value="${esc(it.end)}"></label></div>
     <label class="f mt">Description / achievements (one per line, facts only)<textarea id="it_bullets">${esc((it.bullets || []).join("\n"))}</textarea></label>
