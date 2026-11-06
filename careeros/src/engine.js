@@ -915,6 +915,30 @@
     return { suggestions: kept, coverage: cov, tracks };
   }
   function cleanTitle(t) { return (t || "").replace(/\(.*?\)/g, "").replace(/\s*[-–|:]\s+.*$|\s*\|.*$/g, "").replace(/\s+/g, " ").replace(/[.\s]+$/, "").trim(); }
+  /** Several accepted changes can target the same paragraph (for example a skills addition and an integrity
+      correction on one line). Each was written against the master text, so they are merged into one change:
+      their edited spans are combined when they do not overlap. Overlapping edits keep the first and report the rest. */
+  function mergeParagraphChanges(changes) {
+    const out = [], conflicts = [], byPara = new Map();
+    for (const ch of changes) {
+      if (ch.op === "remove" || ch.paragraph == null) { out.push(ch); continue; }
+      const prev = byPara.get(ch.paragraph);
+      if (!prev) { const c = { ...ch, mergedIds: [ch.id], _spans: [] }; byPara.set(ch.paragraph, c); out.push(c); continue; }
+      if (prev.original !== ch.original) { conflicts.push({ id: ch.id, error: "Written against a different version of this line" }); continue; }
+      const span = (o, n) => { let a = 0; while (a < o.length && a < n.length && o[a] === n[a]) a++; let z = 0; while (z < o.length - a && z < n.length - a && o[o.length - 1 - z] === n[n.length - 1 - z]) z++; return { s: a, e: o.length - z, ins: n.slice(a, n.length - z) }; };
+      if (!prev._spans.length) prev._spans.push(span(prev.original, prev.proposed));
+      const sp = span(ch.original, ch.proposed);
+      const clash = prev._spans.some((q) => (sp.s < q.e && q.s < sp.e) || (sp.s === q.s && sp.e === q.e) || (sp.s === sp.e && sp.s >= q.s && sp.s <= q.e) || (q.s === q.e && q.s >= sp.s && q.s <= sp.e));
+      if (clash) { conflicts.push({ id: ch.id, error: "Changes the same words as another accepted suggestion on this line; keep one of them" }); continue; }
+      prev._spans.push(sp);
+      let txt = prev.original;
+      for (const q of prev._spans.slice().sort((x, y) => y.s - x.s || y.e - x.e)) txt = txt.slice(0, q.s) + q.ins + txt.slice(q.e);
+      prev.proposed = txt; prev.mergedIds.push(ch.id);
+      prev.reason = [prev.reason, ch.reason].filter(Boolean).join(" + ");
+    }
+    for (const c of out) delete c._spans;
+    return { changes: out, conflicts };
+  }
   function applySuggestionsToText(cvModel, accepted) {
     const map = new Map();
     for (const s of accepted) map.set(s.paragraph, s);
@@ -1078,7 +1102,7 @@
     TAXONOMY, TRACKS, STATUS_LABEL, TRUSTED,
     findKeywords, countVariant, profileEvidenceIndex, analyzeJob, extractConstraints, evaluateEligibility,
     scoreMatch, inferTracks, cvCoverage, requirementMatrix, atsAssessDocx, atsAssessPdfText,
-    readDocx, applyChangesToDocx, setFontWidths, estLines, editParagraphText, optimizeSuggestions, applySuggestionsToText, overflowEstimate,
+    readDocx, applyChangesToDocx, setFontWidths, estLines, editParagraphText, optimizeSuggestions, applySuggestionsToText, mergeParagraphChanges, overflowEstimate,
     generatePackage, defaultDevPotential, BULLET_VARIANTS, TOPICS, cleanTitle,
   };
 });

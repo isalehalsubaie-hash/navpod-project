@@ -2,6 +2,8 @@ const fs=require('fs');const E=require('../src/engine.js');
 const prof=JSON.parse(fs.readFileSync('../data/profile.json'));
 const cur=JSON.parse(fs.readFileSync('curated_li.json'));const ov=JSON.parse(fs.readFileSync('overrides.json'));
 const exLI=JSON.parse(fs.readFileSync('excluded_li.json'));
+// jobs the user already applied to (private, git-ignored list): dropped silently, not listed in excluded.json
+const appliedPriv=new Set(fs.existsSync('applied_private.json')?JSON.parse(fs.readFileSync('applied_private.json')).ids:[]);
 const det=JSON.parse(fs.readFileSync('li_details.json'));
 const today='2026-11-05';
 const noEm=s=>typeof s==='string'?s.replace(/—/g,' - '):s;
@@ -12,6 +14,7 @@ for(const k of defIds){const d=det[k];if(!d||!d.description||curIds.has('LI-'+k)
  cur.push({id:'LI-'+k,title:d.title,employer:d.company,location:d.location,country:'Saudi Arabia',type:d.criteria['Employment type']||'',seniority:d.criteria['Seniority level']||'',jobFunction:d.criteria['Job function']||'',industry:d.criteria['Industries']||'',published:d.date,postedAgo:d.posted_ago,applicants:d.applicants,description:d.description,source:d.url,applyUrl:d.url,status:d.closed?'Closed':'Open',verifiedDate:today,verification:'LinkedIn public job page fetched '+today+(d.closed?' shows "No longer accepting applications"':'; no closed notice shown'),verificationLevel:'Aggregator listing (LinkedIn public page)',origin:'research_session',salary:'Not disclosed',deadline:''});}
 const jobs=[],excluded=[...exLI.map(e=>({...e,category:'Excluded'}))];
 for(const j0 of cur){
+ if(appliedPriv.has(j0.id))continue;
  const o=ov[j0.id]||{};
  const j={...j0};delete j._el;delete j._score;delete j._c;
  if(o.exclude){excluded.push({id:j.id,title:j.title,employer:j.employer,reason:o.exclude,source:j.source,category:'Excluded'});continue;}

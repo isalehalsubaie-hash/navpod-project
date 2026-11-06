@@ -9,7 +9,7 @@ const path = require('path');
   p.on('console', (m) => { if (m.type() === 'error') errs.push('CONSOLE ' + m.text()); });
   const url = 'file://' + path.resolve(__dirname, '../CareerOS.html');
   await p.goto(url); await p.waitForSelector('#nav a', { timeout: 20000 });
-  const routes = ['dashboard','discover','analysis','profile','cv','optimize','builder','tracker','market','watchlist','keywords','settings','ai','compare','interview','devmap','analytics','gmail','optimize/TRACK-ME','company/Hitachi%20Energy','job/CO-0003','builder/CO-0003','interview/CO-0003'];
+  const routes = ['dashboard','discover','analysis','profile','cv','optimize','builder','tracker','market','watchlist','keywords','settings','ai','compare','interview','devmap','analytics','gmail','optimize/TRACK-ME','company/Hitachi%20Energy','job/CO-0001','builder/CO-0001','interview/CO-0001'];
   for (const r of routes) {
     await p.goto(url + '#/' + r); await p.waitForTimeout(r === 'cv' ? 2500 : 600);
     const t = await p.textContent('#title'); const bad = await p.$('text=Something went wrong');

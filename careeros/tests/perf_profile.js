@@ -13,7 +13,7 @@ const { chromium, devices } = require('playwright'); const path = require('path'
   await cdp.send('Profiler.start');
   await p.goto('file://' + path.resolve(__dirname, '../CareerOS.html')); await p.waitForSelector('#nav a', { timeout: 120000 });
   top((await cdp.send('Profiler.stop')).profile, 'boot');
-  await cdp.send('Profiler.start'); await p.evaluate(() => go('#/builder/CO-0003')); await p.waitForTimeout(200); top((await cdp.send('Profiler.stop')).profile, 'open builder');
+  await cdp.send('Profiler.start'); await p.evaluate(() => go('#/builder/CO-0001')); await p.waitForTimeout(200); top((await cdp.send('Profiler.stop')).profile, 'open builder');
   await p.evaluate(() => go('#/profile')); await p.waitForTimeout(300);
   await cdp.send('Profiler.start'); await p.fill('input[data-p="personal.nationality"]', 'Saudi'); await p.dispatchEvent('input[data-p="personal.nationality"]', 'change'); await p.waitForTimeout(500); top((await cdp.send('Profiler.stop')).profile, 'profile edit');
   await p.evaluate(() => go('#/discover')); await p.waitForTimeout(300);

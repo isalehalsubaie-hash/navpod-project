@@ -5,7 +5,7 @@ P = lambda *a: os.path.join(ROOT, *a)
 read = lambda p: open(P(p), encoding="utf-8").read()
 def js_safe(s): return s.replace("</script", "<\\/script").replace("<!--", "<\\!--")
 seed = {
-    "seedVersion": 3,
+    "seedVersion": 4,
     "researchDate": "2026-11-05",
     "profile": json.load(open(P("data/profile.json"))),
     "jobs": json.load(open(P("data/jobs.json"))),

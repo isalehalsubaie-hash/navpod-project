@@ -10,7 +10,7 @@ ok('Confirmation parser', a && a.title === 'Internship & Co-op Training' && a.co
 const idx = E.profileEvidenceIndex(P);
 const rows = J.slice(0, 40).map((job) => { const an = E.analyzeJob(job); return { job, a: an, el: E.evaluateEligibility(job, P, an, '2026-11-05'), m: E.scoreMatch(job, P, an, { evidenceIndex: idx }), v: E.careerValue(job, an, P) }; });
 ok('Career value in range and explained', rows.every((r) => r.v.total >= 0 && r.v.total <= 100 && r.v.factors.length === 6 && r.v.factors.every((f) => f.why)));
-const air = rows.find((r) => r.job.jobId === 'CO-0003'); ok('Airbus apprenticeship has structured development', air.v.factors.find((f) => f.key === 'development').points === 20, 'value ' + air.v.total);
+const air = rows.find((r) => r.job.jobId === 'CO-0001'); ok('Kidde role has structured development', air.v.factors.find((f) => f.key === 'development').points === 20, 'value ' + air.v.total);
 const cmp = E.compareJobs([rows[0], rows[1], rows.find((r) => r.el.label === 'RED')]);
 ok('Compare ranks a RED job last', cmp.rows[cmp.rows.length - 1].el.label === 'RED' && cmp.recommendation.length > 40, cmp.recommendation.slice(0, 120));
 const moves = E.nextBestMoves({ jobs: rows, applications: [], profile: P, master: { approved: false }, today: '2026-11-05', cvVersions: [], packages: [] });
@@ -21,6 +21,19 @@ const allRows = J.map((job) => { const an = E.analyzeJob(job); return { job, a: 
 const dm = E.devMap({ jobs: allRows, idx, profile: P });
 ok('Development map ranked with tiers and resources', dm.list.length > 10 && dm.list.every((x) => x.tier && x.res && x.res.length), dm.list.slice(0, 6).map((x) => x.term + '(' + x.n + ',' + x.tier.split(' ')[0] + ',' + x.cost + ')').join('; '));
 ok('No verified skill appears as a gap', !dm.list.some((x) => idx[x.id] && idx[x.id].trusted.length));
-const an = E.analytics({ applications: [{ jobId: 'CO-0003', status: 'Applied', appliedDate: '2026-10-01', channel: 'LinkedIn Easy Apply' }, { jobId: 'X', status: 'Interview', appliedDate: '2026-10-02', channel: 'LinkedIn Easy Apply', snapshot: { title: 't', employer: 'e', tracks: ['ME'] } }], jobById: (id) => J.find((j) => j.jobId === id), discovered: J.length, matchFor: () => 80 });
+const an = E.analytics({ applications: [{ jobId: 'CO-0001', status: 'Applied', appliedDate: '2026-10-01', channel: 'LinkedIn Easy Apply' }, { jobId: 'X', status: 'Interview', appliedDate: '2026-10-02', channel: 'LinkedIn Easy Apply', snapshot: { title: 't', employer: 'e', tracks: ['ME'] } }], jobById: (id) => J.find((j) => j.jobId === id), discovered: J.length, matchFor: () => 80 });
 ok('Analytics rates and small-sample warning', an.submitted === 2 && an.responseRate === 50 && /too small/.test(an.observations[0]));
 ok('No em dash in engine2 strings', !require('fs').readFileSync(__dirname + '/../src/engine2.js', 'utf8').includes('—'));
+// Career-site confirmation matching (generic examples, not real applications)
+const cj = [{ jobId: 'A', title: 'Graduate Trainee Program', employer: 'Acme Energy' }, { jobId: 'C', title: 'Project Engineer', employer: 'Beta Systems' }, { jobId: 'D', title: 'Field Engineer Intern', employer: 'Gamma Co' }];
+const mc = (o) => (E.matchConfirmation(o, cj) || []).map((x) => x.jobId).join();
+ok('Confirmation: title and employer matched', mc({ subject: 'Thank you for applying', snippet: 'Thank you for applying for the position of Graduate Trainee Program - R123 at Acme Energy' }) === 'A');
+ok('Confirmation: longer title is not a match', mc({ subject: 'Thanks for applying to Beta Systems', snippet: 'Your application for the Senior Project Engineer job was submitted successfully' }) === '');
+ok('Confirmation: other employer is not a match', mc({ subject: 'Thanks for applying to Delta', snippet: 'Your application for the Project Engineer job was submitted' }) === '');
+ok('Confirmation: job alert is not an application', mc({ subject: 'New jobs for you', snippet: 'Field Engineer Intern at Gamma Co' }) === '');
+ok('Confirmation: employer from sender', mc({ subject: 'Application received', snippet: 'We received your application for Field Engineer Intern', from: 'careers@gamma.com' }) === 'D');
+// Same-line CV changes are merged, overlapping ones reported
+const E1 = require('../src/engine.js'); const line = 'UAV Design, ArduPilot, Mission Planner, Autonomous Navigation';
+const mg = E1.mergeParagraphChanges([{ id: 'S4', paragraph: 5, original: line, proposed: line + ', Systems Integration' }, { id: 'S6', paragraph: 5, original: line, proposed: line.replace('Mission Planner', 'Mission Planner (training)') }, { id: 'S9', paragraph: 5, original: line, proposed: line.replace('Mission Planner', 'QGroundControl') }]);
+ok('Same-line changes merged', mg.changes.length === 1 && mg.changes[0].proposed === 'UAV Design, ArduPilot, Mission Planner (training), Autonomous Navigation, Systems Integration', mg.changes[0].proposed);
+ok('Overlapping same-line change reported', mg.conflicts.length === 1 && mg.conflicts[0].id === 'S9');

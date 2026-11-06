@@ -6,7 +6,7 @@ const { chromium, devices } = require('playwright'); const path = require('path'
   await ctx.addInitScript(() => { window.CAREEROS_AUTO_CONFIRM = true; });
   const p = await ctx.newPage(); const url = 'file://' + path.resolve(__dirname, file);
   await p.goto(url); await p.waitForSelector('#nav a');
-  const routes = (process.argv[4] || 'dashboard,discover,job/CO-0003,analysis,profile,cv,optimize/CO-0003,builder/CO-0003,tracker,market,watchlist,keywords,settings').split(',');
+  const routes = (process.argv[4] || 'dashboard,discover,job/CO-0001,analysis,profile,cv,optimize/CO-0001,builder/CO-0001,tracker,market,watchlist,keywords,settings').split(',');
   for (const r of routes) {
     await p.evaluate((h) => go('#/' + h), r); await p.waitForTimeout(r.startsWith('cv') ? 2000 : 700);
     const ow = await p.evaluate(() => document.documentElement.scrollWidth);

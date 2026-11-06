@@ -170,12 +170,13 @@ const GM = { busy: false, found: null };
 route("gmail", () => {
   const avail = !!HOOKS.mcp;
   const f = GM.found;
-  return { title: "Import from Gmail", sub: "Job-alert emails and LinkedIn application confirmations",
-    html: avail ? `<div class="card mb"><h2>What this does</h2><p class="small">Reads your own LinkedIn job-alert emails and "your application was sent" confirmations through your Gmail connector, inside this private page. Nothing is sent anywhere else. Imported alert jobs are marked <b>From job alert (not yet verified)</b>: only title, company, location and the LinkedIn link are known until you open the advert.</p>
+  return { title: "Import from Gmail", sub: "Job alerts plus application confirmations from LinkedIn and employer career sites",
+    html: avail ? `<div class="card mb"><h2>What this does</h2><p class="small">Reads your own LinkedIn job-alert emails, LinkedIn "your application was sent" confirmations and employer career-site confirmations (Workday, Workable, SmartRecruiters and similar) through your Gmail connector, inside this private page. Nothing is sent anywhere else. Imported alert jobs are marked <b>From job alert (not yet verified)</b>: only title, company, location and the LinkedIn link are known until you open the advert.</p>
       <div class="row mt"><label class="f">Look back<select id="gm_days"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="120">120 days</option></select></label><button class="btn primary big" data-act="gmScan" ${GM.busy ? "disabled" : ""}>${GM.busy ? "Scanning..." : "Scan my Gmail"}</button></div></div>
       ${f ? `<div class="grid g2"><div class="card"><h2>Applications found: ${f.apps.length}</h2><p class="tiny muted">${f.apps.filter((a) => a.isNew).length} not yet in your tracker. LinkedIn's confirmation email is evidence you submitted, so these are imported as Applied with the date from the email.</p>${f.apps.slice(0, 80).map((a) => `<div class="tiny" style="padding:3px 0;border-bottom:1px solid var(--line)">${a.isNew ? "🆕 " : "✓ "}<b>${esc(a.title)}</b> · ${esc(a.company)} · ${esc(a.location)} · applied ${esc(a.appliedDate)}</div>`).join("")}</div>
+        <div class="card"><h2>Career-site applications matched: ${f.portal.length}</h2><p class="tiny muted">Confirmation emails from employer portals whose wording, full job title and employer match a job saved in CareerOS. ${f.portal.filter((a) => a.isNew).length} will be marked Applied with the email date.</p>${f.portal.map((a) => `<div class="tiny" style="padding:3px 0;border-bottom:1px solid var(--line)">${a.isNew ? "🆕 " : "✓ "}<b>${esc(a.title)}</b> · ${esc(a.company)} · email ${esc(a.date)}<div class="muted">${esc(a.subject)}</div></div>`).join("") || '<span class="small muted">None of your saved jobs matched.</span>'}</div>
         <div class="card"><h2>Alert jobs found: ${f.jobs.length}</h2><p class="tiny muted">${f.jobs.filter((x) => x.isNew).length} new to your database. Irrelevant titles are still imported; CareerOS scores them like any other job.</p>${f.jobs.slice(0, 80).map((x) => `<div class="tiny" style="padding:3px 0;border-bottom:1px solid var(--line)">${x.isNew ? "🆕 " : "✓ "}<b>${esc(x.title)}</b> · ${esc(x.company)} · ${esc(x.location)} · alert ${esc(x.date)}</div>`).join("")}</div></div>
-        <div class="row mt"><button class="btn primary big" data-act="gmImport">Import ${f.apps.filter((a) => a.isNew).length} application(s) and ${f.jobs.filter((x) => x.isNew).length} job(s)</button></div>` : ""}`
+        <div class="row mt"><button class="btn primary big" data-act="gmImport">Import ${f.apps.filter((a) => a.isNew).length + f.portal.filter((a) => a.isNew).length} application(s) and ${f.jobs.filter((x) => x.isNew).length} job(s)</button></div>` : ""}`
       : emptyState("Gmail import works on your private claude.ai page", "It uses your Gmail connector through Claude, which a local HTML file cannot reach. Open CareerOS from your claude.ai link to use it."),
   };
 });
@@ -200,7 +201,21 @@ ACT.gmScan = async () => {
         else for (const b of E.parseLinkedInBlocks(text)) if (!seenJ.has(b.liId)) { seenJ.add(b.liId); jobs.push({ ...b, date, isNew: !have.has(b.liId) }); }
       }
     }
-    GM.found = { apps, jobs };
+    // Employer career-site confirmations (Workday, Workable, SmartRecruiters, SuccessFactors, Greenhouse...): matched to saved jobs by full title and employer.
+    const portal = [], seenP = new Set();
+    const pq = "newer_than:" + days + "d -from:linkedin.com (\"thank you for applying\" OR \"thanks for applying\" OR \"your application\" OR \"received your application\" OR \"application received\" OR \"applying for\")";
+    let ptoken = "", ppages = 0;
+    do {
+      const r = await gmCall("search_threads", { query: pq, pageSize: 50, pageToken: ptoken || undefined, view: "THREAD_VIEW_MINIMAL" });
+      for (const t of r.threads || []) for (const msg of t.messages || []) {
+        const from = msg.sender || "", fromName = ((msg.addressDisplayNames || []).find((x) => x.emailAddress === from) || {}).displayName || "";
+        const m = E.matchConfirmation({ subject: msg.subject, snippet: msg.snippet, from, fromName }, S.jobs);
+        if (!m) continue;
+        for (const j of m) if (!seenP.has(j.jobId)) { seenP.add(j.jobId); const ex = appFor(j.jobId); portal.push({ jobId: j.jobId, title: j.title, company: j.employer, date: (msg.date || "").slice(0, 10), subject: msg.subject || "", isNew: !(ex && (SUBMITTED.has(ex.status) || ex.status === "Withdrawn")) }); }
+      }
+      ptoken = r.nextPageToken; ppages++;
+    } while (ptoken && ppages < 6);
+    GM.found = { apps, jobs, portal };
   } catch (e) { toast("Gmail scan failed: " + (e.message || e.code), 6000); }
   GM.busy = false; rerender();
 };
@@ -212,6 +227,13 @@ ACT.gmImport = () => {
     let j = byLi(a.liId);
     if (!j) { j = { id: "LI-" + a.liId, jobId: "GM-" + a.liId, title: a.title, employer: a.company, location: a.location, country: "Saudi Arabia", type: "", seniority: "", description: "", source: a.url, applyUrl: a.url, published: "", firstSeen: TODAY(), deadline: "", status: "Unknown", verifiedDate: a.appliedDate, verification: "From your LinkedIn application confirmation (" + a.appliedDate + ").", verificationLevel: "Application confirmation email", origin: "gmail_application", salary: "Not disclosed", tracks: [] }; j.tracks = E.inferTracks(j, E.analyzeJob(j)); S.jobs.push(j); }
     if (!appFor(j.jobId)) { S.applications.push({ id: uid("APP"), jobId: j.jobId, liId: a.liId, status: "Applied", created: TODAY(), appliedDate: a.appliedDate, deadline: "", followUp: "", contact: "", notes: "Imported from LinkedIn confirmation email", channel: "LinkedIn Easy Apply", source: "gmail_import", cvVersionId: "", packageId: "", history: [{ date: a.appliedDate, status: "Applied" }], snapshot: { title: a.title, employer: a.company, location: a.location, tracks: j.tracks } }); na++; }
+  }
+  for (const p of (f.portal || []).filter((p) => p.isNew)) {
+    const j = jobById(p.jobId); if (!j) continue;
+    let a = appFor(j.jobId);
+    if (!a) { a = { id: uid("APP"), jobId: j.jobId, snapshot: { title: j.title, employer: j.employer, location: j.location, tracks: j.tracks || [], source: j.source }, status: "Interested", created: TODAY(), appliedDate: "", deadline: j.deadline || "", followUp: "", contact: "", notes: "", cvVersionId: "", packageId: "", history: [] }; S.applications.push(a); }
+    if (SUBMITTED.has(a.status) || a.status === "Withdrawn") continue;
+    a.status = "Applied"; a.appliedDate = a.appliedDate || p.date; a.channel = a.channel || "Employer career portal"; a.source = "gmail_import"; a.notes = (a.notes ? a.notes + "\n" : "") + "Imported from confirmation email: " + p.subject; a.history.push({ date: p.date || TODAY(), status: "Applied" }); na++;
   }
   invalidate(); logActivity("Gmail import: " + na + " applications, " + nj + " jobs"); save(); GM.found = null; toast("Imported " + na + " application(s) and " + nj + " job(s)", 4000); go("#/analytics");
 };

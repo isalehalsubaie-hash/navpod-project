@@ -24,7 +24,8 @@ Built for Saleh Abdullah Alsubaie, research snapshot of **5 November 2026** (two
 | Interviews | Briefing from the advert and your evidence: fundamentals per track, advert-based, behavioural and CV questions, STAR outlines, questions to ask, DOCX, optional AI deepening |
 | Development map | Gaps ranked by frequency, relevance, cost and how often mandatory, split into Essential / Competitive advantage / Optional, with free and low-cost resources and a three-stage roadmap |
 | Analytics | Submitted, responses, interviews, offers, rates, and breakdowns by track, channel, CV version, location, employer and month, with small-sample warnings |
-| Gmail import | Reads your LinkedIn job-alert emails and "your application was sent" confirmations through your Gmail connector (search and read only). Imports past applications as Applied with the email date, and alert jobs as unverified |
+| Gmail import | Reads your LinkedIn job-alert emails, LinkedIn "your application was sent" confirmations and employer career-site confirmations (Workday, Workable, SmartRecruiters, SuccessFactors and similar) through your Gmail connector (search and read only). Imports past applications as Applied with the email date, and alert jobs as unverified. A career-site email is matched to a saved job only when it reads like a confirmation and contains the full job title and the employer |
+| Already applied | Jobs whose tracker status is Applied or later are not suggested again (Discover, Dashboard, next best moves, AI). They stay in the tracker; Discover has a "Show them" switch |
 | Discovery | City chips (Riyadh, Jeddah, Dammam, Khobar, Dhahran, Jubail, Yanbu, NEOM, GCC, Remote), career-value sort, collapsible filters on mobile, NEW badge for adverts published in the last 2 days or newly imported |
 
 
@@ -137,14 +138,16 @@ cd careeros/build && npm install                      # jszip, @xmldom/xmldom, p
 cd .. && python3 build/build.py                       # rebuild CareerOS.html
 node build/export_data.js && python3 build/make_xlsx.py   # rebuild exports
 node tests/e2e.js                                     # 48 end-to-end checks in headless Chromium
-node tests/e2e2.js                                    # 30 CareerOS 2.0 checks on the hosted build (simulated AI, Gmail, storage)
+node tests/e2e2.js                                    # 32 CareerOS 2.0 checks on the hosted build (simulated AI, Gmail, storage)
 node tests/web_e2e.js                                 # 14 hosted-page checks (blocked dialogs, private storage, reload)
+node tests/save_atomic_e2e.js                         # interrupted saves and unreadable data never lose your data
+node tests/applied_e2e.js                             # jobs you applied to are not suggested again
 node tests/test_engine2.js                            # engine 2.0 unit tests
 node tests/test_pdf.js <outdir> <file.docx>           # in-app PDF renderer
 node tests/test_tailoring_pages.js                    # renders tailored CVs with LibreOffice and checks page count and integrity
 node tests/test_docx.js                               # DOCX read/edit unit check
 ```
 
-Research scripts in `research/` reproduce the job collection (`li_collect.py`, `li_detail.py`), curation (`curate.js`, `overrides.json`, `manual_records.json`) and database build (`build_jobs.js`).
+Research scripts in `research/` reproduce the job collection (`li_collect.py`, `li_detail.py`), curation (`curate.js`, `overrides.json`, `manual_records.json`) and database build (`build_jobs.js`). Jobs you have already applied to can be listed in `research/applied_private.json` (git-ignored, never published); `build_jobs.js` and `hide_applied.js` leave them out of the seed without recording why.
 
 Third-party code bundled in the HTML: JSZip (MIT or GPLv3), PDF.js (Apache 2.0), jsPDF (MIT) and a Latin subset of Source Sans Pro (SIL Open Font License 1.1).

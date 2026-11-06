@@ -17,12 +17,12 @@ const SKIP = new Set(['wipe', 'reseed', 'restore', 'uploadCV', 'jdFile', 'jdImag
   const url = 'file://' + path.resolve(__dirname, web ? '../CareerOS_web.html' : '../CareerOS.html');
   await p.goto(url); await p.waitForSelector('#nav a', { timeout: 60000 });
   // prepare some state so conditional buttons exist
-  await p.evaluate(async () => { addToTracker('CO-0003'); S.compareIds = ['CO-0001', 'CO-0003']; go('#/builder/CO-0003'); });
+  await p.evaluate(async () => { addToTracker('CO-0001'); S.compareIds = ['CO-0010', 'CO-0001']; go('#/builder/CO-0001'); });
   await p.waitForTimeout(300); await p.click('[data-act="genPkg"]').catch(() => {}); await p.waitForTimeout(300);
-  await p.evaluate(() => go('#/optimize/CO-0003')); await p.waitForTimeout(300); await p.click('[data-act="optimize"]').catch(() => {}); await p.waitForTimeout(300);
+  await p.evaluate(() => go('#/optimize/CO-0001')); await p.waitForTimeout(300); await p.click('[data-act="optimize"]').catch(() => {}); await p.waitForTimeout(300);
   await p.click('[data-act="decide"][data-v="accepted"] >> nth=0').catch(() => {}); await p.waitForTimeout(300); await p.click('[data-act="makeVersion"]').catch(() => {}); await p.waitForTimeout(1500);
-  await p.evaluate(() => go('#/interview/CO-0003')); await p.waitForTimeout(300); await p.click('[data-act="ivGen"]').catch(() => {}); await p.waitForTimeout(400);
-  const routes = ['dashboard', 'discover', 'job/CO-0003', 'compare', 'analysis', 'watchlist', 'company/Hitachi%20Energy', 'cv', 'optimize/CO-0003', 'optimize/TRACK-ME', 'builder/CO-0003', 'builder', 'tracker', 'interview/CO-0003', 'profile', 'devmap', 'analytics', 'market', 'keywords', 'ai', 'gmail', 'settings'];
+  await p.evaluate(() => go('#/interview/CO-0001')); await p.waitForTimeout(300); await p.click('[data-act="ivGen"]').catch(() => {}); await p.waitForTimeout(400);
+  const routes = ['dashboard', 'discover', 'job/CO-0001', 'compare', 'analysis', 'watchlist', 'company/Hitachi%20Energy', 'cv', 'optimize/CO-0001', 'optimize/TRACK-ME', 'builder/CO-0001', 'builder', 'tracker', 'interview/CO-0001', 'profile', 'devmap', 'analytics', 'market', 'keywords', 'ai', 'gmail', 'settings'];
   const problems = []; let clicks = 0;
   for (const r of routes) {
     const go = async () => { await p.evaluate(() => { const m = document.getElementById('modal'); if (m) m.remove(); const a = document.getElementById('askmodal'); if (a) a.remove(); }); await p.evaluate((h) => go('#/' + h), r); await p.waitForTimeout(r === 'cv' ? 900 : 250); };

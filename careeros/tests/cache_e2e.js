@@ -9,9 +9,9 @@ const ok = (n, c, i) => { console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' 
   await p.goto(url); await p.waitForSelector('#nav a'); const cold = await snap(); await p.waitForTimeout(10500);
   await p.reload(); await p.waitForSelector('#nav a'); ok('Warm boot loaded cached analyses', await p.evaluate(() => acache.size > 200));
   const warm = await snap(); ok('Warm boot results identical to cold boot', cold === warm);
-  const before = await p.evaluate(() => C(jobById('CO-0003')).a.keywords.map((k) => k.id).join());
-  await p.evaluate(() => { const j = jobById('CO-0003'); j.description = j.description.replace('Systems Engineering', 'Mechanical Design!!'); invalidate(j.jobId); });
-  const after = await p.evaluate(() => C(jobById('CO-0003')).a.keywords.map((k) => k.id).join());
+  const before = await p.evaluate(() => C(jobById('CO-0001')).a.keywords.map((k) => k.id).join());
+  await p.evaluate(() => { const j = jobById('CO-0001'); j.description = j.description.replace('Life Safety Leadership', 'Mechanical Design!!!!!'); invalidate(j.jobId); });
+  const after = await p.evaluate(() => C(jobById('CO-0001')).a.keywords.map((k) => k.id).join());
   ok('Edited advert (same length) re-analysed', before !== after && /mechdesign/.test(after));
   await b.close();
 })();

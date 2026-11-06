@@ -4,3 +4,4 @@ build/scored.json
 tests/out/
 research/one.html
 research/*.log
+research/applied_private.json

@@ -20,9 +20,10 @@ route("dashboard", () => {
   const avgCov = covs.length ? Math.round(covs.reduce((a, b) => a + b, 0) / covs.length) : null;
   const avgEv = reach.length ? Math.round(reach.map((j) => C(j).cov ? C(j).cov.evidenceCoverage : 0).reduce((a, b) => a + b, 0) / reach.length) : null;
   const attention = S.applications.map((a) => ({ a, j: jobById(a.jobId) })).filter((x) => x.j && ((x.a.followUp && x.a.followUp <= TODAY() && !["Rejected", "Accepted", "Withdrawn"].includes(x.a.status)) || x.a.status === "Interview" || x.a.status === "Follow-up required" || (x.a.status === "Applied" && x.a.appliedDate && daysUntil(x.a.appliedDate) < -21)));
-  const newest = active.slice().sort((a, b) => (b.firstSeen || b.published || "").localeCompare(a.firstSeen || a.published || "")).slice(0, 6);
-  const closing = active.filter((j) => j.deadline && daysUntil(j.deadline) >= 0 && daysUntil(j.deadline) <= 14).sort((a, b) => a.deadline.localeCompare(b.deadline));
-  const topHigh = reach.slice().sort((a, b) => (0.55 * C(b).m.total + 0.45 * C(b).v.total) - (0.55 * C(a).m.total + 0.45 * C(a).v.total)).slice(0, 5);
+  const fresh = active.filter((j) => !alreadyApplied(j));
+  const newest = fresh.slice().sort((a, b) => (b.firstSeen || b.published || "").localeCompare(a.firstSeen || a.published || "")).slice(0, 6);
+  const closing = fresh.filter((j) => j.deadline && daysUntil(j.deadline) >= 0 && daysUntil(j.deadline) <= 14).sort((a, b) => a.deadline.localeCompare(b.deadline));
+  const topHigh = reach.filter((j) => !alreadyApplied(j)).sort((a, b) => (0.55 * C(b).m.total + 0.45 * C(b).v.total) - (0.55 * C(a).m.total + 0.45 * C(a).v.total)).slice(0, 5);
   const dm = devMapData();
   const trackRows = Object.keys(TRACKS).map((t) => { const js = active.filter((j) => (j.tracks || []).includes(t)); return [trackName(t), js.filter((j) => ["GREEN", "YELLOW"].includes(C(j).el.label)).length, js.length + " active in total"]; }).sort((a, b) => b[1] - a[1]);
   const tile = (l, v, d, href) => `<a class="tile" href="${href}"><div class="l">${l}</div><div class="v">${v}</div>${d ? `<div class="d">${d}</div>` : ""}</a>`;
@@ -227,7 +228,7 @@ ACT.theme = () => { const o = ["auto", "light", "dark"]; S.settings.theme = o[(o
 ACT.setCompanion = (d, t) => { S.settings.companionUrl = t.value.replace(/\/$/, ""); save(); };
 ACT.testCompanion = async () => { const el = document.getElementById("compStatus"); el.textContent = "Testing..."; try { const r = await fetch(S.settings.companionUrl + "/health"); const j = await r.json(); el.innerHTML = `<b class="ok">Connected.</b> Search: ${esc(j.search || "not configured")} · PDF export: ${j.pdf ? "available" : "LibreOffice not found"}`; } catch (e) { el.innerHTML = `<b class="bad">Not reachable.</b> Start it with python3 tools/careeros_server.py`; } };
 ACT.backup = () => download("CareerOS_Backup_" + TODAY() + ".json", JSON.stringify(S), "application/json");
-ACT.restore = async (d, t) => { const f = t.files[0]; if (!f) return; try { const st = JSON.parse(await f.text()); if (!st.profile || !st.jobs) throw new Error("Not a CareerOS backup"); if (!await ask("Replace all current data with this backup?")) return; S = st; invalidate(); await save(true); toast("Backup restored"); go("#/dashboard"); } catch (e) { toast("Restore failed: " + e.message, 5000); } };
+ACT.restore = async (d, t) => { const f = t.files[0]; if (!f) return; try { const st = JSON.parse(await f.text()); if (!st.profile || !st.jobs) throw new Error("Not a CareerOS backup"); if (!await ask("Replace all current data with this backup?")) return; saveBlocked = ""; S = st; invalidate(); await save(true); toast("Backup restored"); go("#/dashboard"); } catch (e) { toast("Restore failed: " + e.message, 5000); } };
 ACT.exportProfile = () => download("CareerOS_Master_Profile.json", JSON.stringify(S.profile, null, 2), "application/json");
 ACT.exportJobs = () => {
   const H = ["Job ID", "Job Title", "Employer", "Location", "Career Track", "Employment Type", "Salary", "Education", "Experience (min years)", "Skills", "Publication Date", "Deadline", "Verification Date", "Job Status", "Eligibility", "Match Score", "Source", "Application URL", "Notes"];
@@ -235,7 +236,7 @@ ACT.exportJobs = () => {
   download("CareerOS_Opportunities_" + TODAY() + ".csv", "﻿" + [H, ...rows].map((r) => r.map((x) => '"' + String(x == null ? "" : x).replace(/"/g, '""') + '"').join(",")).join("\n"), "text/csv");
 };
 ACT.reseed = async () => { if (!await ask("Reload research jobs, companies and market facts? Manually imported jobs are kept.")) return; const manual = S.jobs.filter((j) => j.origin !== "research_session"); S.jobs = clone(SEED.jobs).concat(manual); S.companies = clone(SEED.companies); S.excluded = clone(SEED.excluded); S.market = clone(SEED.market); invalidate(); save(); toast("Research snapshot reloaded"); rerender(); };
-ACT.wipe = async () => { if (!await ask("Delete ALL CareerOS data stored in this browser? This cannot be undone.")) return; await idbClear(); S = freshState(); await rebuildMasterModel(); invalidate(); await save(true); toast("All data deleted. Fresh research snapshot loaded."); go("#/dashboard"); };
+ACT.wipe = async () => { if (!await ask("Delete ALL CareerOS data stored in this browser? This cannot be undone.")) return; saveBlocked = ""; await idbClear(); S = freshState(); await rebuildMasterModel(); invalidate(); await save(true); toast("All data deleted. Fresh research snapshot loaded."); go("#/dashboard"); };
 
 // ---------------------------------------------------------------- boot
 (async function boot() {

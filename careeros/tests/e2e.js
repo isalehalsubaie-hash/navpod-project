@@ -21,7 +21,7 @@ const results = []; const ok = (name, cond, info) => { results.push({ name, pass
   const locs = await p.$$eval('.job .c', (x) => x.map((e) => e.textContent)); ok('City filter Riyadh', locs.length > 0 && locs.every((t) => /Riyadh/i.test(t)), locs.length + ' jobs');
   await p.click('[data-act="clearF"]'); await p.waitForTimeout(300);
   await p.selectOption('select[data-k="sort"]', 'deadline'); await p.waitForTimeout(400);
-  const firstDeadline = await p.$eval('.job .t', (e) => e.textContent); ok('Sort by closest deadline', /Corporate Banking/.test(firstDeadline), firstDeadline);
+  const firstDeadline = await p.$eval('.job .t', (e) => e.textContent); const dlS = await p.evaluate(() => { const L = filteredJobs(); return { first: L[0].title, sorted: L.every((j, i) => !i || (L[i - 1].deadline || '9999') <= (j.deadline || '9999')) }; }); ok('Sort by closest deadline', firstDeadline.trim() === dlS.first.trim() && dlS.sorted, firstDeadline);
   await p.click('[data-act="clearF"]');
   await p.fill('input[data-inp="fq"]', 'drone'); await p.waitForTimeout(900);
   const dr = await p.$$eval('.job .t', (x) => x.map((e) => e.textContent)); ok('Search "drone"', dr.length >= 1, dr.join(' | '));
@@ -32,7 +32,7 @@ const results = []; const ok = (name, cond, info) => { results.push({ name, pass
   await p.click('[data-act="tab"][data-t="apply"]'); await p.click('[data-act="view"][data-v="table"]'); await p.waitForTimeout(400);
   ok('Table view', (await p.$$eval('table tbody tr', (x) => x.length)) > 10); await p.click('[data-act="view"][data-v="cards"]');
   // 2 Job analysis tabs
-  await nav('job/CO-0003');
+  await nav('job/CO-0001');
   for (const t of ['requirements', 'keywords', 'score', 'strategy', 'advert', 'overview']) { await p.click(`[data-act="jtab"][data-t="${t}"]`); await p.waitForTimeout(300); ok('Job tab ' + t, !(await p.$('text=Something went wrong'))); }
   const reqRows = await (async () => { await p.click('[data-act="jtab"][data-t="requirements"]'); await p.waitForTimeout(300); return p.$$eval('table tbody tr', (x) => x.length); })();
   ok('Requirement matrix rows', reqRows > 3, reqRows + ' rows');
@@ -54,8 +54,8 @@ const results = []; const ok = (name, cond, info) => { results.push({ name, pass
   const docxFile = await dl(() => p.click('.card:has-text("Versions for this job") [data-act="dlVersion"]'));
   ok('Tailored DOCX downloaded', fs.statSync(docxFile).size > 5000, path.basename(docxFile));
   // 4 Builder
-  await nav('builder/CO-0003'); await p.click('[data-act="genPkg"]'); await p.waitForTimeout(800);
-  const cl = await p.inputValue('textarea[data-k="coverLetter"]'); ok('Cover letter generated', /Airbus/.test(cl) && /Dear Hiring Team/.test(cl), cl.length + ' chars');
+  await nav('builder/CO-0001'); await p.click('[data-act="genPkg"]'); await p.waitForTimeout(800);
+  const cl = await p.inputValue('textarea[data-k="coverLetter"]'); ok('Cover letter generated', /Kidde/.test(cl) && /Dear Hiring Team/.test(cl), cl.length + ' chars');
   ok('Cover letter has no em dash', !/—/.test(cl));
   await p.fill('textarea[data-k="coverLetter"]', cl + '\nP.S. edited'); await p.waitForTimeout(400);
   for (const t of ['msg', 'form', 'strategy', 'interview', 'check']) { await p.click(`[data-act="btab"][data-t="${t}"]`); await p.waitForTimeout(300); ok('Builder tab ' + t, !(await p.$('text=Something went wrong'))); }
@@ -64,7 +64,7 @@ const results = []; const ok = (name, cond, info) => { results.push({ name, pass
   await p.click('[data-act="btab"][data-t="cover"]'); const coverDocx = await dl(() => p.click('[data-act="dlCover"]'), 'cover.docx'); ok('Cover letter DOCX', fs.statSync(coverDocx).size > 1000);
   await p.click('[data-act="btab"][data-t="check"]'); await p.click('[data-act="markApplied"]'); await p.waitForTimeout(800);
   // 5 Tracker
-  ok('Tracker shows application', /Engineering Apprentice/.test(await p.textContent('#content')));
+  ok('Tracker shows application', /Pre-Sales Engineer/.test(await p.textContent('#content')));
   const st = await p.$eval('select[data-k="status"]', (e) => e.value); ok('Status Applied after confirmation', st === 'Applied', st);
   await p.selectOption('select[data-k="status"]', 'Interview'); await p.waitForTimeout(400);
   await p.fill('input[data-k="followUp"]', '2026-11-20'); await p.dispatchEvent('input[data-k="followUp"]', 'change'); await p.waitForTimeout(400);
@@ -73,7 +73,7 @@ const results = []; const ok = (name, cond, info) => { results.push({ name, pass
   await p.reload(); await p.waitForSelector('#nav a'); await nav('tracker');
   ok('Persistence after reload: status', (await p.$eval('select[data-k="status"]', (e) => e.value)) === 'Interview');
   ok('Persistence after reload: follow-up', (await p.$eval('input[data-k="followUp"]', (e) => e.value)) === '2026-11-20');
-  await nav('builder/CO-0003'); ok('Persistence: edited cover letter', /P\.S\. edited/.test(await p.inputValue('textarea[data-k="coverLetter"]')));
+  await nav('builder/CO-0001'); ok('Persistence: edited cover letter', /P\.S\. edited/.test(await p.inputValue('textarea[data-k="coverLetter"]')));
   // 7 Profile edit triggers eligibility change
   await nav('job/CO-0001'); const before = await p.textContent('.el'); 
   await nav('profile'); await p.fill('input[data-p="personal.nationality"]', 'Saudi'); await p.dispatchEvent('input[data-p="personal.nationality"]', 'change'); await p.waitForTimeout(400);

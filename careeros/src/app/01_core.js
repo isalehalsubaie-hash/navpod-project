@@ -69,6 +69,7 @@ async function idbClear() { const db = await idb(); return new Promise((res) => 
 let saveTimer = null;
 function save(now) {
   clearTimeout(saveTimer);
+  if (saveBlocked) return Promise.resolve();
   const go = () => Promise.all([HOOKS.save ? null : idbSet("state", S).catch((e) => toast("Could not save: " + e.message)), HOOKS.save ? HOOKS.save(S) : null]).then(() => { S._savedAt = new Date().toISOString(); }).catch((e) => toast("Could not save: " + e.message, 5000));
   if (now) return go();
   saveTimer = setTimeout(go, 600);
@@ -115,11 +116,16 @@ function mergeSeed(st) {
   st.activity.unshift({ date: TODAY(), text: "Research update merged: " + added + " new opportunities" });
   return st;
 }
+let saveBlocked = "";
 async function loadState() {
-  let st = null;
-  try { st = HOOKS.load ? await HOOKS.load() : null; } catch (e) { console.warn(e); }
-  if (!st) { try { st = await idbGet("state"); } catch (e) { console.warn(e); } }
+  let st = null, readError = null;
+  try { st = HOOKS.load ? await HOOKS.load() : null; } catch (e) { console.warn(e); readError = e; }
+  // Local build: the browser database is the store, so a failed read must block saving. Hosted page: it is only an
+  // optional source for migrating older data, so a missing or failing browser database is ignored there.
+  if (!st && !readError && typeof indexedDB !== "undefined" && indexedDB) { try { st = await idbGet("state"); } catch (e) { console.warn(e); if (!HOOKS.save) readError = e; } }
   await loadAnalysisCache();
+  // Never save over data that exists but could not be read: start a temporary session and leave the stored copy alone.
+  if (!st && readError) { saveBlocked = "Your saved data could not be read (" + (readError.message || readError) + "). Nothing will be saved this session so your data is not overwritten. Reload the page to try again."; setTimeout(() => toast(saveBlocked, 12000), 500); }
   S = st ? mergeSeed(st) : freshState();
   S.migrations = S.migrations || {};
   if (!S.migrations.gpaPrivate) { const g = S.profile.education.gpa = S.profile.education.gpa || {}; if (!g.value) { g.private = true; g.status = "confirmed_user"; g.note = "You keep your GPA private. CareerOS never asks for it."; } S.migrations.gpaPrivate = true; S.profileRev++; }
@@ -173,6 +179,8 @@ function C(job) {
 }
 let jobById = (id) => S.jobs.find((j) => j.jobId === id);
 const appFor = (jobId) => S.applications.find((a) => a.jobId === jobId);
+// A job you already submitted (or withdrew from) is not suggested again; it stays in the tracker.
+const alreadyApplied = (j) => { const a = appFor(j.jobId); return !!a && (SUBMITTED.has(a.status) || a.status === "Withdrawn"); };
 const isExpired = (j) => j.status === "Closed" || (j.deadline && daysUntil(j.deadline) < 0);
 function profileChanged() { S.profileRev++; invalidate(); save(); }
 function logActivity(text) { S.activity.unshift({ date: TODAY(), text }); S.activity = S.activity.slice(0, 60); }

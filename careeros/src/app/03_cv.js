@@ -149,7 +149,10 @@ function wordDiff(a, b) {
   return out;
 }
 function optimState(jobId) { return S.optim[jobId]; }
-function acceptedChanges(o) { return o.suggestions.filter((s) => ["accepted", "edited"].includes((o.decisions[s.id] || {}).status)).map((s) => ({ ...s, proposed: (o.decisions[s.id] || {}).text || s.proposed })); }
+function acceptedRaw(o) { return o.suggestions.filter((s) => ["accepted", "edited"].includes((o.decisions[s.id] || {}).status)).map((s) => ({ ...s, proposed: (o.decisions[s.id] || {}).text || s.proposed })); }
+// accepted suggestions with same-line edits merged into one change (see E.mergeParagraphChanges)
+function acceptedMerged(o) { return E.mergeParagraphChanges(acceptedRaw(o)); }
+function acceptedChanges(o) { return acceptedMerged(o).changes; }
 route("optimize", (id) => {
   if (!id) {
     const list = S.jobs.filter((j) => !isExpired(j) && ["GREEN", "YELLOW", "ORANGE"].includes(C(j).el.label)).sort((a, b) => C(b).m.total - C(a).m.total).slice(0, 40);
@@ -179,7 +182,7 @@ route("optimize", (id) => {
   html += `<div class="grid g4 mb">
     <div class="tile"><div class="l">Keyword coverage: before</div><div class="v">${c.cov.keywordCoverage}%</div></div>
     <div class="tile"><div class="l">Keyword coverage: with accepted changes</div><div class="v">${after.keywordCoverage}%</div><div class="d">${after.counts.exact + after.counts.equivalent} of ${after.total}</div></div>
-    <div class="tile"><div class="l">Accepted / pending</div><div class="v">${acc.length} / ${nPending}</div><div class="d">${o.suggestions.length} suggestions</div></div>
+    <div class="tile"><div class="l">Accepted / pending</div><div class="v">${acceptedRaw(o).length} / ${nPending}</div><div class="d">${o.suggestions.length} suggestions</div></div>
     <div class="tile"><div class="l">Page overflow risk</div><div class="v ${of.risk === "high" ? "bad" : of.risk === "low" ? "warnc" : "ok"}" style="font-size:20px">${of.risk === "none" ? "None" : of.risk === "low" ? "Low" : "High"}</div><div class="d">Estimated ${of.delta >= 0 ? "+" : ""}${of.delta} line(s); about ${of.free} free</div></div></div>
   ${of.risk === "high" ? `<div class="flag high mb"><b>This set of changes will probably push the CV onto a second page</b> (estimated +${of.delta} line(s), about ${of.free} free). Reject some longer changes, or accept the suggested removal of a low-relevance block to make room. Check the page count after export.</div>` : ""}
   <div class="card"><div class="row between"><h2>Suggested changes</h2><div class="row"><button class="btn sm" data-act="acceptAll" data-id="${id}">Accept all non-removal</button><button class="btn sm" data-act="resetOpt" data-id="${id}">Restore original (reset all)</button><button class="btn sm" data-act="optimize" data-id="${id}">Regenerate</button></div></div>
@@ -191,7 +194,7 @@ route("optimize", (id) => {
     <td>${dcs.status ? `<div class="small"><b>${esc(dcs.status)}</b></div><button class="btn sm" data-act="decide" data-id="${id}" data-s="${s.id}" data-v="">Undo</button>` : `<div class="row" style="gap:4px"><button class="btn sm primary" data-act="decide" data-id="${id}" data-s="${s.id}" data-v="accepted">Accept</button><button class="btn sm" data-act="decide" data-id="${id}" data-s="${s.id}" data-v="rejected">Reject</button>${s.op === "remove" ? "" : `<button class="btn sm" data-act="editSug" data-id="${id}" data-s="${s.id}">Edit</button>`}</div>`}</td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">No changes suggested: the CV already reflects what this advert asks for, as far as your evidence allows.</td></tr>`}
   </tbody></table></div></div>
   <div class="grid g2 mt"><div class="card"><h2>Keywords after accepted changes</h2>${after.rows.map((r) => `<span class="kw ${r.status}" title="${esc(r.note)}">${esc(r.jdForms[0])}</span>`).join("")}<p class="tiny muted mt">Unconfirmed and missing keywords stay out of the CV. To use one, add evidence in <a href="#/profile">My Career Profile</a> first.</p></div>
-  <div class="card"><h2>Create the tailored copy</h2><p class="small">Applies the ${acc.length} accepted change(s) to a <b>new copy</b> of the master DOCX, keeps every run's formatting, then re-opens the result and checks it against the master.</p>
+  <div class="card"><h2>Create the tailored copy</h2><p class="small">Applies the ${acceptedRaw(o).length} accepted change(s) to a <b>new copy</b> of the master DOCX, keeps every run's formatting, then re-opens the result and checks it against the master.</p>
     <button class="btn primary big" data-act="makeVersion" data-id="${id}" ${acc.length ? "" : "disabled"}>Create tailored CV (DOCX)</button>
     <h3>Versions for this job</h3>${versionsTable(S.cvVersions.filter((v) => v.jobId === id))}</div></div>
   <div class="card mt"><h2>Preview with accepted changes</h2>${cvPreview(previewParas(M.model, acc), new Set(acc.map((a) => a.paragraph)))}</div>`;
@@ -243,7 +246,7 @@ ACT.makeVersion = async (d) => {
   const masterBytes = b64ToBytes(S.master.docxB64);
   const masterHashBefore = await sha(masterBytes);
   const r = await E.applyChangesToDocx(JSZip, masterBytes, acc, DOMParser, XMLSerializer);
-  const failed = r.log.filter((x) => !x.ok);
+  const failed = r.log.filter((x) => !x.ok).concat(acceptedMerged(o).conflicts.map((c) => ({ ...c, ok: false })));
   // integrity: reopen and compare
   const re = await E.readDocx(JSZip, r.bytes, DOMParser);
   const expected = previewParas(S.master.model, acc.filter((a) => !failed.find((f) => f.id === a.id)));

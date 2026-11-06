@@ -83,3 +83,17 @@ Bugs fixed:
 5. GPA: now private by default. No GPA prompts, to-dos or eligibility warnings; GPA minimums show as neutral notes. Existing saved data migrated.
 
 Verification: `tests/clickall.js` clicked 481 actions across 22 screens (desktop file and iPhone private page) with no errors; `tests/cache_e2e.js` (3/3) proves cached and fresh results are identical; `tests/merge_e2e.js` (7/7) proves research refreshes keep your data; all earlier suites still pass (48/48, 30/30, 14/14, 24/24, 13/13, 8/8, 12/12 tailoring pages).
+
+## Update, 6 November 2026: applied jobs, safer saving, CV merge fix
+
+Changes:
+1. Jobs already applied to are no longer suggested. Discover, the Dashboard (best matches, newest, closing soon), next best moves and the AI shortlist skip any job whose tracker status is Applied or later. The job stays in the tracker, and Discover shows how many are hidden with a "Show them" switch.
+2. Gmail import now also reads employer career-site confirmations (Workday, Workable, SmartRecruiters, SuccessFactors, Greenhouse and similar), not only LinkedIn. A confirmation is matched to a saved job only when the email reads like a confirmation, contains the job's full title as a standalone title (so "Senior Project Engineer" does not match "Project Engineer"), and names the employer.
+3. The research seed now leaves out listings the user has already applied to (private, git-ignored list). 272 jobs remain. Seed version bumped so saved data refreshes.
+
+Bugs fixed:
+1. Data loss on the private page: saves were split into parts written in place, so closing or reloading the page during a save could leave a mix of old and new parts. The next start could not read them, started empty and saved over the stored data. Saves are now atomic (changed parts go to a spare slot and the index is written last), and if stored data ever cannot be read, CareerOS shows a message and does not save that session instead of overwriting it. `tests/save_atomic_e2e.js` reproduces the failure on the previous build (3 of 3 checks fail) and passes on this one, 6 runs out of 6.
+2. CV Optimizer: two accepted suggestions on the same line (for example a skills addition and an integrity correction) produced a tailored CV with one change missing and an integrity warning. Same-line changes are now merged; changes that edit the same words are reported instead of silently dropped.
+
+Results: `e2e.js` 48/48, `e2e2.js` 32/32, `web_e2e.js` all pass, `save_atomic_e2e.js` 3/3, `applied_e2e.js` 6/6, `cache_e2e.js` 3/3, `merge_e2e.js` 7/7, `test_data.js` 24/24, `test_engine2.js` 20/20, `test_tailoring_pages.js` 0 failures, `smoke.js` 0 errors, `clickall.js` no problems on desktop and iPhone, local file and private page.
+

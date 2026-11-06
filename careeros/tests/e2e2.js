@@ -6,12 +6,13 @@ const results = []; const ok = (n, c, i) => { results.push(!!c); console.log((c 
 (async () => {
   const b = await chromium.launch();
   const mk = async (opts) => {
-    const ctx = await b.newContext(opts);
+    const ctx = await b.newContext(opts); const store = new Map(); // mock private store kept in the test process so reloads see every completed write
+    await ctx.exposeFunction('__dbGet', (k) => (store.has(k) ? JSON.parse(store.get(k)) : null)); await ctx.exposeFunction('__dbSet', (k, v) => { store.set(k, JSON.stringify(v)); });
     await ctx.addInitScript(() => {
       window.confirm = () => false; window.open = () => null;
-      const mem = JSON.parse(localStorage.getItem('mockdb') || '{}'); const persist = () => localStorage.setItem('mockdb', JSON.stringify(mem));
+      
       window.__downloads = []; window.__toolCalls = []; window.__mcpCalls = [];
-      const db = { collection: (p) => ({ doc: (k) => ({ get: async () => (mem[p + '/' + k] ? { exists: true, data: () => mem[p + '/' + k] } : { exists: false, data: () => undefined }), set: async (v) => { mem[p + '/' + k] = v; persist(); } }) }) };
+      const db = { collection: (p) => ({ doc: (k) => ({ get: async () => { const v = await window.__dbGet(p + '/' + k); return v ? { exists: true, data: () => v } : { exists: false, data: () => undefined }; }, set: async (v) => { await window.__dbSet(p + '/' + k, v); } }) }) };
       const sample = async (input, opts) => {
         const tool = (opts.tools || []).find((t) => t.name === 'search_jobs');
         const r = tool ? await tool.execute({ eligibility: ['GREEN', 'YELLOW'], limit: 3 }) : { rows: [] };
@@ -22,7 +23,7 @@ const results = []; const ok = (n, c, i) => { results.push(!!c); console.log((c 
       };
       const conf = 'Your application was sent to Test Robotics Co\n\nRobotics Integration Engineer\nTest Robotics Co\nRiyadh\nView job: https://www.linkedin.com/comm/jobs/view/9990001111/?t=1\n\n---------------------------------------------------------\n\nApplied on October 20, 2026----------------------------------------------------------------\n Now, take these next steps for more success\n';
       const alert = 'Your job alert for Engineer in Riyadh Region\n\nGraduate Mechanical Engineer\nExample Industrial Co\nRiyadh\n\nView job: https://www.linkedin.com/comm/jobs/view/9990002222/?x\n\n---------------------------------------------------------\n\nSee all jobs on LinkedIn: https://y';
-      const mcp = { callTool: async (server, tool, input) => { window.__mcpCalls.push(server + ':' + tool); if (tool === 'search_threads') return { payload: { threads: /application was sent/.test(input.query) ? [{ id: 't1' }] : [{ id: 't2' }] } }; if (tool === 'get_thread') return { payload: { messages: [{ date: '2026-10-20T10:00:00Z', plaintextBody: input.threadId === 't1' ? conf : alert }] } }; throw new Error('unknown tool'); } };
+      const mcp = { callTool: async (server, tool, input) => { window.__mcpCalls.push(server + ':' + tool); if (tool === 'search_threads') return { payload: { threads: /application was sent/.test(input.query) ? [{ id: 't1' }] : /thank you for applying/.test(input.query) ? [{ id: 't3', messages: [{ date: '2026-10-25T09:00:00Z', subject: 'Thank you for your application', snippet: 'Dear Candidate, thank you for applying for the position of Tendering Intern at Hitachi Energy. We will review it.', sender: 'hitachi@myworkday.com' }, { date: '2026-10-25T09:00:00Z', subject: 'New jobs for you', snippet: 'Tendering Intern at Hitachi Energy and 9 more', sender: 'alerts@example.com' }] }] : [{ id: 't2' }] } }; if (tool === 'get_thread') return { payload: { messages: [{ date: '2026-10-20T10:00:00Z', plaintextBody: input.threadId === 't1' ? conf : alert }] } }; throw new Error('unknown tool'); } };
       const api = { db, user: { id: async () => 'u777' }, downloads: { save: async ({ filename }) => { window.__downloads.push(filename); } }, sample, mcp };
       window.claude = { use: (n) => new Promise((r) => setTimeout(() => r(api[n] || null), 30)) };
     });
@@ -41,7 +42,7 @@ const results = []; const ok = (n, c, i) => { results.push(!!c); console.log((c 
   await nav('compare'); ok('Compare: recommendation for 2 jobs', /ranks first/.test(await p.textContent('#content')));
   ok('Career value on cards', await p.evaluate(() => S.jobs.length > 250));
   // Job page
-  await nav('job/CO-0003'); await p.click('[data-act="jtab"][data-t="value"]'); await p.waitForTimeout(300);
+  await nav('job/CO-0001'); await p.click('[data-act="jtab"][data-t="value"]'); await p.waitForTimeout(300);
   ok('Career value tab with 6 factors', (await p.$$('.factor')).length === 6);
   await p.click('[data-act="jtab"][data-t="overview"]'); await p.waitForTimeout(300);
   ok('Three independent assessments + readiness', /Three independent assessments/.test(await p.textContent('#content')) && /Application readiness/.test(await p.textContent('#content')));
@@ -57,13 +58,13 @@ const results = []; const ok = (n, c, i) => { results.push(!!c); console.log((c 
   ok('In-app master PDF export', (await p.evaluate(() => window.__downloads)).some((f) => /\.pdf$/.test(f)), (await p.evaluate(() => window.__downloads)).join(','));
   await p.click('[data-act="viewChanges"] >> nth=0'); await p.waitForTimeout(400); ok('Original vs tailored change review', /Original vs tailored/.test(await p.textContent('#modal'))); await p.click('#modal [data-act="closeModal"]');
   // Command center
-  await nav('builder/CO-0003'); await p.click('[data-act="genPkg"]'); await p.waitForTimeout(800);
+  await nav('builder/CO-0001'); await p.click('[data-act="genPkg"]'); await p.waitForTimeout(800);
   ok('Readiness score shown', /Application readiness: \d+%/.test(await p.textContent('#content')));
   await p.click('[data-act="btab"][data-t="msg"]'); await p.waitForTimeout(300); ok('Application email generated', /Subject: Application for/.test(await p.inputValue('textarea[data-k="messages.applicationEmail"]')));
   await p.click('[data-act="btab"][data-t="cover"]'); await p.waitForTimeout(200); await p.click('[data-act="approve"][data-k="coverLetter"]'); await p.waitForTimeout(300);
   ok('Approval recorded', await p.evaluate(() => S.packages.slice(-1)[0].approved.coverLetter === true));
   // Interview
-  await nav('interview/CO-0003'); await p.click('[data-act="ivGen"]'); await p.waitForTimeout(600);
+  await nav('interview/CO-0001'); await p.click('[data-act="ivGen"]'); await p.waitForTimeout(600);
   const iv = await p.textContent('#content'); ok('Interview briefing generated', /Engineering fundamentals|Behavioural questions/.test(iv) && /STAR/.test(iv));
   await p.click('[data-act="ivAI"]'); await p.waitForTimeout(1500); ok('Interview AI notes via tool calls', /apply first to CO-/.test(await p.textContent('#content')));
   // AI agent
@@ -74,7 +75,9 @@ const results = []; const ok = (n, c, i) => { results.push(!!c); console.log((c 
   // Gmail import
   await nav('gmail'); await p.click('[data-act="gmScan"]'); await p.waitForTimeout(1500);
   ok('Gmail scan parsed application and alert', /Applications found: 1/.test(await p.textContent('#content')) && /Alert jobs found: 1/.test(await p.textContent('#content')));
+  ok('Career-site confirmation matched to saved job', /Career-site applications matched: 1/.test(await p.textContent('#content')) && /Tendering Intern/.test(await p.textContent('#content')));
   await p.click('[data-act="gmImport"]'); await p.waitForTimeout(800);
+  ok('Career-site application imported as Applied', await p.evaluate(() => { const a = appFor('CO-0004'); return !!a && a.status === 'Applied' && a.appliedDate === '2026-10-25' && a.channel === 'Employer career portal'; }));
   ok('Imported application in tracker as Applied with email date', await p.evaluate(() => S.applications.some((a) => a.liId === '9990001111' && a.status === 'Applied' && a.appliedDate === '2026-10-20')));
   ok('Imported alert job marked unverified', await p.evaluate(() => S.jobs.some((j) => j.origin === 'gmail_alert' && /not yet verified/i.test(j.verification))));
   await nav('analytics'); ok('Analytics counts submitted', /Submitted<\/div><div class="v">[1-9]/.test(await p.innerHTML('#content')));
@@ -83,13 +86,13 @@ const results = []; const ok = (n, c, i) => { results.push(!!c); console.log((c 
   await p.evaluate(() => { S.settings.theme = 'dark'; applyTheme(); }); ok('Dark theme applies', (await p.evaluate(() => document.documentElement.dataset.theme)) === 'dark');
   // Persistence of 2.0 data
   await p.waitForTimeout(1500); await p.reload(); await p.waitForSelector('#nav a', { timeout: 30000 }); await p.waitForTimeout(1500);
-  ok('After reload: imported application, interview briefing, compare list persist', await p.evaluate(() => S.applications.length >= 2 && Object.keys(S.interviews || {}).length >= 1 && (S.compareIds || []).length === 2));
+  ok('After reload: imported application, interview briefing, compare list persist', await p.evaluate(() => S.applications.length >= 2 && Object.keys(S.interviews || {}).length >= 1 && (S.compareIds || []).length === 2), await p.evaluate(() => [S.applications.length, Object.keys(S.interviews || {}).length, JSON.stringify(S.compareIds)].join(' / ')));
   ok('No page errors (desktop)', errs.length === 0, errs.join(' | '));
   // iPhone layout audit on every screen
   const m = await (await mk({ ...devices['iPhone 13'] })).newPage(); const merr = []; m.on('pageerror', (e) => merr.push(e.message));
   await m.goto(url); await m.waitForSelector('#nav a', { timeout: 30000 }); await m.waitForTimeout(800);
   const over = [];
-  for (const r of ['dashboard', 'discover', 'job/CO-0003', 'compare', 'analysis', 'profile', 'cv', 'optimize/CO-0003', 'builder/CO-0003', 'tracker', 'interview', 'devmap', 'analytics', 'market', 'watchlist', 'company/Hitachi%20Energy', 'keywords', 'settings', 'ai', 'gmail']) {
+  for (const r of ['dashboard', 'discover', 'job/CO-0001', 'compare', 'analysis', 'profile', 'cv', 'optimize/CO-0001', 'builder/CO-0001', 'tracker', 'interview', 'devmap', 'analytics', 'market', 'watchlist', 'company/Hitachi%20Energy', 'keywords', 'settings', 'ai', 'gmail']) {
     await m.evaluate((h) => go('#/' + h), r); await m.waitForTimeout(r === 'cv' ? 1500 : 400);
     const w = await m.evaluate(() => document.documentElement.scrollWidth); if (w > 392) over.push(r + ':' + w);
   }

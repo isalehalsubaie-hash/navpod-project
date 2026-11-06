@@ -11,7 +11,7 @@ const { chromium, devices } = require('playwright'); const path = require('path'
   const time = async (label, fn) => { const s = Date.now(); await fn(); await p.evaluate(() => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)))); const ms = Date.now() - s; console.log(label.padEnd(34), String(ms).padStart(6), 'ms'); return ms; };
   console.log('boot to first screen'.padEnd(34), String(boot).padStart(6), 'ms');
   const res = { boot };
-  for (const r of ['dashboard', 'discover', 'job/CO-0003', 'compare', 'cv', 'optimize/CO-0003', 'builder/CO-0003', 'tracker', 'interview', 'devmap', 'analytics', 'market', 'watchlist', 'keywords', 'profile', 'ai', 'settings', 'discover']) res[r] = await time('open ' + r, () => p.evaluate((h) => go('#/' + h), r));
+  for (const r of ['dashboard', 'discover', 'job/CO-0001', 'compare', 'cv', 'optimize/CO-0001', 'builder/CO-0001', 'tracker', 'interview', 'devmap', 'analytics', 'market', 'watchlist', 'keywords', 'profile', 'ai', 'settings', 'discover']) res[r] = await time('open ' + r, () => p.evaluate((h) => go('#/' + h), r));
   res.filter = await time('Discover: filter by Riyadh', () => p.click('[data-act="cityChip"][data-c="Riyadh"]'));
   res.search = await time('Discover: type search "engineer"', async () => { await p.evaluate(() => { const d = document.getElementById('fdet'); if (d) d.open = true; }); await p.fill('input[data-inp="fq"]', 'engineer'); await p.waitForTimeout(400); });
   await p.evaluate(() => go('#/profile'));

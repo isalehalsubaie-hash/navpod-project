@@ -50,6 +50,7 @@ Rules:
 - You cannot browse the web or check live job boards. If a question needs that, say so and suggest Discover, Job Analysis or the Gmail import.
 - Eligibility, match, career value and readiness are separate measures; none is a probability of being hired.
 - The user keeps their GPA private by choice. Never ask for it or list it as missing; mention GPA minimums only as something to check.
+- Never recommend a job whose tracker status is Applied or later (Assessment, Interview, Rejected, Offer received, Accepted, Withdrawn): the user already applied. Suggest new roles instead.
 - Be concise and practical: short paragraphs or numbered steps. No em dashes. Plain text with simple bullets.`;
 function aiHistoryText() { const h = (S.aiChat || []).slice(-12).map((m) => ({ role: m.role, content: m.content })); while (h.length && h[0].role !== "user") h.shift(); return h; }
 async function aiSample() { return HOOKS.sample ? HOOKS.sample() : null; }
@@ -101,7 +102,7 @@ function localAnswer(q) {
   const ql = q.toLowerCase();
   const idm = q.match(/CO-\d{4}/i);
   const P = S.profile;
-  const top = (n, f) => S.jobs.filter((j) => !isExpired(j) && (!f || f(j))).sort((a, b) => (0.55 * C(b).m.total + 0.45 * C(b).v.total) - (0.55 * C(a).m.total + 0.45 * C(a).v.total)).slice(0, n);
+  const top = (n, f) => S.jobs.filter((j) => !isExpired(j) && !alreadyApplied(j) && (!f || f(j))).sort((a, b) => (0.55 * C(b).m.total + 0.45 * C(b).v.total) - (0.55 * C(a).m.total + 0.45 * C(a).v.total)).slice(0, n);
   if (idm && /eligib/.test(ql)) { const j = jobById(idm[0].toUpperCase()); if (!j) return "No job " + idm[0] + " in your database."; const c = C(j); return j.title + " (" + j.employer + "): " + c.el.label + ", " + c.el.summary + ".\n" + c.el.reasons.map((r) => "- " + r.level + ": " + r.msg).join("\n"); }
   if (idm && /cv|version/.test(ql)) { const j = jobById(idm[0].toUpperCase()); if (!j) return "No job " + idm[0] + "."; const t = (j.tracks || [])[0]; const map = { ME: "Mechanical Engineering", DEF: "UAV and Aerospace", UAV: "UAV and Aerospace", ROB: "UAV and Aerospace", INSP: "Safety and Inspection", HSE: "Safety and Inspection", PM: "Project Engineering", ENERGY: "Project Engineering", BD: "Business and Technical Development", STRAT: "Business and Technical Development" }; const vs = S.cvVersions.filter((v) => v.jobId === j.jobId); return vs.length ? "Use your tailored version " + vs[vs.length - 1].name + " (coverage " + vs[vs.length - 1].coverageAfter + "%)." : "Start from the " + (map[t] || "Master") + " CV track version in CV Studio, then tailor it for " + j.jobId + " in the CV Optimizer. Its track is " + (j.tracks || []).map(trackName).join(", ") + "."; }
   if (/today|this week|prioriti|next/.test(ql)) return "Your next best moves:\n" + nextMoves().map((m, i) => (i + 1) + ". " + m.title + "\n   " + m.why + " (" + m.time + ")").join("\n");

@@ -3,14 +3,15 @@
 const { chromium } = require('playwright'); const path = require('path');
 const ok = (n, c, i) => console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' + i : ''));
 (async () => {
-  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 390, height: 844 } }); const store = new Map(); // mock private store kept in the test process
+  await ctx.exposeFunction('__dbGet', (k) => (store.has(k) ? JSON.parse(store.get(k)) : null)); await ctx.exposeFunction('__dbSet', (k, v) => { store.set(k, JSON.stringify(v)); });
   await ctx.addInitScript(() => {
     window.confirm = () => false; window.open = () => null;
     try { Object.defineProperty(window, 'indexedDB', { value: undefined }); } catch (e) {}
-    const mem = JSON.parse(localStorage.getItem('mockdb') || '{}');
-    const persist = () => localStorage.setItem('mockdb', JSON.stringify(mem));
+    
+    
     window.__downloads = [];
-    const db = { collection: (p) => ({ doc: (k) => ({ get: async () => (mem[p + '/' + k] ? { exists: true, data: () => mem[p + '/' + k] } : { exists: false, data: () => undefined }), set: async (v) => { mem[p + '/' + k] = v; persist(); } }) }) };
+    const db = { collection: (p) => ({ doc: (k) => ({ get: async () => { const v = await window.__dbGet(p + '/' + k); return v ? { exists: true, data: () => v } : { exists: false, data: () => undefined }; }, set: async (v) => { await window.__dbSet(p + '/' + k, v); } }) }) };
     const api = { db, user: { id: async () => 'u123' }, downloads: { save: async ({ filename, data }) => { window.__downloads.push(filename); } } };
     window.claude = { use: (n) => new Promise((r) => setTimeout(() => r(api[n] || null), 50)) };
   });
@@ -20,7 +21,8 @@ const ok = (n, c, i) => console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' + 
   await p.click('#tabbar a[href="#/discover"]'); await p.waitForTimeout(500);
   ok('Internal routing to Discover', (await p.textContent('#title')) === 'Discover Opportunities');
   ok('URL hash untouched', !(await p.evaluate(() => location.hash)));
-  await p.click('.job a.t >> nth=1'); await p.waitForTimeout(500); ok('Open job via card link', /Airbus|Engineering Apprentice/.test(await p.textContent('#title')), await p.textContent('#title'));
+  const cardT = (await p.textContent('.job a.t >> nth=1')).trim(); await p.click('.job a.t >> nth=1'); await p.waitForTimeout(500); ok('Open job via card link', (await p.textContent('#title')).trim() === cardT, await p.textContent('#title'));
+  await p.evaluate(() => go('#/job/CO-0001')); await p.waitForTimeout(500);
   await p.click('#moreBtn'); await p.click('#actmenu >> text=Analyze and tailor my CV'); await p.waitForTimeout(500);
   await p.click('[data-act="optimize"]'); await p.waitForTimeout(600); await p.click('[data-act="acceptAll"]'); await p.waitForTimeout(500);
   await p.click('[data-act="makeVersion"]'); await p.waitForTimeout(600);
@@ -33,9 +35,9 @@ const ok = (n, c, i) => console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' + 
   await p.selectOption('select[data-k="status"]', 'Applied'); await p.waitForTimeout(400); await p.click('#ask-ok'); await p.waitForTimeout(400);
   await p.evaluate(() => go('#/profile')); await p.waitForTimeout(400);
   await p.fill('input[data-p="personal.availability"]', 'From February 2027'); await p.dispatchEvent('input[data-p="personal.availability"]', 'change'); await p.waitForTimeout(2500);
-  const stored = await p.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('mockdb') || '{}')));
+  const stored = [...store.keys()];
   ok('State written to private per-person store', stored.some((k) => k.startsWith('data/users/u123/careeros_')), stored.join(','));
-  const size = await p.evaluate(() => localStorage.getItem('mockdb').length); ok('Compact state size', size < 600000, size + ' chars');
+  const meta = JSON.parse(store.get('data/users/u123/careeros_meta')); const size = Array.from({ length: meta.n }, (_, i) => JSON.parse(store.get('data/users/u123/careeros_' + i + (meta.slots ? '_' + meta.slots[i] : ''))).s.length).reduce((a, b) => a + b, 0); ok('Compact state size', size < 600000, size + ' chars');
   await p.reload(); await p.waitForSelector('#nav a', { timeout: 30000 }); await p.waitForTimeout(1500);
   await p.evaluate(() => go('#/tracker')); await p.waitForTimeout(500);
   ok('After reload: tracker restored from store', (await p.$eval('select[data-k="status"]', (e) => e.value)) === 'Applied');

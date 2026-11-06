@@ -43,15 +43,21 @@ window.CAREEROS_HOOKS = (function () {
     return o;
   }
   const CHUNK = 300000;
-  let last = [];
+  /* Saves are atomic: a changed chunk is written to the slot ("a" or "b") that the current meta record does NOT use,
+     and the meta record (the list of slots) is written last. If the page closes mid-save, the previous meta still
+     points at a complete, consistent set of chunks. Old saves (no slots) are read as before. */
+  let last = [], lastSlots = [];
+  const key = (i, slot) => "careeros_" + i + (slot ? "_" + slot : "");
   H.load = async () => {
     const col = await getStore(); if (!col) return null;
     const meta = val(await col.doc("careeros_meta").get());
     if (!meta || !meta.n) return null;
+    const slots = Array.isArray(meta.slots) && meta.slots.length === meta.n ? meta.slots : new Array(meta.n).fill("");
     const parts = [];
-    for (let i = 0; i < meta.n; i++) { const c = val(await col.doc("careeros_" + i).get()); if (!c || typeof c.s !== "string") return null; parts.push(c.s); }
-    last = parts.slice();
-    return expand(JSON.parse(parts.join("")));
+    for (let i = 0; i < meta.n; i++) { const c = val(await col.doc(key(i, slots[i])).get()); if (!c || typeof c.s !== "string") throw new Error("Saved data is incomplete (part " + (i + 1) + " of " + meta.n + ")"); parts.push(c.s); }
+    const o = JSON.parse(parts.join(""));
+    last = parts.slice(); lastSlots = slots.slice();
+    return expand(o);
   };
   let busy = Promise.resolve();
   H.save = (S) => {
@@ -59,10 +65,12 @@ window.CAREEROS_HOOKS = (function () {
     busy = busy.then(async () => {
       const col = await getStore(); if (!col) return;
       const parts = []; for (let i = 0; i < json.length; i += CHUNK) parts.push(json.slice(i, i + CHUNK));
-      for (let i = 0; i < parts.length; i++) if (last[i] !== parts[i]) await col.doc("careeros_" + i).set({ s: parts[i] });
-      if (last.length !== parts.length || parts.some((p, i) => last[i] !== p)) await col.doc("careeros_meta").set({ n: parts.length, savedAt: new Date().toISOString() });
-      last = parts;
-    }).catch((e) => { console.warn(e); });
+      if (parts.length === last.length && parts.every((p, i) => last[i] === p)) return;
+      const slots = parts.map((p, i) => (last[i] === p && lastSlots[i] !== undefined ? lastSlots[i] : lastSlots[i] === "a" ? "b" : "a"));
+      for (let i = 0; i < parts.length; i++) if (!(last[i] === parts[i] && lastSlots[i] === slots[i])) await col.doc(key(i, slots[i])).set({ s: parts[i] });
+      await col.doc("careeros_meta").set({ n: parts.length, slots, savedAt: new Date().toISOString() });
+      last = parts; lastSlots = slots;
+    }).catch((e) => { console.warn(e); window.toast && toast("Could not save: " + (e.message || e), 5000); });
     return busy;
   };
   H.download = async (name, blob) => {

@@ -10,7 +10,7 @@ const ok = (n, c, i) => { console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' 
     const st = JSON.parse(JSON.stringify(S));
     st.seedVersion = 1;
     st.jobs = st.jobs.filter((j) => j.jobId !== 'CO-0288');                      // KPMG did not exist yet
-    const j3 = st.jobs.find((j) => j.jobId === 'CO-0003'); j3.notes = 'OLD NOTE'; j3.description = 'USER EDITED TEXT ' + j3.description; j3.userEdited = true;
+    const j3 = st.jobs.find((j) => j.jobId === 'CO-0001'); j3.notes = 'OLD NOTE'; j3.description = 'USER EDITED TEXT ' + j3.description; j3.userEdited = true;
     const j4 = st.jobs.find((j) => j.jobId === 'CO-0004'); j4.notes = 'OLD NOTE 4';
     st.jobs.push({ ...st.jobs[0], id: 'LI-GONE1', jobId: 'CO-9001', title: 'Removed listing', origin: 'research_session' });
     st.jobs.push({ ...st.jobs[0], id: 'LI-GONE2', jobId: 'CO-9002', title: 'Removed but tracked', origin: 'research_session' });
@@ -19,7 +19,7 @@ const ok = (n, c, i) => { console.log((c ? 'PASS ' : 'FAIL ') + n + (i ? ' :: ' 
     await idbSet('state', st);
   });
   await p.reload(); await p.waitForSelector('#nav a');
-  const r = await p.evaluate(() => ({ kpmg: !!jobById('CO-0288'), note4: jobById('CO-0004').notes, desc3: jobById('CO-0003').description.slice(0, 17), gone: !!jobById('CO-9001'), tracked: !!jobById('CO-9002'), manual: !!jobById('MAN-1'), ver: S.seedVersion, gpa: S.profile.education.gpa.private }));
+  const r = await p.evaluate(() => ({ kpmg: !!jobById('CO-0288'), note4: jobById('CO-0004').notes, desc3: jobById('CO-0001').description.slice(0, 17), gone: !!jobById('CO-9001'), tracked: !!jobById('CO-9002'), manual: !!jobById('MAN-1'), ver: S.seedVersion, gpa: S.profile.education.gpa.private }));
   ok('New research job added (KPMG CO-0288)', r.kpmg);
   ok('Research fields refreshed (notes)', r.note4 !== 'OLD NOTE 4');
   ok('Your edited description kept', r.desc3 === 'USER EDITED TEXT ');

@@ -1,5 +1,5 @@
 /* Discover Opportunities, Job details, Job Analysis input. */
-const F = { show: 30, q: "", tab: "apply", city: "", company: "", track: "", elig: "", minScore: 0, type: "", level: "", exp: "", deadline: "", recent: "", sort: "match", paid: "" };
+const F = { show: 30, showApplied: false, q: "", tab: "apply", city: "", company: "", track: "", elig: "", minScore: 0, type: "", level: "", exp: "", deadline: "", recent: "", sort: "match", paid: "" };
 function jobCity(j) { const l = (j.location || "").toLowerCase(); if (/remote/.test(l)) return "Remote"; if (/riyadh|الرياض|kharj/.test(l)) return "Riyadh"; if (/jedd|jidd/.test(l)) return "Jeddah"; if (/makkah|mecca|kaec|king abdullah|rabigh/.test(l)) return "Makkah Region"; if (/dammam/.test(l)) return "Dammam"; if (/khobar/.test(l)) return "Khobar"; if (/dhahran/.test(l)) return "Dhahran"; if (/jubail|jubayl/.test(l)) return "Jubail"; if (/yanbu/.test(l)) return "Yanbu"; if (/neom/.test(l)) return "NEOM"; if (/eastern|ras al|qatif/.test(l)) return "Eastern Province (other)"; if (/madinah|medina/.test(l)) return "Madinah Region"; if (/tabuk|duba/.test(l)) return "Tabuk"; if (/dubai|abu dhabi|uae|emirates|qatar|doha|kuwait|bahrain|oman|muscat/.test(l)) return "GCC"; if (/saudi/.test(l)) return "Saudi Arabia (unspecified)"; return "Other Saudi"; }
 function jobKind(j) { const t = ((j.type || "") + " " + (j.title || "")).toLowerCase(); if (/intern|co-?op|summer|trainee|tamheer|apprentic/.test(t)) return "Internship / trainee"; if (/graduate|gdp|development program|fresh/.test(t)) return "Graduate program / fresh grad"; if (/contract/.test(t)) return "Contract"; return "Full-time"; }
 function paidLabel(j) { if (j.salary && j.salary !== "Not disclosed") return "Paid: " + j.salary; if (/volunteer|unpaid/i.test((j.type || "") + (j.description || "").slice(0, 3000)) && !/stipend|allowance|salary|paid/i.test(j.description || "")) return "Unpaid or not stated"; return "Compensation not disclosed"; }
@@ -10,6 +10,7 @@ function filteredJobs() {
   else if (F.tab === "stretch") list = list.filter((j) => !isExpired(j) && C(j).el.label === "ORANGE");
   else if (F.tab === "red") list = list.filter((j) => !isExpired(j) && C(j).el.label === "RED");
   else if (F.tab === "all") list = list.filter((j) => !isExpired(j));
+  if (!F.showApplied) list = list.filter((j) => !alreadyApplied(j));
   if (q) list = list.filter((j) => (j.title + " " + j.employer + " " + j.location + " " + (j.description || "").slice(0, 4000)).toLowerCase().includes(q));
   if (F.city) list = list.filter((j) => jobCity(j) === F.city);
   if (F.company) list = list.filter((j) => j.employer === F.company);
@@ -56,7 +57,8 @@ function jobRow(j) {
     <td>${elPill(c.el.label)}</td><td class="num">${c.m.total}</td><td class="num">${c.v.total}</td><td>${j.published ? fmtDate(j.published) : "-"}</td><td>${j.deadline ? fmtDate(j.deadline) : "-"}</td><td><a href="${esc(j.applyUrl || j.source)}" target="_blank" rel="noopener">Apply ↗</a></td></tr>`;
 }
 route("discover", () => {
-  const all = S.jobs.filter((j) => !isExpired(j));
+  const appliedN = S.jobs.filter((j) => !isExpired(j) && alreadyApplied(j)).length;
+  const all = S.jobs.filter((j) => !isExpired(j) && (F.showApplied || !alreadyApplied(j)));
   const counts = { apply: all.filter((j) => ["GREEN", "YELLOW"].includes(C(j).el.label)).length, stretch: all.filter((j) => C(j).el.label === "ORANGE").length, red: all.filter((j) => C(j).el.label === "RED").length, all: all.length, expired: S.excluded.length + S.jobs.filter(isExpired).length };
   const opt = (arr, cur) => arr.map((v) => `<option ${v[0] === String(cur) ? "selected" : ""} value="${esc(v[0])}">${esc(v[1])}</option>`).join("");
   const cities = [...new Set(S.jobs.map(jobCity))].sort();
@@ -75,6 +77,7 @@ route("discover", () => {
     html: `<div class="tabs">${[["apply", "Apply Now (Green + Yellow)"], ["stretch", "Stretch (Orange)"], ["red", "Not eligible (Red)"], ["all", "All active"], ["expired", "Expired & excluded"]].map(([k, l]) => `<a class="${F.tab === k ? "on" : ""}" data-act="tab" data-t="${k}">${l} <span class="muted">${counts[k]}</span></a>`).join("")}</div>
     ${F.tab === "expired" ? "" : `<input type="search" placeholder="Search title, company or advert text" value="${esc(F.q)}" data-inp="fq" class="mb" style="width:100%">
     <div class="chips mb">${["", "Riyadh", "Jeddah", "Dammam", "Khobar", "Dhahran", "Jubail", "Yanbu", "NEOM", "GCC", "Remote"].map((c) => `<button class="chip ${F.city === c ? "on" : ""}" data-act="cityChip" data-c="${c}">${c || "All locations"}</button>`).join("")}</div>
+    ${appliedN ? `<div class="tiny muted mb">${F.showApplied ? "Including" : "Hiding"} ${appliedN} job${appliedN === 1 ? "" : "s"} you already applied to (they stay in your tracker). <button class="btn sm ghost" data-act="toggleApplied">${F.showApplied ? "Hide them" : "Show them"}</button></div>` : ""}
     <details class="mb" id="fdet" ${window.innerWidth > 820 ? "open" : ""}><summary>Filters and sorting${activeFilterCount() ? " (" + activeFilterCount() + " active)" : ""}</summary><div class="filters mt">
       <select data-chg="f" data-k="city"><option value="">All cities</option>${opt(cities.map((c) => [c, c]), F.city)}</select>
       <select data-chg="f" data-k="company" style="max-width:180px"><option value="">All companies</option>${opt(companies.map((c) => [c, c]), F.company)}</select>
@@ -293,6 +296,7 @@ ACT.recheck = async (d) => {
   invalidate(j.jobId); logActivity("Re-checked advert: " + j.title); save(); rerender();
 };
 
+ACT.toggleApplied = () => { F.showApplied = !F.showApplied; F.show = 30; rerender(); };
 ACT.cityChip = (d) => { F.city = d.c; F.show = 30; rerender(); };
 function activeFilterCount() { return ["q", "company", "track", "elig", "type", "level", "exp", "deadline", "recent", "paid"].filter((k) => F[k]).length + (F.minScore ? 1 : 0); }
 

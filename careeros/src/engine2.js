@@ -267,6 +267,45 @@
     return { ...b, appliedDate: d && !isNaN(d) ? d.toISOString().slice(0, 10) : "", sentTo: mTo[1].trim() };
   }
 
+  // Match an employer career-site confirmation email (Workday, Workable, SmartRecruiters, SuccessFactors...) to a saved job.
+  // Conservative: the email must read like an application confirmation, contain the job's full title, and name the employer.
+  const normTxt = (s) => " " + String(s || "").toLowerCase().replace(/&amp;/g, "&").replace(/&#39;/g, "'").replace(/[^a-z0-9\u0600-\u06ff]+/g, " ").trim() + " ";
+  const CONFIRM_RX = /thank(s| you) for (applying|your application|your interest|submitting)|received your (job )?application|application (was )?(received|submitted|successful)|successfully (submitted|received|applied)|you have successfully applied|for applying (to|for)|applying for the (position|role)|your application (for|to|is)/i;
+  const EMP_STOP = new Set(["the", "company", "co", "group", "holding", "saudi", "arabia", "ksa", "middle", "east", "international", "al", "and", "for", "of", "llc", "ltd", "inc"]);
+  function employerTokens(name) { return normTxt(String(name || "").split(/[|(]/)[0]).trim().split(" ").filter((t) => t.length >= 3 && !EMP_STOP.has(t)); }
+  // The title must stand alone ("for the Project Engineer job"), not be part of a longer one ("Senior Project Engineer").
+  const BEFORE_OK = new Set(["the", "for", "of", "position", "role", "as", "our", "a", "an", "to", "in", "applied", "applying", "application", "job", "vacancy", "titled", "opening"]);
+  const AFTER_OK = new Set(["job", "position", "role", "at", "with", "in", "for", "has", "is", "opportunity", "vacancy", "application", "and", "we", "your", "dear", "thank", "thanks", "was", "requisition", "req", "id", "posting"]);
+  function titleBounded(text, t) {
+    let i = text.indexOf(" " + t + " ");
+    while (i >= 0) {
+      const before = text.slice(0, i).trim().split(" ").pop() || "";
+      const after = text.slice(i + t.length + 2).split(" ")[0] || "";
+      const okB = !before || BEFORE_OK.has(before) || /\d/.test(before);
+      const okA = !after || AFTER_OK.has(after) || /\d/.test(after);
+      if (okB && okA) return true;
+      i = text.indexOf(" " + t + " ", i + 1);
+    }
+    return false;
+  }
+  function matchConfirmation(email, jobs) {
+    const raw = [email.subject, email.snippet].join(" ");
+    if (!CONFIRM_RX.test(raw)) return null;
+    const main = normTxt(raw), text = normTxt(raw + " " + (email.from || "") + " " + (email.fromName || ""));
+    const hits = [];
+    for (const j of jobs) {
+      const t = normTxt(j.title).trim();
+      if (t.length < 8 || t.split(" ").length < 2) continue;
+      if (!titleBounded(main, t)) continue;
+      const toks = employerTokens(j.employer);
+      if (!toks.length || !toks.some((k) => text.includes(" " + k + " ") || text.includes(k + "."))) continue;
+      hits.push(j);
+    }
+    if (!hits.length) return null;
+    hits.sort((a, b) => b.title.length - a.title.length);
+    return hits.filter((h) => h.title === hits[0].title);
+  }
+
   // ---------------------------------------------------------------- ATS checks based on Greenhouse's published guidance
   const GREENHOUSE = "https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse";
   function atsGreenhouse(model, fileSize) {
@@ -290,5 +329,5 @@
     return { checks, source: GREENHOUSE, note: "Based on Greenhouse's published list of causes of unsuccessful parsing. Workday, Lever and iCIMS do not publish equivalent public pages that could be verified; third-party guides suggest the same risks (tables, columns, text boxes, image-only files). This is a risk check, not a reproduction of any ranking algorithm." };
   }
 
-  return Object.assign({}, E, { careerValue, compareJobs, nextBestMoves, readiness, trackTargets, TRACK_CV, devMap, analytics, parseLinkedInBlocks, parseLinkedInApplication, atsGreenhouse, GREENHOUSE });
+  return Object.assign({}, E, { careerValue, compareJobs, nextBestMoves, readiness, trackTargets, TRACK_CV, devMap, analytics, parseLinkedInBlocks, parseLinkedInApplication, matchConfirmation, atsGreenhouse, GREENHOUSE });
 });
