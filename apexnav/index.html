@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ApexNav · GPS-denied navigation pod for security UAVs</title>
+<meta name="description" content="ApexNav keeps security drones on track when GPS is jammed. Team ApexNav, IMSIU Riyadh, SAIF 2026.">
+<meta property="og:title" content="ApexNav · GPS jammed. Still on track."><meta property="og:description" content="A belly pod that keeps a security drone on track when GPS is jammed."><meta property="og:image" content="assets/og.jpg">
+<meta name="theme-color" content="#0d3e3b"><link rel="icon" href="assets/icon.png">
+<style>
+@font-face{font-family:Inter;font-weight:400;font-display:swap;src:url(fonts/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;font-display:swap;src:url(fonts/inter-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:800;font-display:swap;src:url(fonts/inter-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:Mono;font-weight:600;font-display:swap;src:url(fonts/jetbrains-mono-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Kufi;font-weight:700;font-display:swap;src:url(fonts/noto-kufi-arabic-arabic-700-normal.woff2) format("woff2")}
+:root{--teal:#0d3e3b;--deep:#092d2b;--cream:#f4f4e9;--box:#e8ece2;--orange:#f3a05e;--od:#c26a1f;--aqua:#8fd3dc;--ink:#12302e;--mute:#5d7472}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--cream);color:var(--ink);line-height:1.55;-webkit-text-size-adjust:100%}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+.ar{font-family:Kufi,Inter,sans-serif;font-weight:700}
+.mono{font:600 11px Mono,ui-monospace,monospace;letter-spacing:.16em}
+a{color:inherit}
+a:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:6px}
+nav{position:sticky;top:0;z-index:20;background:rgba(9,45,43,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(143,211,220,.18)}
+nav .wrap{display:flex;align-items:center;gap:14px;height:56px}
+nav img{height:26px;width:auto;max-width:none}
+nav .sp{flex:1}
+nav a.n{color:var(--cream);text-decoration:none;font-weight:600;font-size:14px;padding:8px 6px;display:none}
+nav a.go{background:var(--orange);color:#2b1a08;font-weight:800;font-size:14px;text-decoration:none;padding:9px 14px;border-radius:10px;white-space:nowrap}
+@media(min-width:720px){nav a.n{display:block}}
+header{position:relative;overflow:hidden;background:radial-gradient(120% 120% at 15% 0%,#14524e 0%,#0d3e3b 50%,#092d2b 100%);color:var(--cream);padding:34px 0 10px}
+header .topo{position:absolute;inset:0;width:100%;height:100%}
+header .wrap{position:relative}
+.tag{color:var(--orange)}
+h1{font-size:clamp(38px,9.5vw,76px);font-weight:800;line-height:1.02;letter-spacing:-.025em;margin-top:10px;text-wrap:balance}
+h1 i{font-style:normal;color:var(--orange);display:block}
+.sub{font-size:clamp(16px,2.4vw,20px);max-width:36em;margin-top:14px;color:#dfe9e2}
+.h1ar{font-size:clamp(16px,3.6vw,22px);color:var(--aqua);margin-top:10px;text-align:left}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn{display:inline-flex;flex-direction:column;justify-content:center;min-height:58px;padding:10px 20px;border-radius:14px;text-decoration:none;font-weight:800;font-size:16px;flex:1 1 220px;max-width:340px;transition:transform .15s}
+.btn:active{transform:scale(.98)}
+.btn span{font-weight:400;font-size:12.5px;opacity:.85}
+.btn.p{background:var(--orange);color:#2b1a08;box-shadow:0 8px 24px rgba(243,160,94,.25)}
+.btn.s{border:1.5px solid rgba(143,211,220,.7);color:var(--cream)}
+.plane{width:100%;max-width:760px;margin:30px auto 0;filter:drop-shadow(0 12px 16px rgba(0,0,0,.45))}
+.motif{display:block;width:100%;max-width:820px;margin:0 auto;position:static;overflow:hidden}
+.draw path[stroke-width="5.5"],.draw path[stroke-width="5"]{stroke-dasharray:1200;stroke-dashoffset:1200;animation:draw 2.6s .3s ease-out forwards}
+.draw path[stroke-width="5"]{animation-delay:1.5s;animation-duration:1.4s}
+.draw text{opacity:0;animation:fade .6s 2.6s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}@keyframes fade{to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.draw path,.draw text{animation:none;stroke-dashoffset:0;opacity:1}html{scroll-behavior:auto}}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(143,211,220,.25);border-top:1px solid rgba(143,211,220,.25);margin-top:14px}
+.facts div{background:var(--deep);padding:16px 14px}
+.facts b{display:block;font-size:clamp(26px,6vw,40px);font-weight:800;color:var(--orange);line-height:1;font-variant-numeric:tabular-nums}
+.facts span{display:block;font-size:13px;color:#dfe9e2;margin-top:6px}
+@media(min-width:720px){.facts{grid-template-columns:repeat(4,1fr)}}
+section{padding:54px 0;scroll-margin-top:64px}
+.k{color:var(--od);display:flex;justify-content:space-between;align-items:baseline}
+.k .ar{font-size:15px;letter-spacing:0}
+h2{font-size:clamp(26px,5.4vw,40px);font-weight:800;letter-spacing:-.018em;line-height:1.1;margin:8px 0 18px;color:var(--teal);text-wrap:balance;max-width:20em}
+.lead{font-size:17px;max-width:38em;color:#2c4543}
+.dark{background:var(--teal);color:var(--cream)}.dark h2{color:var(--cream)}.dark .k{color:var(--orange)}.dark .lead{color:#dfe9e2}
+.split{display:grid;gap:26px;align-items:center}
+@media(min-width:820px){.split{grid-template-columns:1fr 1fr}}
+.shot{border-radius:16px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.25)}
+.big{font-size:clamp(46px,11vw,84px);font-weight:800;color:var(--orange);line-height:1;letter-spacing:-.03em;margin-top:18px;font-variant-numeric:tabular-nums}
+ol.steps{list-style:none;display:grid;gap:12px;counter-reset:s}
+@media(min-width:820px){ol.steps{grid-template-columns:1fr 1fr}}
+ol.steps li{display:flex;gap:14px;background:#fff;border:1px solid #d7dccf;border-radius:16px;padding:18px}
+ol.steps i{flex:none;width:40px;height:40px;border-radius:50%;background:var(--teal);color:var(--cream);font:800 17px Inter;display:flex;align-items:center;justify-content:center;font-style:normal}
+ol.steps li:last-child i{background:var(--orange);color:#2b1a08}
+ol.steps b{display:block;font-size:18px;font-weight:800;color:var(--teal)}
+ol.steps p{font-size:15px;color:#2c4543;margin-top:2px}
+.parts{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:20px;font-size:14px}
+.parts div{border-left:3px solid var(--orange);padding-left:10px;color:#dfe9e2;line-height:1.35}
+.parts b{display:block;color:var(--cream);font-weight:800}
+ul.ck{list-style:none;margin-top:20px}
+ul.ck li{padding-left:26px;position:relative;margin-bottom:8px;font-size:15.5px}
+ul.ck li::before{content:"";position:absolute;left:2px;top:6px;width:12px;height:7px;border-left:2.5px solid var(--orange);border-bottom:2.5px solid var(--orange);transform:rotate(-45deg)}
+.tblw{overflow-x:auto;margin-top:24px;border-radius:14px;border:1px solid #d7dccf;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #e3e7dc;vertical-align:top}
+th{background:var(--teal);color:var(--cream);font-weight:600}
+tr.us td{background:var(--orange);color:#2b1a08;font-weight:700;border:0}
+.ready{display:flex;margin:26px 0 6px}
+.ready div{flex:1;font-size:11.5px;text-align:center;color:var(--mute);position:relative;padding-top:26px;line-height:1.25}
+.ready div::before{content:"";position:absolute;left:0;right:0;top:8px;height:2px;background:#b9c4b6}
+.ready i{position:absolute;left:50%;top:0;margin-left:-9px;width:18px;height:18px;border-radius:50%;background:var(--cream);border:2px solid #b9c4b6}
+.ready .ok{color:var(--ink);font-weight:600}.ready .ok i{background:var(--teal);border-color:var(--teal)}
+.ready .next{color:#b9621c;font-weight:700}.ready .next i{border-color:var(--orange);background:#fbe3cd}
+.note{font-size:13px;color:var(--mute);margin-top:16px;max-width:46em}
+.team{display:grid;gap:12px}
+@media(min-width:820px){.team{grid-template-columns:1fr 1fr}.m.lead{grid-column:span 1}}
+.m{display:flex;gap:14px;background:#fff;border:1px solid #d7dccf;border-radius:16px;padding:18px}
+.av{flex:none;width:54px;height:54px;border-radius:50%;background:var(--teal);color:var(--cream);font-weight:800;display:flex;align-items:center;justify-content:center;letter-spacing:.04em}
+.m.lead .av{background:var(--orange);color:#2b1a08}
+.mi{min-width:0;flex:1}
+.m h3{font-size:19px;font-weight:800;color:var(--teal);line-height:1.2}
+.arn{font-family:Kufi,sans-serif;font-weight:700;font-size:15px;text-align:left}
+.role{font:600 11.5px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--od);margin-top:3px}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.b{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border-radius:10px;background:var(--box);text-decoration:none;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.b.in{background:var(--teal);color:var(--cream)}
+.b.ghost{background:none;border:1.5px solid #b9c4b6}
+.end{background:radial-gradient(120% 140% at 80% 0%,#14524e 0%,#0d3e3b 55%,#092d2b 100%);color:var(--cream);text-align:center}
+.end h2{color:var(--cream);margin-left:auto;margin-right:auto}.end h2 i{font-style:normal;color:var(--orange)}
+.end .cta{justify-content:center}
+footer{background:var(--deep);color:var(--cream);padding:24px 0 34px;font-size:13.5px}
+footer b{color:var(--orange);font-weight:600}
+footer .mono{opacity:.8;margin-top:6px;font-size:10.5px}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}.rv.on{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+body{-webkit-tap-highlight-color:rgba(243,160,94,.25)}
+nav{padding-top:env(safe-area-inset-top)}
+.wrap{padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+.tabs{display:none}
+@media(max-width:719px){
+ section{padding:42px 0}
+ nav a.go{display:none}
+ .btn{flex:1 1 100%;max-width:none;min-height:62px;font-size:17px}
+ .links{flex-direction:column}.links .b{width:100%;justify-content:center;min-height:48px;font-size:15px}
+ .m{padding:16px 14px}
+ .parts{font-size:15px}
+ ol.steps p,ul.ck li,.lead{font-size:16px}
+ .ready div{font-size:11px}
+ body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+ .tabs{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(9,45,43,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(143,211,220,.25);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+ .tabs a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;text-decoration:none;color:var(--cream);font-size:12px;font-weight:600;border-radius:12px}
+ .tabs a svg{width:22px;height:22px}
+ .tabs a.hot{background:var(--orange);color:#2b1a08;font-weight:800}
+ .tblw{border:0;background:none;overflow:visible}
+ table{min-width:0;display:block}
+ table tr:first-child{display:none}
+ table tr{display:block;background:#fff;border:1px solid #d7dccf;border-radius:14px;padding:12px 14px;margin-bottom:10px}
+ table td{display:flex;gap:10px;border:0;padding:3px 0;font-size:15px}
+ table td::before{content:attr(data-l);flex:none;width:112px;font:600 10.5px Mono,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding-top:4px}
+ table td:first-child{font-weight:800;font-size:17px;color:var(--teal);padding-bottom:6px}table td:first-child::before{display:none}
+ tr.us{background:var(--orange)!important;border-color:var(--orange)!important}tr.us td{background:none}tr.us td::before{color:#5b3410}tr.us td:first-child{color:#2b1a08}
+}
+</style></head><body>
+<nav><div class="wrap"><img src="assets/logo.png" alt="ApexNav" width="720" height="183"><span class="sp"></span>
+<a class="n" href="#how">How it works</a><a class="n" href="#proof">Proof</a><a class="n" href="#team">Team</a>
+<a class="go" href="mission.html">Live mission</a></div></nav>
+<header><svg class="topo" viewBox="0 0 1000 640" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#8fd3dc" stroke-width="1.3" opacity="0.07"><path d="M0 -6.6 L17 2.4 L34 9.0 L51 12.2 L68 11.9 L85 8.3 L102 2.6 L119 -3.7 L136 -9.1 L153 -12.5 L170 -13.3 L187 -11.6 L204 -8.2 L221 -4.2 L238 -0.7 L255 1.4 L272 1.6 L289 0.3 L306 -2.0 L323 -4.3 L340 -5.5 L357 -5.2 L374 -3.4 L391 -0.7 L408 2.0 L425 3.1 L442 1.8 L459 -2.9 L476 -10.8 L493 -21.1 L510 -32.7 L527 -43.9 L544 -53.1 L561 -59.3 L578 -61.9 L595 -61.2 L612 -58.1 L629 -53.8 L646 -49.6 L663 -46.3 L680 -44.3 L697 -43.5 L714 -43.1 L731 -42.2 L748 -39.9 L765 -35.8 L782 -30.0 L799 -23.1 L816 -16.3 L833 -10.8 L850 -7.7 L867 -7.6 L884 -10.3 L901 -15.2 L918 -20.8 L935 -25.7 L952 -28.4 L969 -28.1 L986 -24.6 L1003 -18.3 L1020 -10.4"/><path d="M0 48.6 L17 50.2 L34 49.7 L51 47.0 L68 42.4 L85 36.8 L102 31.6 L119 28.2 L136 27.4 L153 29.7 L170 34.7 L187 41.4 L204 48.3 L221 54.0 L238 57.1 L255 57.0 L272 53.6 L289 47.7 L306 40.3 L323 32.8 L340 26.4 L357 21.6 L374 18.5 L391 16.6 L408 15.1 L425 13.0 L442 9.8 L459 5.2 L476 -0.2 L493 -5.6 L510 -9.6 L527 -11.0 L544 -9.2 L561 -3.8 L578 4.4 L595 14.4 L612 24.5 L629 33.2 L646 39.2 L663 42.0 L680 41.7 L697 39.1 L714 35.3 L731 31.9 L748 29.7 L765 29.3 L782 30.8 L799 33.5 L816 36.4 L833 38.7 L850 39.5 L867 38.8 L884 36.9 L901 34.7 L918 33.5 L935 34.1 L952 37.3 L969 43.0 L986 50.5 L1003 58.6 L1020 65.6"/><path d="M0 85.2 L17 88.6 L34 90.3 L51 90.1 L68 88.4 L85 86.0 L102 83.8 L119 82.8 L136 83.3 L153 85.1 L170 87.5 L187 89.4 L204 89.4 L221 86.7 L238 80.8 L255 71.9 L272 61.1 L289 49.7 L306 39.5 L323 31.8 L340 27.6 L357 27.0 L374 29.6 L391 34.3 L408 39.8 L425 45.0 L442 48.9 L459 51.4 L476 52.8 L493 54.0 L510 55.9 L527 59.2 L544 64.2 L561 70.7 L578 77.7 L595 84.3 L612 89.0 L629 91.0 L646 90.0 L663 86.2 L680 80.8 L697 75.0 L714 70.5 L731 68.5 L748 69.6 L765 73.9 L782 80.5 L799 88.2 L816 95.7 L833 101.5 L850 105.0 L867 106.0 L884 105.0 L901 102.9 L918 100.5 L935 98.9 L952 98.3 L969 98.5 L986 98.8 L1003 98.2 L1020 95.6"/><path d="M0 143.2 L17 144.8 L34 143.0 L51 137.9 L68 130.6 L85 122.3 L102 114.2 L119 107.4 L136 102.4 L153 99.1 L170 96.7 L187 94.5 L204 91.5 L221 87.2 L238 81.8 L255 75.7 L272 70.1 L289 66.2 L306 65.1 L323 67.3 L340 72.8 L357 80.7 L374 89.8 L391 98.5 L408 105.2 L425 109.0 L442 109.5 L459 107.2 L476 103.0 L493 98.3 L510 94.4 L527 92.3 L544 92.3 L561 94.3 L578 97.3 L595 100.6 L612 103.1 L629 104.3 L646 104.2 L663 103.4 L680 102.7 L697 103.3 L714 106.0 L731 111.3 L748 118.9 L765 127.9 L782 136.8 L799 144.1 L816 148.5 L833 149.1 L850 145.7 L867 139.2 L884 130.6 L901 121.4 L918 113.2 L935 106.7 L952 102.5 L969 100.3 L986 99.2 L1003 98.4 L1020 96.9"/><path d="M0 170.3 L17 163.0 L34 153.1 L51 141.7 L68 130.5 L85 121.0 L102 114.4 L119 111.5 L136 112.2 L153 115.7 L170 120.8 L187 126.1 L204 130.6 L221 133.5 L238 134.9 L255 135.3 L272 135.4 L289 136.4 L306 138.7 L323 142.6 L340 147.7 L357 152.9 L374 157.1 L391 159.2 L408 158.5 L425 154.8 L442 148.8 L459 141.6 L476 134.9 L493 129.9 L510 128.0 L527 129.4 L544 133.9 L561 140.6 L578 148.0 L595 154.9 L612 160.0 L629 162.9 L646 163.4 L663 162.4 L680 160.6 L697 159.2 L714 158.8 L731 159.6 L748 161.2 L765 162.8 L782 163.2 L799 161.5 L816 157.2 L833 150.3 L850 141.5 L867 132.2 L884 123.9 L901 117.9 L918 115.3 L935 116.2 L952 120.2 L969 126.3 L986 132.9 L1003 138.6 L1020 142.5"/><path d="M0 172.8 L17 167.8 L34 162.6 L51 158.4 L68 156.2 L85 157.0 L102 161.3 L119 168.6 L136 177.9 L153 187.9 L170 196.8 L187 203.4 L204 207.0 L221 207.3 L238 205.1 L255 201.5 L272 197.9 L289 195.6 L306 195.3 L323 197.1 L340 200.7 L357 205.1 L374 209.4 L391 212.5 L408 214.2 L425 214.5 L442 214.0 L459 213.9 L476 215.2 L493 218.5 L510 224.1 L527 231.5 L544 239.7 L561 247.0 L578 252.2 L595 253.9 L612 251.6 L629 245.6 L646 236.7 L663 226.4 L680 216.1 L697 207.1 L714 200.4 L731 196.1 L748 193.7 L765 192.3 L782 190.9 L799 188.7 L816 185.4 L833 181.1 L850 176.7 L867 173.1 L884 171.3 L901 172.0 L918 175.4 L935 180.8 L952 187.3 L969 193.4 L986 197.7 L1003 199.1 L1020 197.5"/><path d="M0 225.1 L17 226.6 L34 227.2 L51 227.9 L68 229.7 L85 233.0 L102 237.9 L119 243.7 L136 249.6 L153 254.3 L170 256.8 L187 256.6 L204 253.9 L221 249.5 L238 244.6 L255 240.8 L272 239.5 L289 241.4 L306 246.8 L323 255.0 L340 264.9 L357 275.0 L374 283.9 L391 290.6 L408 294.6 L425 296.3 L442 296.3 L459 295.8 L476 295.6 L493 296.2 L510 297.8 L527 299.6 L544 300.9 L561 300.5 L578 297.6 L595 291.8 L612 283.4 L629 273.3 L646 263.0 L663 253.9 L680 247.4 L697 244.0 L714 244.0 L731 246.6 L748 250.5 L765 254.4 L782 256.9 L799 257.2 L816 255.0 L833 250.9 L850 245.7 L867 240.7 L884 236.8 L901 234.8 L918 234.6 L935 235.7 L952 237.3 L969 238.3 L986 237.8 L1003 235.7 L1020 232.2"/><path d="M0 295.4 L17 292.1 L34 288.0 L51 284.3 L68 282.2 L85 282.4 L102 284.7 L119 288.6 L136 293.0 L153 297.0 L170 299.7 L187 300.8 L204 300.7 L221 300.1 L238 300.2 L255 301.7 L272 305.5 L289 311.3 L306 318.6 L323 326.2 L340 332.5 L357 336.1 L374 336.3 L391 332.6 L408 325.5 L425 316.2 L442 306.2 L459 296.9 L476 289.6 L493 284.8 L510 282.5 L527 282.0 L544 282.3 L561 282.2 L578 281.2 L595 278.9 L612 275.7 L629 272.4 L646 270.0 L663 269.5 L680 271.3 L697 275.4 L714 281.0 L731 287.0 L748 291.9 L765 294.6 L782 294.2 L799 290.7 L816 284.7 L833 277.5 L850 270.6 L867 265.5 L884 263.2 L901 264.1 L918 268.0 L935 273.9 L952 280.6 L969 287.0 L986 292.2 L1003 295.8 L1020 298.2"/><path d="M0 334.3 L17 329.4 L34 326.1 L51 325.4 L68 328.0 L85 333.7 L102 341.8 L119 350.7 L136 359.1 L153 365.6 L170 369.3 L187 370.0 L204 368.3 L221 365.1 L238 361.3 L255 358.0 L272 355.5 L289 353.8 L306 352.3 L323 350.0 L340 346.0 L357 339.5 L374 330.6 L391 319.7 L408 307.9 L425 296.7 L442 287.7 L459 281.8 L476 279.6 L493 280.8 L510 284.6 L527 289.4 L544 293.9 L561 296.8 L578 297.6 L595 296.0 L612 293.0 L629 289.4 L646 286.4 L663 285.0 L680 285.7 L697 288.3 L714 292.1 L731 296.1 L748 299.3 L765 301.1 L782 301.2 L799 300.1 L816 298.9 L833 298.8 L850 301.0 L867 306.2 L884 314.6 L901 325.6 L918 338.0 L935 350.2 L952 360.7 L969 368.2 L986 372.1 L1003 372.5 L1020 370.2"/><path d="M0 389.3 L17 389.7 L34 391.8 L51 395.9 L68 401.7 L85 408.6 L102 415.0 L119 419.6 L136 421.1 L153 418.9 L170 412.8 L187 403.6 L204 392.8 L221 381.7 L238 371.9 L255 364.4 L272 359.6 L289 357.1 L306 356.1 L323 355.7 L340 354.6 L357 352.4 L374 349.0 L391 344.8 L408 340.8 L425 338.0 L442 337.2 L459 338.7 L476 342.4 L493 347.2 L510 352.0 L527 355.4 L544 356.4 L561 354.4 L578 349.6 L595 343.0 L612 336.0 L629 330.0 L646 326.6 L663 326.4 L680 329.8 L697 336.0 L714 344.0 L731 352.6 L748 360.5 L765 367.0 L782 372.0 L799 375.8 L816 379.1 L833 382.9 L850 387.9 L867 394.2 L884 401.5 L901 408.8 L918 414.9 L935 418.5 L952 418.7 L969 415.1 L986 408.2 L1003 399.0 L1020 389.1"/><path d="M0 452.9 L17 449.0 L34 445.7 L51 443.5 L68 442.0 L85 440.7 L102 438.5 L119 434.5 L136 428.4 L153 420.1 L170 410.4 L187 400.6 L204 392.0 L221 386.2 L238 383.8 L255 385.2 L272 389.7 L289 396.1 L306 403.1 L323 409.1 L340 412.9 L357 414.2 L374 413.1 L391 410.5 L408 407.4 L425 405.0 L442 404.3 L459 405.3 L476 407.9 L493 411.3 L510 414.4 L527 416.4 L544 416.8 L561 415.5 L578 413.4 L595 411.4 L612 410.8 L629 412.8 L646 417.8 L663 425.9 L680 436.2 L697 447.2 L714 457.5 L731 465.5 L748 470.2 L765 471.2 L782 469.0 L799 464.4 L816 458.8 L833 453.4 L850 449.1 L867 446.2 L884 444.4 L901 443.0 L918 441.1 L935 437.8 L952 432.8 L969 426.2 L986 418.8 L1003 411.7 L1020 406.2"/><path d="M0 464.2 L17 455.3 L34 449.1 L51 445.8 L68 444.7 L85 445.1 L102 445.6 L119 445.5 L136 444.2 L153 441.9 L170 439.1 L187 436.9 L204 436.1 L221 437.5 L238 441.2 L255 446.7 L272 453.1 L289 458.9 L306 463.0 L323 464.3 L340 462.6 L357 458.4 L374 452.7 L391 447.1 L408 443.0 L425 441.7 L442 443.7 L459 449.0 L476 456.6 L493 465.5 L510 474.3 L527 481.9 L544 487.8 L561 491.8 L578 494.6 L595 497.1 L612 500.0 L629 503.9 L646 509.0 L663 514.6 L680 519.7 L697 523.2 L714 523.8 L731 520.8 L748 514.2 L765 504.8 L782 493.6 L799 482.4 L816 472.8 L833 465.8 L850 462.1 L867 461.4 L884 462.8 L901 465.1 L918 467.1 L935 467.7 L952 466.4 L969 463.5 L986 459.6 L1003 455.7 L1020 452.8"/><path d="M0 471.9 L17 471.2 L34 474.0 L51 479.5 L68 486.4 L85 493.1 L102 498.2 L119 500.9 L136 500.8 L153 498.5 L170 494.9 L187 491.1 L204 488.5 L221 487.5 L238 488.4 L255 490.8 L272 493.7 L289 496.1 L306 497.4 L323 497.1 L340 495.4 L357 493.3 L374 491.9 L391 492.3 L408 495.6 L425 502.0 L442 511.3 L459 522.3 L476 533.5 L493 543.4 L510 550.5 L527 554.1 L544 554.0 L561 550.9 L578 545.9 L595 540.3 L612 535.3 L629 531.6 L646 529.3 L663 528.1 L680 527.0 L697 525.1 L714 521.8 L731 516.8 L748 510.3 L765 503.4 L782 497.2 L799 492.9 L816 491.3 L833 492.7 L850 496.7 L867 502.1 L884 507.6 L901 511.6 L918 512.9 L935 511.0 L952 506.1 L969 499.0 L986 491.0 L1003 483.5 L1020 477.8"/><path d="M0 526.9 L17 530.9 L34 536.4 L51 542.2 L68 547.0 L85 549.6 L102 549.2 L119 545.9 L136 540.4 L153 533.9 L170 528.0 L187 524.1 L204 523.3 L221 525.8 L238 531.4 L255 539.0 L272 547.3 L289 555.1 L306 561.4 L323 565.8 L340 568.4 L357 570.1 L374 571.6 L391 573.9 L408 577.3 L425 581.7 L442 586.6 L459 590.7 L476 592.9 L493 592.1 L510 587.9 L527 580.4 L544 570.7 L561 560.0 L578 549.9 L595 542.0 L612 537.2 L629 535.7 L646 537.0 L663 540.1 L680 543.7 L697 546.4 L714 547.4 L731 546.5 L748 544.0 L765 540.6 L782 537.4 L799 535.3 L816 534.8 L833 535.8 L850 537.6 L867 539.4 L884 539.9 L901 538.4 L918 534.4 L935 528.4 L952 521.2 L969 514.3 L986 509.3 L1003 507.3 L1020 509.1"/><path d="M0 575.0 L17 576.4 L34 579.0 L51 582.0 L68 584.3 L85 585.4 L102 584.9 L119 583.4 L136 581.8 L153 581.2 L170 582.8 L187 587.3 L204 594.9 L221 604.8 L238 615.9 L255 626.5 L272 635.1 L289 640.6 L306 642.3 L323 640.4 L340 635.9 L357 629.8 L374 623.6 L391 618.4 L408 614.7 L425 612.5 L442 611.3 L459 610.0 L476 607.7 L493 604.0 L510 598.7 L527 592.3 L544 585.8 L561 580.4 L578 577.2 L595 576.8 L612 579.3 L629 583.9 L646 589.5 L663 594.6 L680 597.6 L697 597.8 L714 594.7 L731 588.7 L748 581.1 L765 573.1 L782 566.1 L799 561.4 L816 559.3 L833 559.8 L850 562.0 L867 565.1 L884 568.0 L901 570.1 L918 571.1 L935 571.6 L952 572.3 L969 574.3 L986 578.4 L1003 585.1 L1020 594.2"/><path d="M0 616.4 L17 623.3 L34 631.8 L51 640.6 L68 648.4 L85 654.4 L102 658.4 L119 660.8 L136 662.4 L153 664.0 L170 666.5 L187 670.1 L204 674.5 L221 679.0 L238 682.5 L255 683.6 L272 681.7 L289 676.5 L306 668.3 L323 658.3 L340 648.0 L357 639.0 L374 632.5 L391 629.3 L408 629.3 L425 631.8 L442 635.5 L459 639.2 L476 641.5 L493 641.9 L510 640.2 L527 636.9 L544 633.0 L561 629.5 L578 627.3 L595 626.6 L612 627.3 L629 628.7 L646 629.6 L663 629.1 L680 626.5 L697 621.6 L714 615.1 L731 607.9 L748 601.7 L765 597.8 L782 597.4 L799 600.8 L816 607.8 L833 617.3 L850 627.9 L867 638.1 L884 646.6 L901 652.7 L918 656.3 L935 657.9 L952 658.6 L969 659.3 L986 660.7 L1003 663.3 L1020 666.7"/><path d="M0 699.1 L17 710.0 L34 719.9 L51 727.2 L68 731.0 L85 731.0 L102 727.6 L119 721.8 L136 715.2 L153 708.8 L170 703.8 L187 700.6 L204 698.8 L221 697.8 L238 696.6 L255 694.3 L272 690.5 L289 685.3 L306 679.3 L323 673.6 L340 669.2 L357 667.2 L374 668.1 L391 671.5 L408 676.6 L425 682.1 L442 686.4 L459 688.4 L476 687.1 L493 682.6 L510 675.7 L527 667.5 L544 659.5 L561 653.0 L578 649.2 L595 648.1 L612 649.4 L629 652.4 L646 655.9 L663 659.0 L680 661.2 L697 662.4 L714 663.1 L731 664.4 L748 667.1 L765 672.1 L782 679.6 L799 689.0 L816 699.5 L833 709.5 L850 717.6 L867 722.5 L884 723.7 L901 721.3 L918 716.1 L935 709.5 L952 703.0 L969 697.8 L986 694.9 L1003 694.4 L1020 695.9"/></g></svg><div class="wrap">
+<p class="mono tag">GPS-DENIED NAVIGATION POD FOR SECURITY UAVS</p>
+<h1>GPS jammed.<i>Still on track.</i></h1>
+<p class="h1ar ar" dir="rtl">ملاحة دون GPS للطائرات المسيّرة الأمنية</p>
+<p class="sub">A belly pod that keeps border and critical-site drones on their route when GPS is lost. No new airframe, no pilot action.</p>
+<div class="cta"><a class="btn p" href="mission.html">Watch the live mission<span>3D border patrol simulation, runs in your browser</span></a>
+<a class="btn s" href="https://drive.google.com/drive/folders/1GyXOwAgaCXWKaI6PKLZnd7J96Cm46gG0" target="_blank" rel="noopener">Technical files<span>CAD, CFD, electronics, references</span></a></div>
+<img class="plane" src="assets/aircraft.png" alt="Fixed-wing drone with the ApexNav pod under the fuselage" width="1500" height="483">
+<svg class="motif draw" style="" viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><radialGradient id="jzdc" cx="380" cy="560" r="470" gradientUnits="userSpaceOnUse"><stop offset="0.5" stop-color="#ff6b5a" stop-opacity="0.24"/><stop offset="1" stop-color="#ff6b5a" stop-opacity="0.03"/></radialGradient><radialGradient id="jzdcm" cx="470" cy="250" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(470 250) scale(470 190) translate(-470 -250)"><stop offset="0.45" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="jzdck" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="420"><rect width="1000" height="420" fill="url(#jzdcm)"/></mask></defs><circle cx="380" cy="560" r="470" fill="url(#jzdc)" mask="url(#jzdck)"/><circle cx="380" cy="560" r="470" fill="none" stroke="#ff6b5a" stroke-width="2.4" stroke-dasharray="13 10" opacity="0.9"/><path d="M1000 300 C900 296 830 322 740 318 S600 372 520 356 S380 300 300 310 S120 250 0 262" fill="none" stroke="#f4f4e9" stroke-width="2.6" stroke-dasharray="2 9" stroke-linecap="round" opacity="0.75"/><path d="M745 272 C690 264 640 244 595 214 S510 156 470 130" fill="none" stroke="#f3a05e" stroke-width="5" stroke-linecap="round"/><path d="M980 252 C890 250 830 276 745 272 S610 322 525 308 S390 254 305 262 S150 206 40 214" fill="none" stroke="#8fd3dc" stroke-width="5.5" stroke-linecap="round"/><circle cx="980" cy="252" r="8" fill="#f4f4e9"/><circle cx="745" cy="272" r="13" fill="none" stroke="#ff6b5a" stroke-width="2.5"/><circle cx="745" cy="272" r="6" fill="#ff6b5a"/><path d="M458 118 L482 142 M482 118 L458 142" stroke="#ff6b5a" stroke-width="5.5" stroke-linecap="round"/><circle cx="40" cy="214" r="12" fill="none" stroke="#8fd3dc" stroke-width="4"/><circle cx="40" cy="214" r="4.5" fill="#8fd3dc"/><text x="770" y="304" font-size="25" fill="#ff6b5a" font-family="Mono, monospace" font-weight="600" letter-spacing="1.5" stroke="#0e3f3c" stroke-width="9" stroke-linejoin="round" paint-order="stroke">GPS LOST</text><text x="508" y="66" font-size="26" fill="#f3a05e" font-family="Mono, monospace" font-weight="600" letter-spacing="1.5" stroke="#0e3f3c" stroke-width="9" stroke-linejoin="round" paint-order="stroke">WITHOUT POD</text><text x="508" y="112" font-size="44" fill="#f3a05e" font-family="Inter" font-weight="800" stroke="#0e3f3c" stroke-width="9" stroke-linejoin="round" paint-order="stroke">1,185 m off</text><text x="14" y="112" font-size="26" fill="#8fd3dc" font-family="Mono, monospace" font-weight="600" letter-spacing="1.5" stroke="#0e3f3c" stroke-width="9" stroke-linejoin="round" paint-order="stroke">WITH APEXNAV</text><text x="14" y="160" font-size="44" fill="#8fd3dc" font-family="Inter" font-weight="800" stroke="#0e3f3c" stroke-width="9" stroke-linejoin="round" paint-order="stroke">16 m</text></svg>
+</div>
+<div class="facts"><div><b>16 m</b><span>worst error during 8.5 minutes of jamming</span></div><div><b>1.2 km</b><span>drift of the same drone without the pod</span></div><div><b>0</b><span>pilot actions at GPS loss</span></div><div><b>650 g</b><span>240 mm pod, one connector</span></div></div>
+</header>
+<section class="dark"><div class="wrap split">
+<div class="rv"><p class="mono k">THE PROBLEM<span class="ar" dir="rtl">المشكلة</span></p>
+<h2>A cheap jammer can blind a security drone.</h2>
+<p class="lead">Border and critical-site drones depend on GPS. Under jamming the drone drifts, aborts or is lost. Tactical-grade INS kits and anti-jam fleets cost too much to fit to every aircraft.</p>
+<div class="big">1,185 m</div><p class="lead" style="font-size:14.5px;margin-top:6px">off course after 6 minutes without GPS, then the drone hits a ridge it believed was far below (mission simulation).</p></div>
+<div class="shot rv"><img src="assets/crash.jpg" alt="Simulation frame: the unaided drone flies into a ridge" width="1400" height="788"></div>
+</div></section>
+<section id="how"><div class="wrap">
+<p class="mono k">HOW IT WORKS<span class="ar" dir="rtl">كيف تعمل</span></p>
+<h2>Four steps, no pilot input.</h2>
+<ol class="steps rv"><li><i>1</i><div><b>Load the map</b><p>Satellite tiles of the patrol area are loaded before take-off.</p></div></li><li><i>2</i><div><b>Fly on GPS</b><p>GPS-aided INS and pure INS run side by side for the whole flight.</p></div></li><li><i>3</i><div><b>Learn the drift</b><p>An on-board model learns this drone's own INS drift while GPS is healthy.</p></div></li><li><i>4</i><div><b>Automatic handover</b><p>GPS jammed: the learned correction and camera map fixes take over at once.</p></div></li></ol>
+</div></section>
+<section class="dark"><div class="wrap split">
+<div class="rv"><p class="mono k">INSIDE THE POD<span class="ar" dir="rtl">داخل الوحدة</span></p>
+<h2>One sealed body. One connector.</h2>
+<div class="shot"><img src="assets/cutaway.jpg" alt="Internal layout of the pod (concept render)" width="1200" height="406"></div>
+<div class="parts"><div><b>Jetson Orin Nano 8 GB</b>navigation computer</div><div><b>Cube Orange+</b>unmodified ArduPilot</div><div><b>Sony IMX477</b>nadir navigation camera</div><div><b>FLIR Lepton 3.5</b>thermal camera</div><div><b>4K stereo pair</b>forward view</div><div><b>ADIS16470</b>inertial unit</div><div><b>u-blox ZED-F9P</b>GNSS, while healthy</div><div><b>Helix-N link</b>signed MAVLink 2</div></div></div>
+<div class="rv"><img src="assets/pod.png" alt="ApexNav pod" width="1000" height="423" style="margin:0 auto">
+<ul class="ck"><li>Belly rail mount, fitted in minutes</li><li>Powered by the drone, 12 V</li><li>Airframe and autopilot software unchanged</li><li>Remove the pod and the drone flies as before</li></ul></div>
+</div></section>
+<section id="proof"><div class="wrap">
+<p class="mono k">THE PROOF<span class="ar" dir="rtl">الدليل</span></p>
+<h2>Metres of error instead of a kilometre.</h2>
+<div class="shot rv"><img src="assets/mission.jpg" alt="Border patrol under GPS jamming: with the pod the patrol is completed, without it the drone is lost" width="1600" height="472"></div>
+<div class="tblw rv"><table><tr><th>Approach</th><th>Under jamming</th><th>Cost</th><th>Retrofit</th></tr>
+<tr><td data-l="Approach">GNSS-guided UAV</td><td data-l="Under jamming">Navigation lost</td><td data-l="Cost">Low</td><td data-l="Retrofit">N/A</td></tr>
+<tr><td data-l="Approach">Tactical-grade INS</td><td data-l="Under jamming">Error grows without bound</td><td data-l="Cost">Very high</td><td data-l="Retrofit">Difficult</td></tr>
+<tr><td data-l="Approach">Vision-only</td><td data-l="Under jamming">Fails on low-texture ground, night</td><td data-l="Cost">High</td><td data-l="Retrofit">Moderate</td></tr>
+<tr class="us"><td data-l="Approach">ApexNav pod</td><td data-l="Under jamming">Learned drift correction + visual fix</td><td data-l="Cost">Moderate</td><td data-l="Retrofit">Yes, in minutes</td></tr></table></div>
+<div class="ready rv"><div class="ok"><i></i>Mission sim</div><div class="ok"><i></i>Flight log</div><div class="ok"><i></i>PCB design</div><div class="ok"><i></i>CAD + CFD</div><div class="next"><i></i>Bench build</div><div class=""><i></i>Flight trials</div></div>
+<p class="note">Results are from mission simulation and a 100-flight MATLAB Monte Carlo check (11.7 m median worst error), not flight test. Bench build is the next phase.</p>
+</div></section>
+<section id="team" style="background:var(--box)"><div class="wrap">
+<p class="mono k">THE TEAM<span class="ar" dir="rtl">الفريق</span></p>
+<h2>Team ApexNav, IMSIU Riyadh.</h2>
+<div class="team rv"><article class="m lead"><div class="av">MA</div><div class="mi"><h3>Muslih Aljehani</h3><p class="arn" dir="rtl">مصلح الجهني</p><p class="role">Team Lead</p><div class="links"><a class="b in" href="https://www.linkedin.com/in/muslih-aljehani-capm%C2%AE-580861242" target="_blank" rel="noopener">LinkedIn</a><a class="b" href="mailto:Johanij112@gmail.com">Johanij112@gmail.com</a><a class="b ghost" href="data:text/vcard;base64,QkVHSU46VkNBUkQNClZFUlNJT046My4wDQpOOkFsamVoYW5pO011c2xpaDs7Ow0KRk46TXVzbGloIEFsamVoYW5pDQpPUkc6VGVhbSBBcGV4TmF2DQpUSVRMRTpUZWFtIExlYWQNCkVNQUlMOkpvaGFuaWoxMTJAZ21haWwuY29tDQpFTkQ6VkNBUkQNCg==" download="Muslih_Aljehani.vcf">Save contact</a></div></div></article><article class="m lead"><div class="av">SA</div><div class="mi"><h3>Saleh Alsubaie</h3><p class="arn" dir="rtl">صالح السبيعي</p><p class="role">UAV Systems Engineer</p><div class="links"><a class="b in" href="https://www.linkedin.com/in/saleh-alsubaie-43a872269" target="_blank" rel="noopener">LinkedIn</a><a class="b" href="mailto:iSalehAlsubaie@gmail.com">iSalehAlsubaie@gmail.com</a><a class="b ghost" href="data:text/vcard;base64,QkVHSU46VkNBUkQNClZFUlNJT046My4wDQpOOkFsc3ViYWllO1NhbGVoOzs7DQpGTjpTYWxlaCBBbHN1YmFpZQ0KT1JHOlRlYW0gQXBleE5hdg0KVElUTEU6VUFWIFN5c3RlbXMgRW5naW5lZXINCkVNQUlMOmlTYWxlaEFsc3ViYWllQGdtYWlsLmNvbQ0KRU5EOlZDQVJEDQo=" download="Saleh_Alsubaie.vcf">Save contact</a></div></div></article><article class="m"><div class="av">KA</div><div class="mi"><h3>Khalid Alahmari</h3><p class="role">Electrical Engineer</p></div></article><article class="m"><div class="av">AH</div><div class="mi"><h3>Abdulaziz Alharbi</h3><p class="role">Design Engineer</p></div></article><article class="m"><div class="av">AA</div><div class="mi"><h3>Abdullah Alaoud</h3><p class="role">Computer Engineer</p></div></article></div>
+</div></section>
+<section class="end"><div class="wrap">
+<h2>Restore the fleet. <i>Don't replace it.</i></h2>
+<p class="h1ar ar" dir="rtl" style="text-align:center;margin-bottom:6px">نُعيد للأسطول قدرته، دون استبداله</p>
+<div class="cta"><a class="btn p" href="mission.html">Watch the live mission<span>3D border patrol simulation</span></a></div>
+</div></section>
+<footer><div class="wrap"><b>SAIF 2026 · ID SAIF130075</b><br>Imam Mohammad Ibn Saud Islamic University, Riyadh<p class="mono">TRACK · SPACE, AVIATION &amp; UNMANNED AERIAL SYSTEMS</p></div></footer>
+<div class="tabs" role="navigation" aria-label="Quick links">
+<a class="hot" href="mission.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Live mission</a>
+<a href="#how"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.500v.01"/></svg>How it works</a>
+<a href="#team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.500"/><path d="M2.500 20c.5-3.500 3-5.500 6.500-5.500s6 2 6.500 5.500M16 5a3.500 3.500 0 0 1 0 7M18 14.800c2 .7 3.200 2.500 3.500 5.200"/></svg>Team</a>
+</div>
+<script>
+(function(){var e=document.querySelectorAll('.rv');if(!('IntersectionObserver' in window)){e.forEach(function(x){x.classList.add('on')});return}
+var o=new IntersectionObserver(function(a){a.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');o.unobserve(x.target)}})},{threshold:.12});e.forEach(function(x){o.observe(x)})})();
+</script>
+</body></html>
